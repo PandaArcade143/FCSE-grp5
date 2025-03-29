@@ -6,4 +6,8 @@ public class HDBOfficer extends User{
 		super(name, nric, age, maritalStatus, password);
 	}
 
+	public String getRole() {
+		return "HDBOfficer";
+	}
+
 }
