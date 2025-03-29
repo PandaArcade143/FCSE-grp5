@@ -19,4 +19,19 @@ public abstract class User {
 	public String getName() {
 		return name;
 	}
+	
+	public String getNRIC() {
+		return nric;
+	}
+	
+	public String getPassword() {
+		return password;
+	}
+	
+	abstract public String getRole();
+
+	public void setPassword(String newPassword) {
+		password = newPassword;
+		
+	}
 }
