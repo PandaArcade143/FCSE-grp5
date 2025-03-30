@@ -10,8 +10,8 @@ public abstract class User {
 	public User(String name, String nric, int age, String maritalStatus, String password) {
 		this.name = name;
 		this.nric = nric;
-		this.age = age;
-		this.maritalStatus = maritalStatus;
+		this.setAge(age);
+		this.setMaritalStatus(maritalStatus);
 		this.password = password;
 	}
 	
@@ -33,5 +33,21 @@ public abstract class User {
 	public void setPassword(String newPassword) {
 		password = newPassword;
 		
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+	public String getMaritalStatus() {
+		return maritalStatus;
+	}
+
+	public void setMaritalStatus(String maritalStatus) {
+		this.maritalStatus = maritalStatus;
 	}
 }
