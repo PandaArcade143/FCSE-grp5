@@ -2,6 +2,7 @@ package entity;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.ArrayList;
 
 public class Project {
 	String name;
@@ -13,13 +14,13 @@ public class Project {
 	Date closeDate;
 	String manager;
 	int officerSlot;
-	String[] officers;
+	ArrayList<String> officers;
 	boolean visibility;
 	
 	//Constructor
 	public Project(String projectName, String neighbourhood, Map<String, Integer> flatTotal,
 			Map<String, Integer> flatAvailable, Map<String, Integer> flatPrices, Date openingDate, Date closingDate,
-			String manager, int officerSlot, String[] officers, boolean visibility) {
+			String manager, int officerSlot, ArrayList<String> officers, boolean visibility) {
 		this.name = projectName;
 		this.location = neighbourhood;
 		this.flatTypeTotal = flatTotal;
@@ -118,5 +119,33 @@ public class Project {
 
 	public int getOfficerSlot (){
 		return this.officerSlot;
+	}
+
+	public void setOfficerSet (int i){
+		this.officerSlot = i;
+	}
+
+	public Map <String, Integer> getFlatPrices (){
+		return this.flatPrices;
+	}
+
+	public void setFlatPrices (Map <String, Integer> t){
+		this.flatPrices = t;
+	}
+
+	public String getManager(){
+		return this.manager;
+	}
+
+	public void setManager(String m){
+		this.manager = m;
+	}
+
+	public ArrayList <String> getOfficer(){
+		return this.officers;
+	}
+
+	public void addOfficer(String m){
+		this.officers.add(m);
 	}
 }
