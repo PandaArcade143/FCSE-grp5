@@ -16,7 +16,7 @@ public class Project {
 	String[] officers;
 	boolean visibility;
 	
-
+	//Constructor
 	public Project(String projectName, String neighbourhood, Map<String, Integer> flatTotal,
 			Map<String, Integer> flatAvailable, Map<String, Integer> flatPrices, Date openingDate, Date closingDate,
 			String manager, int officerSlot, String[] officers, boolean visibility) {
@@ -33,124 +33,90 @@ public class Project {
 		this.visibility = visibility;
 	}
 
-
-	public String getName() {
-		return name;
+	//Setter for visibility
+	public void toggleVisibility(Boolean t){
+		this.visibility = t;
 	}
 
-
-	public String getLocation() {
-		return location;
+	//Getter for visibility
+	public boolean getVisibility(){
+		return this.visibility;
 	}
 
+	//Check whether there is still the flat type available
+	public boolean hasFlatType (String type){
+		//Check the number of flats for the selected flat type 
+		//Will initilisation definitely have the two different flat types?
 
-	public void setLocation(String location) {
-		this.location = location;
+		if (this.flatTypeAvailable.get(type) <= 0){
+			return false;
+		}
+		return true;
 	}
 
+	public boolean bookFlat (String book){
+		//Checks if there is enough flats of this type
+		if (this.hasFlatType(book)){
+			//Reduce the numbers of flats of the selected type by 1
+			int temp =  this.flatTypeAvailable.get(book) - 1;
+			//Replace the value of the number of flats in the Map
+			this.flatTypeAvailable.replace(book, temp);
+			//Tells user that the booking was successful
+			return true;
+		}
 
-	public Integer getFlatTypeTotal(String flatType) {
-		return flatTypeTotal.get(flatType);
+		return false;
+	}	
+
+	//Getter for name
+	public String getName(){
+		return this.name;
 	}
 
-
-	public void setFlatTypeTotal(Map<String, Integer> flatTypeTotal) {
-		this.flatTypeTotal = flatTypeTotal;
+	//Setter for name
+	public void setName (String n){
+		this.name = n;
 	}
 
-
-	public Integer getFlatTypeAvailable(String flatType) {
-		return flatTypeAvailable.get(flatType);
+	//Getter for location
+	public String getLocation (){
+		return this.location;
 	}
 
-
-	public void setFlatTypeAvailable(Map<String, Integer> flatTypeAvailable) {
-		this.flatTypeAvailable = flatTypeAvailable;
+	//Setter for location
+	public void setLocation (String loc){
+		this.location = loc;
 	}
 
-
-	public int getFlatPrice(String flatType) {
-		return flatPrices.get(flatType);
+	public Map<String, Integer> getFlatTypeAvailable(){
+		return this.flatTypeAvailable;
 	}
 
-
-	public void setFlatPrice(Map<String, Integer> flatPrices) {
-		this.flatPrices = flatPrices;
+	public void setFlatTypeAvailable (Map <String, Integer> t){
+		this.flatTypeAvailable = t;
 	}
 
-
-	public Date getOpenDate() {
-		return openDate;
+	public void addFlatTypeAvailable (String t, int i){
+		this.flatTypeAvailable.put(t, i);
 	}
 
-
-	public void setOpenDate(Date openDate) {
-		this.openDate = openDate;
+	public Date getOpenDate(){
+		return this.openDate;
 	}
 
-
-	public Date getCloseDate() {
-		return closeDate;
+	public void setOpenDate(Date d){
+		this.openDate = d;
 	}
 
-
-	public void setCloseDate(Date closeDate) {
-		this.closeDate = closeDate;
+	public Date getCloseDate(){
+		return this.closeDate;
 	}
 
-
-	public String getManager() {
-		return manager;
+	public void setCloseDate(Date d){
+		this.closeDate = d;
 	}
 
-
-	public void setManager(String manager) {
-		this.manager = manager;
+	public int getOfficerSlot (){
+		return this.officerSlot;
 	}
-
-
-	public int getOfficerSlot() {
-		return officerSlot;
-	}
-
-
-	public void setOfficerSlot(int officerSlot) {
-		this.officerSlot = officerSlot;
-	}
-
-
-	public String[] getOfficers() {
-		return officers;
-	}
-	
-
-	public void setOfficers(String[] officers) {
-		this.officers = officers;
-	}
-
-
-	public boolean isVisibility() {
-		return visibility;
-	}
-
-
-	public void setVisibility(boolean visibility) {
-		this.visibility = visibility;
-	}
-
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-
-	public String getType1() {
-		return "2-Room";
-	}
-
-
-	public String getType2() {
-		return "3-Room";
-	}
-
 }
