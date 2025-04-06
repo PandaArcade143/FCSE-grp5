@@ -23,6 +23,15 @@ public class DataManager {
 	private static String type1 = "2-Room";
 	private static String type2 = "3-Room";
 	
+	static {
+		applicants = DataManager.loadUsers("data/ApplicantList.csv", Applicant.class);
+		managers = DataManager.loadUsers("data/ManagerList.csv", HDBManager.class);
+		officers = DataManager.loadUsers("data/OfficerList.csv", HDBOfficer.class);
+		inquiries = DataManager.loadInquiries("data/inquiries.csv");
+		projects = DataManager.loadProjects("data/projects.csv");
+	}
+	
+	
 	
 	public static List<Project> getProjects() {
 		return projects;
