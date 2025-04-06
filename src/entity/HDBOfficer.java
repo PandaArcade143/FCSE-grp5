@@ -2,10 +2,11 @@ package entity;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class HDBOfficer extends Applicant{
 	List<Project> registeredProjects = new ArrayList<Project>();
-	Map<String, String> registrationStatus = new Map<String, String>();
+	Map<String, String> registrationStatus = new HashMap<String, String>();
 
 	public HDBOfficer(String name, String nric, int age, String maritalStatus, String password) {
 		super(name, nric, age, maritalStatus, password);
@@ -23,11 +24,11 @@ public class HDBOfficer extends Applicant{
 		return registrationStatus.get(key);
 	}
 
-	public void addRegisteredProjects(String proj){
+	public void addRegisteredProjects(Project proj){
 		registeredProjects.add(proj);
 	}
 
-	public void addRegistrationStatus(String name, Boolean status){ // Boolean?
+	public void addRegistrationStatus(String name, String status){ // Boolean?
 		registrationStatus.put(name, status); // Is a string, string list
 	}
 
@@ -39,6 +40,9 @@ public class HDBOfficer extends Applicant{
 		// for (Project proj : registeredProjects){
 
 		// }
+		
+		
+		return true;
 
 	}
 
