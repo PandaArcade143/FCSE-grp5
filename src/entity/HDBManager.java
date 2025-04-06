@@ -1,9 +1,10 @@
 package entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HDBManager extends User{
-	List<Project> createdProjects = new List<Project>();
+	List<Project> createdProjects = new ArrayList<Project>();
 
 	public HDBManager(String name, String nric, int age, String maritalStatus, String password) {
 		super(name, nric, age, maritalStatus, password);
