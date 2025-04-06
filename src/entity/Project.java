@@ -148,4 +148,12 @@ public class Project {
 	public void addOfficer(String m){
 		this.officers.add(m);
 	}
+
+	public Map<String, Integer> getFlatTypeTotal() {
+		return flatTypeTotal;
+	}
+
+	public void setFlatTypeTotal(Map<String, Integer> flatTypeTotal) {
+		this.flatTypeTotal = flatTypeTotal;
+	}	
 }
