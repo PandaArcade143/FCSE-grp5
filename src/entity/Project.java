@@ -121,7 +121,7 @@ public class Project {
 		return this.officerSlot;
 	}
 
-	public void setOfficerSet (int i){
+	public void setOfficerSlot (int i){
 		this.officerSlot = i;
 	}
 
@@ -141,7 +141,7 @@ public class Project {
 		this.manager = m;
 	}
 
-	public ArrayList <String> getOfficer(){
+	public ArrayList <String> getOfficers(){
 		return this.officers;
 	}
 
