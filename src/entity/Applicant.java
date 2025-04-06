@@ -33,7 +33,7 @@ public class Applicant extends User{
 	}	
 
 	// Setter
-	public void setAppliedProject(String appliedProj){
+	public void setAppliedProject(Project appliedProj){
 		this.project = appliedProj;
 	}
 
@@ -45,7 +45,7 @@ public class Applicant extends User{
 		this.withdrawalStatus = status;
 	}
 
-	public void addInquiry(String inquiry){
+	public void addInquiry(Inquiry inquiry){
 		inquiries.add(inquiry);
 	}
 
@@ -55,12 +55,12 @@ public class Applicant extends User{
 		// Do I have to account for if there are any flats left?
 
 		// If Single, can only apply to 2-room flats
-		if (this.getMaritalStatus().compareTo("Single") && p.hasFlatType("2-Room")) {
+		if (this.getMaritalStatus().equals("Single") && p.hasFlatType("2-Room")) {
 			if (this.getAge() < 35) return false;
 			return true;
 		}
 		// If Married, any flat type is allowed
-		else if (this.getMaritalStatus().compareTo("Married")){
+		else if (this.getMaritalStatus().equals("Married")){
 			if (this.getAge() < 21) return false;
 			return true;
 		}
