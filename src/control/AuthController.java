@@ -12,9 +12,9 @@ public class AuthController {
 	private List<User> userList;
 	
 	public AuthController() {
-		List<Applicant> applicantList = DataManager.loadUsers("data/ApplicantList.csv", Applicant.class);
-		List<HDBManager> managerList = DataManager.loadUsers("data/ManagerList.csv", HDBManager.class);
-		List<HDBOfficer> officerList = DataManager.loadUsers("data/OfficerList.csv", HDBOfficer.class);
+		List<Applicant> applicantList = DataManager.getApplicants();
+		List<HDBManager> managerList = DataManager.getManagers();
+		List<HDBOfficer> officerList = DataManager.getOfficers();
 		userList = new ArrayList<>();
 		userList.addAll(applicantList);
 		userList.addAll(managerList);
