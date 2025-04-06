@@ -20,6 +20,9 @@ public class DataManager {
 	private static List<HDBOfficer> officers = new ArrayList<>();
 	private static List<HDBManager> managers = new ArrayList<>();
 	private static List<Inquiry> inquiries = new ArrayList<>();
+	private static String type1 = "2-Room";
+	private static String type2 = "3-Room";
+	
 	
 	public static List<Project> getProjects() {
 		return projects;
@@ -87,7 +90,7 @@ public class DataManager {
 		return res.toArray(new String[0]);
 	}
 
-	private static String stringify(String[] input) {
+	private static String stringify(ArrayList<String> input) {
 		String res = String.join(",",input);
 		res = "\"" + res + "\"";
 		return res;
@@ -163,12 +166,12 @@ public class DataManager {
     			writer.printf("%s,%s,%s,%d,%d,%s,%d,%d,%s,%s,%s,%d,%s\n", 
     					p.getName(),
     					p.getLocation(),
-    					p.getType1(),
-    					p.getFlatTypeTotal(p.getType1()),
-    					p.getFlatPrice(p.getType1()),
-    					p.getType2(),
-    					p.getFlatTypeTotal(p.getType2()),
-    					p.getFlatPrice(p.getType2()),
+    					type1,
+    					p.getFlatTypeTotal().get(type1),
+    					p.getFlatPrices().get(type1),
+    					type2,
+    					p.getFlatTypeTotal().get(type2),
+    					p.getFlatPrices().get(type2),
     					p.getOpenDate().toString(),
     					p.getCloseDate().toString(),
     					p.getManager(),
@@ -267,7 +270,7 @@ public class DataManager {
 				Date closingDate = formatter.parse(data[9]);
 				String manager = data[10];
 				int officerSlot = Integer.parseInt(data[11]);
-				String[] officers = smartSplit(data[12]);
+				ArrayList<String> officers = new ArrayList<>(Arrays.asList(data[12]));
 				boolean visibility;
 				if (data[13] != null) {
 					visibility = Boolean.parseBoolean(data[13]);
