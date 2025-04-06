@@ -32,5 +32,10 @@ public class AuthController {
 
 	}
 
-
+	/*
+	public String changePassword(String toChange){
+		// I assume that they need to login first before changing password?
+		// How would we proceed with this? Ask for password to change then ask for user login again to reconfirm?
+	}
+	*/
 }
