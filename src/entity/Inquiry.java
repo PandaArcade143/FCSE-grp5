@@ -3,70 +3,116 @@ package entity;
 import java.time.LocalDateTime;
 
 public class Inquiry {
-	String senderNRIC;
-	String message;
-	Project relatedProject;
-	String reply;
-	boolean resolved;
-	LocalDateTime timestamp;
+    private String inquiryId; //need anot??
+    private String senderNRIC;
+    private String subject; // also need?? wdy guys think
+    private String message;
+    private String reply;
+    private String status; // "Open", "Resolved" ONLY
+    private LocalDateTime createdAt;
+    private LocalDateTime resolvedAt;
+    private Project relatedProject;
 
-	public Inquiry(String senderNric, String message, Project relatedProject) {
-		this.senderNRIC = senderNric;
-		this.message = message;
-		this.relatedProject = relatedProject;
-	}
+    public Inquiry(String inquiryId, String senderNRIC, String subject, String message,
+                   String status, LocalDateTime createdAt, LocalDateTime resolvedAt, Project relatedProject) {
+        this.inquiryId = inquiryId;
+        this.senderNRIC = senderNRIC;
+        this.subject = subject;
+        this.message = message;
+        this.reply = "";
+        this.status = status;
+        this.createdAt = createdAt;
+        this.resolvedAt = resolvedAt;
+        this.relatedProject = relatedProject;
+    }
 
-	public void setReply(String reply) {
-		this.reply = reply;
-		
-	}
+    // Getters and Setters
 
-	public void setResolved(boolean resolved) {
-		this.resolved = resolved;
-		
-	}
+    public String getInquiryId() {
+        return inquiryId;
+    }
 
-	public void setTimestamp(LocalDateTime timestamp) {
-		this.timestamp = timestamp;
-		
-	}
+    public void setInquiryId(String inquiryId) {
+        this.inquiryId = inquiryId;
+    }
 
-	public String getSenderNRIC() {
-		return senderNRIC;
-	}
+    public String getSenderNRIC() {
+        return senderNRIC;
+    }
 
-	public void setSenderNRIC(String senderNRIC) {
-		this.senderNRIC = senderNRIC;
-	}
+    public void setSenderNRIC(String senderNRIC) {
+        this.senderNRIC = senderNRIC;
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    public String getSubject() {
+        return subject;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
 
-	public Project getRelatedProject() {
-		return relatedProject;
-	}
+    public String getMessage() {
+        return message;
+    }
 
-	public void setRelatedProject(Project relatedProject) {
-		this.relatedProject = relatedProject;
-	}
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	public String getReply() {
-		return reply;
-	}
+    public String getReply (){
+        return reply;
+    }
 
-	public boolean isResolved() {
-		return resolved;
-	}
+    public void setReply (String reply){
+        this.reply = reply;
+    }
 
-	public LocalDateTime getTimestamp() {
-		return timestamp;
-	}
-	
-	
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getResolvedAt() {
+        return resolvedAt;
+    }
+
+    public void setResolvedAt(LocalDateTime resolvedAt) {
+        this.resolvedAt = resolvedAt;
+    }
+
+    public Project getRelatedProject() {
+        return relatedProject;
+    }
+
+    public void setRelatedProject(Project relatedProject) {
+        this.relatedProject = relatedProject;
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Inquiry ID: ").append(inquiryId).append("\n");
+        sb.append("Sender NRIC: ").append(senderNRIC).append("\n");
+        sb.append("Subject: ").append(subject).append("\n");
+        sb.append("Message: ").append(message).append("\n");
+        sb.append("Reply: ").append(reply != null && !reply.isEmpty() ? reply : "No reply yet").append("\n");
+        sb.append("Status: ").append(status).append("\n");
+        sb.append("Created At: ").append(createdAt).append("\n");
+        sb.append("Resolved At: ").append(resolvedAt != null ? resolvedAt : "Not resolved yet").append("\n");
+        sb.append("Related Project: ").append(relatedProject != null ? relatedProject.getName() : "None");
+
+        return sb.toString();
+    }
 
 }
