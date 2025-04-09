@@ -1,7 +1,7 @@
 package entity;
 
 public class Applicant extends User{
-	Project project;
+	Project appliedProject;
 	String applicationStatus;
 
 	public Applicant(String name, String nric, int age, String maritalStatus, String password) {
@@ -13,7 +13,7 @@ public class Applicant extends User{
 	}
 
 	public Project getAppliedProject() {
-		return project;
+		return this.appliedProject;
 	}
 
 	public String getApplicationStatus() {
@@ -24,6 +24,13 @@ public class Applicant extends User{
 	
 	
 	// Setter
+	public void setAppliedProject (Project p){
+		this.appliedProject = p;
+	}
+
+	public void setApplicationStatus(String status){
+		this.applicationStatus = status;
+	}
 	
 
 
