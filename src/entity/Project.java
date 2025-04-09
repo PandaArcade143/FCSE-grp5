@@ -121,7 +121,7 @@ public class Project {
 		return this.officerSlot;
 	}
 
-	public void setOfficerSet (int i){
+	public void setOfficerSlot (int i){
 		this.officerSlot = i;
 	}
 
@@ -141,11 +141,19 @@ public class Project {
 		this.manager = m;
 	}
 
-	public ArrayList <String> getOfficer(){
+	public ArrayList <String> getOfficers(){
 		return this.officers;
 	}
 
 	public void addOfficer(String m){
 		this.officers.add(m);
 	}
+
+	public Map<String, Integer> getFlatTypeTotal() {
+		return flatTypeTotal;
+	}
+
+	public void setFlatTypeTotal(Map<String, Integer> flatTypeTotal) {
+		this.flatTypeTotal = flatTypeTotal;
+	}	
 }

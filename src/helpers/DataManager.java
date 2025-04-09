@@ -20,6 +20,23 @@ public class DataManager {
 	private static List<HDBOfficer> officers = new ArrayList<>();
 	private static List<HDBManager> managers = new ArrayList<>();
 	private static List<Inquiry> inquiries = new ArrayList<>();
+	private static String type1 = "2-Room";
+	private static String type2 = "3-Room";
+	
+	static {
+		applicants = DataManager.loadUsers("data/ApplicantList.csv", Applicant.class);
+		managers = DataManager.loadUsers("data/ManagerList.csv", HDBManager.class);
+		officers = DataManager.loadUsers("data/OfficerList.csv", HDBOfficer.class);
+		inquiries = DataManager.loadInquiries("data/inquiryList.csv");
+		projects = DataManager.loadProjects("data/ProjectList.csv");
+		
+		// Creates a shutdown hook that will save data everytime the program closes
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			DataManager.saveAll();
+		}));
+	}
+	
+	
 	
 	public static List<Project> getProjects() {
 		return projects;
@@ -87,12 +104,14 @@ public class DataManager {
 		return res.toArray(new String[0]);
 	}
 
-	private static String stringify(String[] input) {
+	private static String stringify(ArrayList<String> input) {
 		String res = String.join(",",input);
 		res = "\"" + res + "\"";
 		return res;
 	}
 	public static void saveAll() {
+
+		System.out.println("Saving data before exiting....");
 		saveApplicants("data/ApplicantList.csv");
 		saveOfficers("data/OfficerList.csv");
 		saveManagers("data/ManagerList.csv");
@@ -109,8 +128,8 @@ public class DataManager {
 						applicant.getAge(),
 						applicant.getMaritalStatus(),
 						applicant.getPassword(),
-						applicant.getAppliedProject(),
-						applicant.getApplicationStatus());
+						applicant.getAppliedProject() == null ? "" : applicant.getAppliedProject(),
+						applicant.getApplicationStatus() == null ? "" : applicant.getApplicationStatus());
 			}
 		} catch (IOException e) {
 			System.err.println("Error saving applicants to " + path + ": " + e.getMessage());
@@ -126,8 +145,8 @@ public class DataManager {
 						officer.getAge(),
 						officer.getMaritalStatus(),
 						officer.getPassword(),
-						officer.getAppliedProject(),
-						officer.getApplicationStatus());
+						officer.getAppliedProject() == null ? "" : officer.getAppliedProject(),
+						officer.getApplicationStatus() == null ? "" : officer.getApplicationStatus());
 						//Stringify(officer.getPendingProjects()));
 						//Stringify(officer.getRegisteredProjects()));
 						//Stringify(officer.getRejectedProjects()));
@@ -153,6 +172,8 @@ public class DataManager {
 		}
 	}
     public static void saveProjects(String path) {
+    	SimpleDateFormat formatter = new SimpleDateFormat("dd/mm/yy");
+
     	try(PrintWriter writer = new PrintWriter(new FileWriter(path))) {
     		writer.println("Project Name,Neighborhood,"
     				+ "Type 1,Number of units for Type 1,Selling price for Type 1,"
@@ -163,14 +184,14 @@ public class DataManager {
     			writer.printf("%s,%s,%s,%d,%d,%s,%d,%d,%s,%s,%s,%d,%s\n", 
     					p.getName(),
     					p.getLocation(),
-    					p.getType1(),
-    					p.getFlatTypeTotal(p.getType1()),
-    					p.getFlatPrice(p.getType1()),
-    					p.getType2(),
-    					p.getFlatTypeTotal(p.getType2()),
-    					p.getFlatPrice(p.getType2()),
-    					p.getOpenDate().toString(),
-    					p.getCloseDate().toString(),
+    					type1,
+    					p.getFlatTypeTotal().get(type1),
+    					p.getFlatPrices().get(type1),
+    					type2,
+    					p.getFlatTypeTotal().get(type2),
+    					p.getFlatPrices().get(type2),
+    					formatter.format(p.getOpenDate()),
+    					formatter.format(p.getCloseDate()),
     					p.getManager(),
     					p.getOfficerSlot(),
     					stringify(p.getOfficers())
@@ -256,35 +277,34 @@ public class DataManager {
 				String[] data = smartSplit(currentLine);
 				String projectName = data[0];
 				String neighbourhood= data[1];
-				String type1 = data[2];
+				type1 = data[2];
 				int units1 = Integer.parseInt(data[3]);
 				int price1 = Integer.parseInt(data[4]);
-				String type2 = data[5];
-				int units2 = Integer.parseInt(data[3]);
-				int price2 = Integer.parseInt(data[4]);
+				type2 = data[5];
+				int units2 = Integer.parseInt(data[6]);
+				int price2 = Integer.parseInt(data[7]);
 				SimpleDateFormat formatter = new SimpleDateFormat("dd/mm/yy");
 				Date openingDate = formatter.parse(data[8]);
 				Date closingDate = formatter.parse(data[9]);
 				String manager = data[10];
 				int officerSlot = Integer.parseInt(data[11]);
-				String[] officers = smartSplit(data[12]);
+				ArrayList<String> officers = new ArrayList<>(Arrays.asList(data[12]));
 				boolean visibility;
-				if (data[13] != null) {
-					visibility = Boolean.parseBoolean(data[13]);
-				} else {
+				if (data.length <= 13) {
 					visibility = true;
+				} else {
+					visibility = Boolean.parseBoolean(data[13]);
 				}
 				
 				Map<String, Integer> flatTotal = new HashMap<>();
 				flatTotal.put(type1, units1);
-				flatTotal.put(type1, units2);
+				flatTotal.put(type2, units2);
 				
 				Map<String, Integer> flatAvailable = new HashMap<>(flatTotal);
 				
 				Map<String, Integer> flatPrices = new HashMap<>();
 				flatPrices.put(type1, price1);
 				flatPrices.put(type2, price2);
-				
 				Project project = new Project(projectName, neighbourhood, 
 						flatTotal, flatAvailable, flatPrices, 
 						openingDate, closingDate,
