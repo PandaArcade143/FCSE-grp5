@@ -47,7 +47,7 @@ public class ProjectController {
         } else if (user.getRole() == "HDBOfficer"){
             //Able to view projects they are handling regardless of their visibility and also projects that are visiblie
             for (Project a : this.projects){
-                if (a.getVisibility() == true || a.getOfficer().contains(user)){
+                if (a.getVisibility() == true || a.getOfficers().contains(user)){
                     store.add(a);
                 }
             }
@@ -72,7 +72,7 @@ public class ProjectController {
             for (Project n : this.projects){
                 if (n.getName() == projectName){
                     //Check if n is an officer for the slot
-                    if (n.getOfficer().contains(a)){
+                    if (n.getOfficers().contains(a)){
                         return false;
                     } else{
                         a.setAppliedProject(n);
