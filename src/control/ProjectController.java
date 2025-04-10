@@ -117,4 +117,6 @@ public class ProjectController {
     //If none of the criteria is met
     return false;
     }
+
+    public String bookFlat
 }
