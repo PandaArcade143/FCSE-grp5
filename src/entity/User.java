@@ -14,8 +14,8 @@ public abstract class User {
 		this.setMaritalStatus(maritalStatus);
 		this.password = password;
 	}
-	
-	// TODO: Rest of the getters
+
+	// Getters & Setters
 	public String getName() {
 		return name;
 	}

@@ -21,6 +21,7 @@ public class AuthController {
 		userList.addAll(officerList);
 	}
 
+	// check if NRIC and password matches, if so, login as said user.
 	public User login(String nric, String password) {
 		for (User u : userList) {
 			if (u.getNRIC().equals(nric) && u.getPassword().equals(password)) {
@@ -32,10 +33,14 @@ public class AuthController {
 
 	}
 
-	/*
-	public String changePassword(String toChange){
-		// I assume that they need to login first before changing password?
-		// How would we proceed with this? Ask for password to change then ask for user login again to reconfirm?
+
+	// If password length is >= 6, change the password of user, else return false
+	public boolean changePassword(User user, String toChange){
+		if (toChange.length() >= 6){
+			user.setPassword(toChange);
+			return true;
+		}
+
+		return false;
 	}
-	*/
 }
