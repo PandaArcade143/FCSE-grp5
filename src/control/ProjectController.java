@@ -2,9 +2,12 @@ package control;
 import entity.*;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import helpers.DataManager;
 
-public class ProjectController {
+public class ProjectController <T>{
     private List <Project> projects = DataManager.getProjects();
     private List <Applicant> applicants = DataManager.getApplicants();
     private List <HDBOfficer> officers = DataManager.getOfficers();
@@ -118,5 +121,69 @@ public class ProjectController {
     return false;
     }
 
-    public String bookFlat
+    public void bookFlat (HDBOfficer officer, String n, String flatType){
+        Applicant k = null;
+        for (Applicant i : this.applicants){
+            if (i.getNRIC() == n){
+                k = i;
+            }
+        } 
+        if (k == null){
+            return;
+        }
+            
+        k.getAppliedProject().bookFlat(flatType);
+        k.setApplicationStatus("booked");
+        k.setFlatType(flatType);
+    }
+
+    public void toggleProject(Project p, boolean a){
+        p.toggleVisibility(a);
+    }
+
+    public void createProject (HDBManager m, Project p){
+        m.addCreatedProjects(p);
+        if (this.projects.contains(p)){
+            return;
+        } else {
+            this.projects.add(p);
+        }
+    }
+
+    public void deleteProject (HDBManager m, Project p){
+        // Do we need to remove from the list of HDBManager, do we need to keep the manager attribute as list or just project
+        for (Project n : this.projects){
+            if (n == p){
+                n = null;
+            }
+        }
+
+    }
+
+    public void editProject (HDBManager m, Project p,  String field, T info){
+        if (field == "name"){
+            p.setName((String)info);
+        } else if (field == "location"){
+            p.setLocation((String)info);
+        } else if (field == "openDate"){
+            p.setOpenDate((Date) info);
+        } else if (field == "closeDate"){
+            p.setCloseDate((Date) info);
+        } else if (field == "officerSlot"){
+            p.setOfficerSlot((int) info);
+        } else {
+            return;
+        }
+    }
+
+    public void editFlatTypeAvailable(Project p, Map <String, Integer> k){
+        p.setFlatTypeAvailable(k);
+    }
+
+    public void editFlatPrices (Project p, Map <String, Integer> k){
+        p.setFlatPrices(k);
+    }
+
+
+
 }
