@@ -4,16 +4,18 @@ import java.util.*;
 
 import control.InquiryController;
 import control.ProjectController;
+import entity.Applicant;
 import entity.HDBOfficer;
 import entity.Inquiry;
 import entity.Project;
+import entity.User;
 
 public class HDBOfficerUI {
 	ProjectController projectController = new ProjectController();
     InquiryController inquiryController = new InquiryController();
     
     
-    public void showMenu(HDBOfficer officer) {
+    public void showMenu(HDBOfficer officer, List<Applicant> applicantList) {
         Scanner scanner = new Scanner(System.in);
         List<Project> projectList = projectController.getAvailableProjects(officer); // Fetches list of available projects
         Project registeredProject = officer.getRegisteredProjects();
@@ -25,15 +27,14 @@ public class HDBOfficerUI {
         System.out.println("3. View registration status for projects");
         System.out.println("4. View project details");
         System.out.println("5. Respond to enquiries");
-        System.out.println("6. Update BTO status");
-        System.out.println("7. Generate applicant receipt");
-        System.out.println("8. Quit");
+        System.out.println("6. Update BTO status and generate applicant receipt");
+        System.out.println("7. Quit");
         System.out.print("Select an option: ");
         
         while (true) {
         	int choice = scanner.nextInt();
         	//Quit the program
-        	if (choice == 8) {
+        	if (choice == 7) {
             	System.out.println("Quit successful.");
             	break;	
         	}
@@ -112,8 +113,68 @@ public class HDBOfficerUI {
                 case 6:
                 	Map<String, Integer> flatTypeAvailable = registeredProject.getFlatTypeAvailable();
 
-                	System.out.print("Enter flat type to update: ");
-                	String flatType = scanner.nextLine();
+                	while (true) {
+                		System.out.print("Enter flat type to update: ");
+                    	String flatType = scanner.nextLine();
+                    	System.out.print("Enter new available number of flats: ");
+                    	int availableFlats = scanner.nextInt();
+                    	if (flatTypeAvailable.containsKey(flatType)) {
+                        	flatTypeAvailable.put(flatType, availableFlats);
+                        	registeredProject.setFlatTypeAvailable(flatTypeAvailable);
+                        	break;
+                    	} else {
+                    		System.out.print("No such flat type found in the project.");
+                    	}
+                	}
+
+                	Applicant applicant = null;
+                	
+                	while (true) {
+                    	System.out.print("Enter applicant's NRIC: ");
+                    	String nric = scanner.nextLine();
+                    	if (nric.matches("[ST]\\d{7}[A-Z]")) {
+                        	//check if nric is valid
+                        	System.out.println("Invalid NRIC given, please try again.");
+                        } else {
+                        	while (true) {
+                            	for (Applicant a: applicantList) {
+                                    if (a.getNRIC().equalsIgnoreCase(nric)) {
+                                        applicant = a;
+                                    }
+                                }
+                            	if (applicant != null) {
+                            		System.out.println(applicant.getName() + " with NRIC of " + applicant.getNRIC() + " has a BTO status of " + applicant.getApplicationStatus());
+                            		System.out.print("Enter new status: ");
+                                	String status = scanner.nextLine();
+                                	applicant.setApplicationStatus(status);
+                                	System.out.print("Status updated.");
+                                	System.out.print("Enter flat type of applicant: ");
+                                	String flatType = scanner.nextLine();
+                                	//METHOD NOT DEFINED BUT IN UML
+                                	//applicant.setFlatType(flatType);
+                                	System.out.print("Flat type updated.");
+                            		break;
+                            	} else {
+                            		System.out.println("No applicant with this NRIC was found, please try again.");
+                            		System.out.print("Enter applicant's NRIC: ");
+                                	nric = scanner.nextLine();
+                            	}
+                        	}
+                        	break;
+                        }
+                	}
+                	
+                	System.out.println("Applicant's name: " + applicant.getName());
+                	System.out.println("Applicant's NRIC: " + applicant.getNRIC());
+                	System.out.println("Applicant's age: " + applicant.getAge());
+                	System.out.println("Applicant's marital status: " + applicant.getMaritalStatus());
+                	//METHOD NOT DEFINED BUT IN UML
+                	//System.out.println("Applicant's flat type booked: " + applicant.getFlatType());
+                	System.out.println("Project Name: " + registeredProject.getName());
+                	System.out.println("Neighborhood: " + registeredProject.getLocation());
+                	
+                	break;
+                	
                 default:
                     System.out.println("Invalid option.");
             }
@@ -121,36 +182,5 @@ public class HDBOfficerUI {
         
         
         scanner.close();
-    }
-    
-    private void registerForProject() {
-        // Display projects to register
-        System.out.println("Viewing available projects...");
-        
-    }
-    
-    private void viewRegistrationStatus() {
-        // Implement logic to respond to enquiries
-        System.out.println("Responding to enquiries...");
-    }
-
-    private void viewProjectDetails() {
-        // Implement logic to respond to enquiries
-        System.out.println("Responding to enquiries...");
-    }
-
-    private void respondToEnquiries() {
-        // Implement logic to respond to enquiries
-        System.out.println("Responding to enquiries...");
-    }
-
-    private void updateBTOStatus() {
-        // Implement logic to respond to enquiries
-        System.out.println("Responding to enquiries...");
-    }
-    
-    private void generateReceipt() {
-        // Implement logic to generate applicant receipt
-        System.out.println("Generating receipt...");
     }
 }
