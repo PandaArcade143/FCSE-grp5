@@ -2,7 +2,9 @@ package application;
 
 import java.util.List;
 
+
 import boundary.ApplicantUI;
+import boundary.LoginMenu;
 import control.AuthController;
 import entity.Applicant;
 import entity.HDBManager;
@@ -21,7 +23,6 @@ public class Main {
 			System.out.println(a.getName());
 		}
 		AuthController authcontroller = new AuthController();
-		
 	}
 
 }

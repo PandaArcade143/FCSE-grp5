@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import entity.Inquiry;
+import entity.Project;
+
 public class InquiryController {
     private static List<Inquiry> inquiries = new ArrayList<>();
 
