@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class HDBOfficer extends Applicant{
-	List<Project> registeredProjects = new ArrayList<Project>();
-	Map<String, String> registrationStatus = new HashMap<String, String>();
+	Project registeredProject;
+	String registrationStatus;
 
 	public HDBOfficer(String name, String nric, int age, String maritalStatus, String password) {
 		super(name, nric, age, maritalStatus, password);
@@ -16,25 +16,25 @@ public class HDBOfficer extends Applicant{
 		return "HDBOfficer";
 	}
 
-	public List<Project> getRegisteredProjects(){
-		return registeredProjects;
+	public Project getRegisteredProjects(){
+		return this.registeredProject;
 	}
 
 	public String getRegistrationStatus(String key){ // Added a key value to be received
-		return registrationStatus.get(key);
+		return this.registrationStatus;
 	}
 
 	public void addRegisteredProjects(Project proj){
-		registeredProjects.add(proj);
+		this.registeredProject = proj;
 	}
 
-	public void addRegistrationStatus(String name, String status){ // Boolean?
-		registrationStatus.put(name, status); // Is a string, string list
+	public void setRegistrationStatus(String status){
+		this.registrationStatus = status;
 	}
 
 	public Boolean isEligibleForRegistration(Project p){
 		// If officer has applied for the same project as an application, he is not allowed to join the project
-		if (this.project == p && this.getAppliedProject() == p) return false;
+		if (this.registeredProject == p && this.getAppliedProject() == p) return false;
 
 		// Unable to compute date range yet, confirm during meeting
 		// for (Project proj : registeredProjects){

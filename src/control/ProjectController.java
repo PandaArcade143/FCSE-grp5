@@ -143,7 +143,7 @@ public class ProjectController <T>{
 
     public void createProject (HDBManager m, Project p){
         //CHange the HDBMAnager class to just one project, change the method for setting 
-        m.addCreatedProjects(p);
+        m.setCreatedProjects(p);
         if (this.projects.contains(p)){
             return;
         } else {
@@ -153,7 +153,7 @@ public class ProjectController <T>{
 
     public void deleteProject (HDBManager m, Project p){
         // Do we need to remove from the list of HDBManager, do we need to keep the manager attribute as list or just project
-
+        m.setCreatedProjects(null);
         this.projects.remove(p);
 
     }
@@ -182,6 +182,31 @@ public class ProjectController <T>{
         p.setFlatPrices(k);
     }
 
+    public void processApplication (HDBManager manager, Applicant a, String flatType, String status){
+        if (a.getAppliedProject().getFlatTypeAvailable().get(flatType) >= 0){
+            a.setApplicationStatus(status);
+        }
 
+    }
 
+    public List <HDBOfficer> getRegistrations(Project p){
+        return p.getOfficers();
+    }
+
+    public List <Applicant> getApplications (){
+        return this.applicants;
+    }
+
+    public void processRegistrations(HDBManager manager, HDBOfficer officer, String status){
+        if (status == "Approved"){
+            manager.getCreatedProjects().removeTemporaryOfficer(officer);
+            manager.getCreatedProjects().addOfficer(officer);
+            officer.setRegistrationStatus(status);
+        } else if (status == "Denied"){
+            manager.getCreatedProjects().removeTemporaryOfficer(officer);
+            officer.setRegistrationStatus(status);
+        } else{
+            System.out.println("Invalid Status");
+        }
+    }
 }
