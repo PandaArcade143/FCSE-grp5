@@ -142,6 +142,7 @@ public class ProjectController <T>{
     }
 
     public void createProject (HDBManager m, Project p){
+        //CHange the HDBMAnager class to just one project, change the method for setting 
         m.addCreatedProjects(p);
         if (this.projects.contains(p)){
             return;
@@ -152,6 +153,7 @@ public class ProjectController <T>{
 
     public void deleteProject (HDBManager m, Project p){
         // Do we need to remove from the list of HDBManager, do we need to keep the manager attribute as list or just project
+
         for (Project n : this.projects){
             if (n == p){
                 n = null;
@@ -160,7 +162,7 @@ public class ProjectController <T>{
 
     }
 
-    public void editProject (HDBManager m, Project p,  String field, T info){
+    public void editProject (HDBManager manager, Project p,  String field, T info){
         if (field == "name"){
             p.setName((String)info);
         } else if (field == "location"){
