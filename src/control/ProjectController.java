@@ -154,11 +154,7 @@ public class ProjectController <T>{
     public void deleteProject (HDBManager m, Project p){
         // Do we need to remove from the list of HDBManager, do we need to keep the manager attribute as list or just project
 
-        for (Project n : this.projects){
-            if (n == p){
-                n = null;
-            }
-        }
+        this.projects.remove(p);
 
     }
 
