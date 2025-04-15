@@ -14,13 +14,14 @@ public class Project {
 	Date closeDate;
 	String manager;
 	int officerSlot;
-	ArrayList<String> officers;
+	ArrayList <HDBOfficer> temp;
+	ArrayList <HDBOfficer> officers;
 	boolean visibility;
 	
 	//Constructor
 	public Project(String projectName, String neighbourhood, Map<String, Integer> flatTotal,
 			Map<String, Integer> flatAvailable, Map<String, Integer> flatPrices, Date openingDate, Date closingDate,
-			String manager, int officerSlot, ArrayList<String> officers, boolean visibility) {
+			String manager, int officerSlot, ArrayList<HDBOfficer> officers, boolean visibility) {
 		this.name = projectName;
 		this.location = neighbourhood;
 		this.flatTypeTotal = flatTotal;
@@ -141,11 +142,11 @@ public class Project {
 		this.manager = m;
 	}
 
-	public ArrayList <String> getOfficers(){
+	public ArrayList <HDBOfficer> getOfficers(){
 		return this.officers;
 	}
 
-	public void addOfficer(String m){
+	public void addOfficer(HDBOfficer m){
 		this.officers.add(m);
 	}
 
@@ -156,4 +157,16 @@ public class Project {
 	public void setFlatTypeTotal(Map<String, Integer> flatTypeTotal) {
 		this.flatTypeTotal = flatTypeTotal;
 	}	
+
+	public ArrayList <HDBOfficer> getTemporaryOfficers(){
+		return this.temp;
+	}
+
+	public void addTemporaryOfficer(HDBOfficer n){
+		this.temp.add(n);
+	}
+
+	public void removeTemporaryOfficer (HDBOfficer n){
+		this.temp.remove(n);
+	}
 }

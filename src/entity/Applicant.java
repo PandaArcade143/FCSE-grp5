@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class Applicant extends User{
 	Project appliedProject;
+	String flatType;
 	String applicationStatus;
 	String withdrawalStatus;
 	List<Inquiry> inquiries = new ArrayList<Inquiry>();
@@ -50,7 +51,7 @@ public class Applicant extends User{
 	}
 
 	public boolean isEligibleForProject(Project p){
-		if (project == null) return false; // If already assigned to a project
+		if (appliedProject == null) return false; // If already assigned to a project
 
 		// Do I have to account for if there are any flats left?
 
@@ -66,5 +67,13 @@ public class Applicant extends User{
 		}
 
 		return false;
+	}
+
+	public String getFlatType(){
+		return this.flatType;
+	}
+
+	public void setFlatType(String t){
+		this.flatType = t;
 	}
 }
