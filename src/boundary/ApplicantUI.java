@@ -28,13 +28,14 @@ public class ApplicantUI {
         System.out.println("4. Withdraw my application");
         System.out.println("5. Submit an inquiry");
         System.out.println("6. View and manage inquiries");
-        System.out.println("7. Quit");
+        System.out.println("7. Filter projects.");
+        System.out.println("8. Quit");
         System.out.print("Select an option: ");
         
         while (true) {
         	int choice = scanner.nextInt(); // Input choice of option
         	//Quit the program
-        	if (choice == 7) {
+        	if (choice == 8) {
             	System.out.println("Quit successful.");
             	break;	
         	}
@@ -188,6 +189,13 @@ public class ApplicantUI {
                             System.out.println("Invalid option.");
                     }
                     break;
+                
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///HOW WILL FILTER BE CARRIED ONTO DIFFERENT MENU PAGES? I CAN ONLY THINK OF PROJECT CONTROLLER CREATING FILTER METHOD SO UI JUST CALLS getAvailableProjects()///
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                case 7:
+                	break;
                 	
                 default:
                     System.out.println("Invalid option.");

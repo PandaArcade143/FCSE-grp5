@@ -202,9 +202,11 @@ public class ProjectController <T>{
             manager.getCreatedProjects().removeTemporaryOfficer(officer);
             manager.getCreatedProjects().addOfficer(officer);
             officer.setRegistrationStatus(status);
+        	System.out.print("Status updated.");
         } else if (status == "Denied"){
             manager.getCreatedProjects().removeTemporaryOfficer(officer);
             officer.setRegistrationStatus(status);
+        	System.out.print("Status updated.");
         } else{
             System.out.println("Invalid Status");
         }

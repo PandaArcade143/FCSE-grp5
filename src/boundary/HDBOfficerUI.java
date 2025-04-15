@@ -28,13 +28,14 @@ public class HDBOfficerUI {
         System.out.println("4. View project details");
         System.out.println("5. Respond to enquiries");
         System.out.println("6. Update BTO status and generate applicant receipt");
-        System.out.println("7. Quit");
+        System.out.println("7. Filter projects.");
+        System.out.println("8. Quit");
         System.out.print("Select an option: ");
         
         while (true) {
         	int choice = scanner.nextInt();
         	//Quit the program
-        	if (choice == 7) {
+        	if (choice == 8) {
             	System.out.println("Quit successful.");
             	break;	
         	}
@@ -132,7 +133,7 @@ public class HDBOfficerUI {
                 	while (true) {
                     	System.out.print("Enter applicant's NRIC: ");
                     	String nric = scanner.nextLine();
-                    	if (nric.matches("[ST]\\d{7}[A-Z]")) {
+                    	if (!nric.matches("[ST]\\d{7}[A-Z]")) {
                         	//check if nric is valid
                         	System.out.println("Invalid NRIC given, please try again.");
                         } else {
@@ -156,8 +157,7 @@ public class HDBOfficerUI {
                             		break;
                             	} else {
                             		System.out.println("No applicant with this NRIC was found, please try again.");
-                            		System.out.print("Enter applicant's NRIC: ");
-                                	nric = scanner.nextLine();
+                            		break;
                             	}
                         	}
                         	break;
@@ -173,6 +173,12 @@ public class HDBOfficerUI {
                 	System.out.println("Project Name: " + registeredProject.getName());
                 	System.out.println("Neighborhood: " + registeredProject.getLocation());
                 	
+                	break;
+                
+                /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                ///HOW WILL FILTER BE CARRIED ONTO DIFFERENT MENU PAGES? I CAN ONLY THINK OF PROJECT CONTROLLER CREATING FILTER METHOD SO UI JUST CALLS getAvailableProjects()///
+                /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                case 7:
                 	break;
                 	
                 default:
