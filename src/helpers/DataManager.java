@@ -131,7 +131,7 @@ public class DataManager {
 						applicant.getAge(),
 						applicant.getMaritalStatus(),
 						applicant.getPassword(),
-						applicant.getAppliedProject() == null ? "" : applicant.getAppliedProject(),
+						applicant.getAppliedProject() == null ? "" : applicant.getAppliedProject().getName(),
 						applicant.getApplicationStatus() == null ? "" : applicant.getApplicationStatus());
 			}
 		} catch (IOException e) {
