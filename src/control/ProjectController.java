@@ -16,24 +16,28 @@ public class ProjectController <T>{
     public ProjectController(){
 
     }
+    
 
     public List <Project> getAvailableProjects(User user){
         List <Project> store = new ArrayList <> ();
+
         //Applicant type
-        if (user.getRole() == "Applicant"){
+        if (user.getRole().equals("Applicant")){
+
             //Check for user details to determine
             //Single, 35 and above
-            if (user.getMaritalStatus() == "Single" && user.getAge() >= 35){
+            if (user.getMaritalStatus().equals("Single") && user.getAge() >= 35){
+
                 //Check for visibility and 2 room flats
                 for (Project a : this.projects){
-                    if (a.getVisibility() == true && a.getFlatTypeAvailable().get("2 room") != null){
+                    if (a.getVisibility() == true && a.getFlatTypeAvailable().get("2-Room") != null){
                         store.add(a);
                     }
                 }
                 return store;
 
             //Married, 21 and above
-            } else if (user.getMaritalStatus() == "Married" && user.getAge() >= 21){
+            } else if (user.getMaritalStatus().equals("Married") && user.getAge() >= 21){
                 //Check for visibility
                 for (Project a : this.projects){
                     if (a.getVisibility() == true){
@@ -47,7 +51,7 @@ public class ProjectController <T>{
             }
             
         //Officer type
-        } else if (user.getRole() == "HDBOfficer"){
+        } else if (user.getRole().equals("HDBOfficer")){
             //Able to view projects they are handling regardless of their visibility and also projects that are visiblie
             for (Project a : this.projects){
                 if (a.getVisibility() == true || a.getOfficers().contains(user)){
@@ -57,7 +61,7 @@ public class ProjectController <T>{
             return store;
 
         //Manager type
-        } else if (user.getRole() == "HDBManager"){
+        } else if (user.getRole().equals("HDBManager")){
             return this.projects;
         }
     //If nothing matches, then return empty list
@@ -66,14 +70,14 @@ public class ProjectController <T>{
 
     public boolean applyToProject (Applicant a, String projectName){
         //Check if already applied project
-        if (a.getApplicationStatus() == "Pending" || a.getApplicationStatus() == "Successful" || a.getApplicationStatus() == "Booked"){
+        if (a.getApplicationStatus().equals("Pending") || a.getApplicationStatus().equals("Successful") || a.getApplicationStatus().equals("Booked")){
             return false;
         }
         
         //Check for HDBOfficer
-        if (a.getRole() == "HDBOfficer"){
+        if (a.getRole().equals("HDBOfficer")){
             for (Project n : this.projects){
-                if (n.getName() == projectName){
+                if (n.getName().equals(projectName)){
                     //Check if n is an officer for the slot
                     if (n.getOfficers().contains(a)){
                         return false;
@@ -90,9 +94,9 @@ public class ProjectController <T>{
         if (a.getRole() == "Applicant"){
 
             //Married, 21 and above
-            if (a.getAge() >= 21 && a.getMaritalStatus() == "Married"){
+            if (a.getAge() >= 21 && a.getMaritalStatus().equals("Married")){
                 for (Project n : this.projects){
-                    if (n.getName() == projectName){
+                    if (n.getName().equals(projectName)){
                         a.setAppliedProject(n);
                         a.setApplicationStatus("Pending");
                         return true;
@@ -100,11 +104,15 @@ public class ProjectController <T>{
                 }
 
             //Single, 35 and above
-            } else if (a.getAge() >= 35 && a.getMaritalStatus() == "Single"){
+            } else if (a.getAge() >= 35 && a.getMaritalStatus().equals("Single")){
+
+
                 for (Project n : this.projects){
-                    if (n.getName() == projectName){
+                	System.out.println("Current: " + n.getName());
+                	System.out.println("comparing to: " + projectName);
+                    if (n.getName().equals(projectName)){
                         //Check if there is 2 room flats
-                        if (n.getFlatTypeAvailable().get("2 room") != null){
+                        if (n.getFlatTypeAvailable().get("2-Room") != null){
                             a.setAppliedProject(n);
                             a.setApplicationStatus("Pending");
                             return true;
