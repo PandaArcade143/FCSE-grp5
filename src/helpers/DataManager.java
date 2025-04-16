@@ -6,6 +6,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import entity.Applicant;
 import entity.HDBManager;
@@ -104,8 +107,8 @@ public class DataManager {
 		return res.toArray(new String[0]);
 	}
 
-	private static String stringify(ArrayList<String> input) {
-		String res = String.join(",",input);
+	private static String stringify(List<String> list) {
+		String res = String.join(",",list);
 		res = "\"" + res + "\"";
 		return res;
 	}
@@ -181,6 +184,11 @@ public class DataManager {
     				+ "Application opening date,Application closing date,"
     				+ "Manager,Officer Slot, Officer");
     		for (Project p : projects) {
+
+    			List<HDBOfficer> projectOfficers = p.getOfficers();
+    			List<String> projectOfficersName = projectOfficers.stream()
+    					.map(HDBOfficer::getName)
+    					.collect(Collectors.toList());
     			writer.printf("%s,%s,%s,%d,%d,%s,%d,%d,%s,%s,%s,%d,%s\n", 
     					p.getName(),
     					p.getLocation(),
@@ -194,7 +202,7 @@ public class DataManager {
     					formatter.format(p.getCloseDate()),
     					p.getManager(),
     					p.getOfficerSlot(),
-    					stringify(p.getOfficers())
+    					stringify(projectOfficersName)
     				);
     	}
     } catch (IOException e) {
@@ -203,15 +211,19 @@ public class DataManager {
     }
     public static void saveInquiries(String filePath) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath))) {
-            writer.println("SenderNRIC,ProjectName,Message,Reply,Resolved,Timestamp");
+            writer.println("InquiryID,SenderNRIC,Subject,Message,Status,CreatedAt,ResolvedAt,RelatedProject,Reply");
             for (Inquiry i : inquiries) {
-                writer.printf("%s,%s,%s,%s,%b,%s\n",
-                        i.getSenderNRIC(),
-                        i.getRelatedProject().getName(),
-                        i.getMessage(),
-                        i.getReply() != null ? i.getReply() : "",
-                        i.isResolved(),
-                        i.getTimestamp().toString());
+                writer.printf("%s,%s,%s,%s,%s,%s,%s,%s\n",
+                		i.getInquiryId(),
+                		i.getSenderNRIC(),
+                		i.getSubject(),
+                		i.getMessage(),
+                		i.getStatus(),
+                		i.getCreatedAt(),
+                		i.getResolvedAt(),
+                		i.getRelatedProject().getName(),
+                        i.getReply() != null ? i.getReply() : "");
+                        
             }
         } catch (IOException e) {
             System.err.println("Error saving inquiries: " + e.getMessage());
@@ -288,7 +300,12 @@ public class DataManager {
 				Date closingDate = formatter.parse(data[9]);
 				String manager = data[10];
 				int officerSlot = Integer.parseInt(data[11]);
-				ArrayList<String> officers = new ArrayList<>(Arrays.asList(data[12]));
+				List<HDBOfficer> officersList = new ArrayList<HDBOfficer>();
+				List<String> temp = Arrays.asList(smartSplit(data[12]));
+				officersList = officers.stream()
+						.filter(f -> temp.contains(f.getName()))
+						.collect(Collectors.toList());
+				
 				boolean visibility;
 				if (data.length <= 13) {
 					visibility = true;
@@ -308,7 +325,7 @@ public class DataManager {
 				Project project = new Project(projectName, neighbourhood, 
 						flatTotal, flatAvailable, flatPrices, 
 						openingDate, closingDate,
-						manager, officerSlot, officers, visibility);
+						manager, officerSlot, officersList, visibility);
 				projects.add(project);
 			}
 				
@@ -337,28 +354,27 @@ public class DataManager {
 			
 			while ((currentLine = br.readLine()) != null) {
 				String[] data = smartSplit(currentLine);
-				String senderNric = data[0];
-				String projectName = data[1];
-				String message = data[2];
-				String reply = data[3];
-				boolean resolved = Boolean.parseBoolean(data[4]);
-				LocalDateTime timestamp = LocalDateTime.parse(data[5]);
-				
+				String inquiryID = data[0];
+				String senderNRIC = data[1];
+				String subject = data[2];
+				String message = data[3];
+				String status = data[4];
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");				
+				String createdAtStr = data[5];
+				LocalDateTime createdAt = LocalDateTime.parse(createdAtStr, formatter);
+				String resolvedAtStr = data[6];
+				LocalDateTime resolvedAt = LocalDateTime.parse(resolvedAtStr, formatter);
+				String projectName = data[7];
+				String reply = data[8];
 				Project relatedProject = projects.stream()
 						.filter(p -> p.getName().equalsIgnoreCase(projectName))
 						.findFirst()
 						.orElse(null);
-				
 				if (relatedProject == null) {
 					System.err.println("Warning: Inquiry linked to unknown project: " + projectName);
 					continue;
 				}
-				
-				Inquiry inquiry = new Inquiry(senderNric, message, relatedProject);
-				inquiry.setReply(reply);
-				inquiry.setResolved(resolved);
-				inquiry.setTimestamp(timestamp);
-				
+				Inquiry inquiry = new Inquiry(inquiryID, senderNRIC, subject, message, status, createdAt, resolvedAt, relatedProject);
 				inquiries.add(inquiry);
 
 			}
