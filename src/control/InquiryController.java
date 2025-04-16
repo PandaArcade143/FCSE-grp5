@@ -1,11 +1,14 @@
-package CE.SC2002.Project;
+package control;
 
 import java.time.LocalDateTime;
+
+import entity.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import entity.Inquiry;
 import entity.Project;
+import entity.Applicant;
 
 public class InquiryController {
     private static List<Inquiry> inquiries = new ArrayList<>();
@@ -40,7 +43,7 @@ public class InquiryController {
     }
 
     // Delete inquiry (by applicant)
-    public static void deleteInquiry(String senderNRIC, Inquiry inquiry) {
+    public static void deleteInquiry(String senderNRIC, Inquiry inquiry, Applicant applicant) {
         if (inquiries.contains(inquiry) && inquiry.getSenderNRIC().equals(applicant.getNRIC())) {
             inquiries.remove(inquiry);
             System.out.println("Inquiry deleted.");
