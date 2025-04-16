@@ -8,7 +8,7 @@ public class Inquiry {
     private String subject; // also need?? wdy guys think
     private String message;
     private String reply;
-    private String status; // "Open", "Resolved" ONLY
+    private String status; // "Open", "Resolved" ONLY, should I change to enum??
     private LocalDateTime createdAt;
     private LocalDateTime resolvedAt;
     private Project relatedProject;
