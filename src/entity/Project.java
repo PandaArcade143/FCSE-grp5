@@ -1,6 +1,7 @@
 package entity;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 
@@ -14,14 +15,14 @@ public class Project {
 	Date closeDate;
 	String manager;
 	int officerSlot;
-	ArrayList <HDBOfficer> temp;
-	ArrayList <HDBOfficer> officers;
+	List <HDBOfficer> temp;
+	List <HDBOfficer> officers;
 	boolean visibility;
 	
 	//Constructor
 	public Project(String projectName, String neighbourhood, Map<String, Integer> flatTotal,
 			Map<String, Integer> flatAvailable, Map<String, Integer> flatPrices, Date openingDate, Date closingDate,
-			String manager, int officerSlot, ArrayList<HDBOfficer> officers, boolean visibility) {
+			String manager, int officerSlot, List<HDBOfficer> officers, boolean visibility) {
 		this.name = projectName;
 		this.location = neighbourhood;
 		this.flatTypeTotal = flatTotal;
@@ -142,7 +143,7 @@ public class Project {
 		this.manager = m;
 	}
 
-	public ArrayList <HDBOfficer> getOfficers(){
+	public List <HDBOfficer> getOfficers(){
 		return this.officers;
 	}
 
@@ -158,7 +159,7 @@ public class Project {
 		this.flatTypeTotal = flatTypeTotal;
 	}	
 
-	public ArrayList <HDBOfficer> getTemporaryOfficers(){
+	public List <HDBOfficer> getTemporaryOfficers(){
 		return this.temp;
 	}
 
