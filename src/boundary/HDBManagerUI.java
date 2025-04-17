@@ -17,10 +17,13 @@ import entity.HDBManager;
 import entity.HDBOfficer;
 import entity.Inquiry;
 import entity.Project;
+import helpers.DataManager;
 
 public class HDBManagerUI {
+	List<Applicant> applicantList = DataManager.getApplicants();
+	List<HDBOfficer> hdbOfficerList = DataManager.getOfficers();
     
-    public void showMenu(HDBManager hdbmanager, List<Applicant> applicantList, List<HDBOfficer> hdbOfficerList) {
+    public void showMenu(HDBManager hdbmanager) {
         Scanner scanner = new Scanner(System.in);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         ProjectController projectController = new ProjectController();
