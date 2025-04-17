@@ -27,9 +27,9 @@ public class DataManager {
 	private static String type2 = "3-Room";
 	
 	static {
-		applicants = DataManager.loadUsers("data/ApplicantList.csv", Applicant.class);
-		managers = DataManager.loadUsers("data/ManagerList.csv", HDBManager.class);
-		officers = DataManager.loadUsers("data/OfficerList.csv", HDBOfficer.class);
+		DataManager.loadUsers("data/ApplicantList.csv", Applicant.class);
+		DataManager.loadUsers("data/ManagerList.csv", HDBManager.class);
+		DataManager.loadUsers("data/OfficerList.csv", HDBOfficer.class);
 		inquiries = DataManager.loadInquiries("data/inquiryList.csv");
 		projects = DataManager.loadProjects("data/ProjectList.csv");
 		
@@ -83,8 +83,6 @@ public class DataManager {
 
 	// custom parser to work with quoted strings
 	private static String[] smartSplit(String line) {
-
-
 		List<String> res = new ArrayList<>();
 		boolean inQuotes = false;
 		StringBuilder sb = new StringBuilder();
@@ -101,7 +99,6 @@ public class DataManager {
 				sb.append(ch);
 			}
 		}
-		
 		// to add the last field
 		res.add(sb.toString().trim());
 		return res.toArray(new String[0]);
@@ -112,6 +109,12 @@ public class DataManager {
 		res = "\"" + res + "\"";
 		return res;
 	}
+
+	// Safe wrapper to substitude missing data with an empty string
+	private static String getCSVField(String[] parts, int index) {
+	    return (index < parts.length) ? parts[index] : "";
+	}
+
 	public static void saveAll() {
 
 		System.out.println("Saving data before exiting....");
@@ -140,7 +143,7 @@ public class DataManager {
 	}
 	public static void saveOfficers(String path) {
 		try (PrintWriter writer = new PrintWriter(new FileWriter(path))) {
-			writer.println("Name,NRIC,Age,Marital Status,Password,Applied Project,Status,Pending Projects,Approved Projects, Rejected Projects");
+			writer.println("Name,NRIC,Age,Marital Status,Password,Applied Project,Status");
 			for (HDBOfficer officer : officers) {
 				writer.printf("%s,%s,%s,%s,%s,%s,%s\n",
 						officer.getName(),
@@ -150,9 +153,6 @@ public class DataManager {
 						officer.getPassword(),
 						officer.getAppliedProject() == null ? "" : officer.getAppliedProject(),
 						officer.getApplicationStatus() == null ? "" : officer.getApplicationStatus());
-						//Stringify(officer.getPendingProjects()));
-						//Stringify(officer.getRegisteredProjects()));
-						//Stringify(officer.getRejectedProjects()));
 			}
 		} catch (IOException e) {
 			System.err.println("Error saving applicants to " + path + ": " + e.getMessage());
@@ -182,14 +182,17 @@ public class DataManager {
     				+ "Type 1,Number of units for Type 1,Selling price for Type 1,"
     				+ "Type 2,Number of units for Type 2,Selling price for Type 2,"
     				+ "Application opening date,Application closing date,"
-    				+ "Manager,Officer Slot, Officer");
+    				+ "Manager,Officer Slot,Officer,Temp");
     		for (Project p : projects) {
-
     			List<HDBOfficer> projectOfficers = p.getOfficers();
     			List<String> projectOfficersName = projectOfficers.stream()
     					.map(HDBOfficer::getName)
     					.collect(Collectors.toList());
-    			writer.printf("%s,%s,%s,%d,%d,%s,%d,%d,%s,%s,%s,%d,%s\n", 
+    			List<HDBOfficer> tempOfficers = p.getTemporaryOfficers();
+    			List<String> tempOfficersName = tempOfficers.stream()
+    					.map(HDBOfficer::getName)
+    					.collect(Collectors.toList());
+    			writer.printf("%s,%s,%s,%d,%d,%s,%d,%d,%s,%s,%s,%d,%s,%s\n", 
     					p.getName(),
     					p.getLocation(),
     					type1,
@@ -202,7 +205,8 @@ public class DataManager {
     					formatter.format(p.getCloseDate()),
     					p.getManager(),
     					p.getOfficerSlot(),
-    					stringify(projectOfficersName)
+    					stringify(projectOfficersName),
+    					stringify(tempOfficersName)
     				);
     	}
     } catch (IOException e) {
@@ -232,41 +236,32 @@ public class DataManager {
 
 	
 	
-	public static <T extends User> List<T> loadUsers(String path, Class<T> c) {
-		List<T> users = new ArrayList<>();
-		
+	public static <T> void loadUsers(String path, Class<T> c) {
 		try (BufferedReader br = new BufferedReader(new FileReader(path))) {
 			String currentLine;
 			br.readLine();
 			
 			while ((currentLine = br.readLine()) != null) {
 				String[] data = smartSplit(currentLine);
-				
-				if (data.length < 5) {
-					throw new IOException("Row has missing data in " + path);
-				}
-				
 				String name = data[0];
 				String nric = data[1];
 				int age = Integer.parseInt(data[2]);
 				String maritalStatus = data[3];
 				String password = data[4];
+				String projectName = getCSVField(data,5);
+				String status = getCSVField(data,6);
 				
-				T user = null;
-				
-				// Create object and cast to the corresponding type
 				if (c == Applicant.class) {
-					user = c.cast(new Applicant(name, nric, age, maritalStatus, password));
-					applicants.add((Applicant) user);
+					Applicant applicant = new Applicant(name, nric, age, maritalStatus, password);
+					applicant.setAppliedProjectString(projectName);
+					applicant.setApplicationStatus(status);
+					applicants.add(applicant);
 				} else if (c == HDBOfficer.class) {
-					user = c.cast(new HDBOfficer(name, nric, age, maritalStatus, password));
-					officers.add((HDBOfficer) user);
+					HDBOfficer hdbOfficer = new HDBOfficer(name, nric, age, maritalStatus, password);
+					officers.add(hdbOfficer);
 				} else if (c == HDBManager.class) {
-					user = c.cast(new HDBManager(name, nric, age, maritalStatus, password));
-					managers.add((HDBManager) user);
-				}
-				if (user != null) {
-					users.add(user);
+					HDBManager hdbManager = new HDBManager(name, nric, age, maritalStatus, password);
+					managers.add(hdbManager);
 				}
 			}
 			
@@ -274,38 +269,40 @@ public class DataManager {
 			System.out.println("Error while reading file: " + e.getMessage());
 		}
 		
-		return users;
 	}
 	
 	public static List<Project> loadProjects(String path) {
 
 		List<Project> projects = new ArrayList<Project>();
 		try (BufferedReader br = new BufferedReader(new FileReader(path))) {
-
-			
 			String currentLine;
 			br.readLine();
 			while ((currentLine = br.readLine()) != null) {
 				String[] data = smartSplit(currentLine);
-				String projectName = data[0];
-				String neighbourhood= data[1];
-				type1 = data[2];
-				int units1 = Integer.parseInt(data[3]);
-				int price1 = Integer.parseInt(data[4]);
-				type2 = data[5];
-				int units2 = Integer.parseInt(data[6]);
-				int price2 = Integer.parseInt(data[7]);
+				String projectName = getCSVField(data,0);
+				String neighbourhood= getCSVField(data,1);
+				type1 = getCSVField(data,2);
+				int units1 = Integer.parseInt(getCSVField(data,3));
+				int price1 = Integer.parseInt(getCSVField(data,4));
+				type2 = getCSVField(data,5);
+				int units2 = Integer.parseInt(getCSVField(data,6));
+				int price2 = Integer.parseInt(getCSVField(data,7));
 				SimpleDateFormat formatter = new SimpleDateFormat("dd/mm/yy");
-				Date openingDate = formatter.parse(data[8]);
-				Date closingDate = formatter.parse(data[9]);
-				String manager = data[10];
-				int officerSlot = Integer.parseInt(data[11]);
+				Date openingDate = formatter.parse(getCSVField(data,8));
+				Date closingDate = formatter.parse(getCSVField(data,9));
+				String manager = getCSVField(data,10);
+				int officerSlot = Integer.parseInt(getCSVField(data,11));
 				List<HDBOfficer> officersList = new ArrayList<HDBOfficer>();
-				List<String> temp = Arrays.asList(smartSplit(data[12]));
+				List<HDBOfficer> tempOfficersList = new ArrayList<HDBOfficer>();
+				List<String> officersListName = Arrays.asList(smartSplit(getCSVField(data,12)));
+				List<String> tempOfficersListName = Arrays.asList(smartSplit(getCSVField(data,13)));
 				officersList = officers.stream()
-						.filter(f -> temp.contains(f.getName()))
+						.filter(f -> officersListName.contains(f.getName()))
 						.collect(Collectors.toList());
-				
+				tempOfficersList = officers.stream()
+						.filter(f -> tempOfficersListName.contains(f.getName()))
+						.collect(Collectors.toList());
+
 				boolean visibility;
 				if (data.length <= 13) {
 					visibility = true;
@@ -326,6 +323,7 @@ public class DataManager {
 						flatTotal, flatAvailable, flatPrices, 
 						openingDate, closingDate,
 						manager, officerSlot, officersList, visibility);
+				project.setTemp(tempOfficersList);
 				projects.add(project);
 			}
 				
@@ -354,18 +352,18 @@ public class DataManager {
 			
 			while ((currentLine = br.readLine()) != null) {
 				String[] data = smartSplit(currentLine);
-				String inquiryID = data[0];
-				String senderNRIC = data[1];
-				String subject = data[2];
-				String message = data[3];
-				String status = data[4];
+				String inquiryID = getCSVField(data,0);
+				String senderNRIC = getCSVField(data,1);
+				String subject = getCSVField(data,2);
+				String message = getCSVField(data,3);
+				String status = getCSVField(data,4);
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");				
-				String createdAtStr = data[5];
+				String createdAtStr = getCSVField(data,5);
 				LocalDateTime createdAt = LocalDateTime.parse(createdAtStr, formatter);
-				String resolvedAtStr = data[6];
+				String resolvedAtStr = getCSVField(data,6);
 				LocalDateTime resolvedAt = LocalDateTime.parse(resolvedAtStr, formatter);
-				String projectName = data[7];
-				String reply = data[8];
+				String projectName = getCSVField(data,7);
+				String reply = getCSVField(data,8);
 				Project relatedProject = projects.stream()
 						.filter(p -> p.getName().equalsIgnoreCase(projectName))
 						.findFirst()
@@ -375,6 +373,7 @@ public class DataManager {
 					continue;
 				}
 				Inquiry inquiry = new Inquiry(inquiryID, senderNRIC, subject, message, status, createdAt, resolvedAt, relatedProject);
+				inquiry.setReply(reply);
 				inquiries.add(inquiry);
 
 			}
