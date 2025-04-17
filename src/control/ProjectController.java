@@ -108,8 +108,6 @@ public class ProjectController <T>{
 
 
                 for (Project n : this.projects){
-                	System.out.println("Current: " + n.getName());
-                	System.out.println("comparing to: " + projectName);
                     if (n.getName().equals(projectName)){
                         //Check if there is 2 room flats
                         if (n.getFlatTypeAvailable().get("2-Room") != null){
