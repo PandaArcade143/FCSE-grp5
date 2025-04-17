@@ -20,53 +20,55 @@ import entity.Project;
 import helpers.DataManager;
 
 public class HDBManagerUI {
-	List<Applicant> applicantList = DataManager.getApplicants();
-	List<HDBOfficer> hdbOfficerList = DataManager.getOfficers();
     
     public void showMenu(HDBManager hdbmanager) {
+    	List<Applicant> applicantList = DataManager.getApplicants();
+    	List<HDBOfficer> hdbOfficerList = DataManager.getOfficers();
         Scanner scanner = new Scanner(System.in);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        ProjectController projectController = new ProjectController();
+        ProjectController<HDBManager> projectController = new ProjectController<>();
         InquiryController inquirycontroller = new InquiryController();
         HDBOfficer officer;
         Applicant applicant;
         Project chosenProject;
+        boolean validDate;
         List<Project> projectList;
         int projectIndex;
         List<Inquiry> inquiryList;
+        int filterOption;
         
-        System.out.println("HDB Manager Menu:");
-        System.out.println("1. Create a new BTO project");
-        System.out.println("2. Edit an existing BTO project");
-        System.out.println("3. Delete a BTO project");
-        System.out.println("4. Toggle visibility of project");
-        System.out.println("5. View all created projects");
-        System.out.println("6. View projects created by me");
-        System.out.println("7. View and approve/reject HDB Officer registrations");
-        System.out.println("8. View and approve/reject applicant's BTO application");
-        System.out.println("9. View and approve/reject applicant's withdrawal application");
-        System.out.println("10. Generate applicant list report");
-        System.out.println("11. View inquiries for ALL projects");
-        System.out.println("12. View and reply to inquiries for the projects you are handling");
-        System.out.println("13. Filter projects.");
-        System.out.println("14. Quit");
-        System.out.print("Select an option: ");
-        
+
         while (true) {
-        	int choice = scanner.nextInt(); // Input choice of option
-        	//Quit the program
-        	if (choice == 14) {
-            	System.out.println("Quit successful.");
-            	break;	
-        	}
+        	// Display menu options
+	        System.out.println("HDB Manager Menu:");
+	        System.out.println("1. Create a new BTO project");
+	        System.out.println("2. Edit an existing BTO project");
+	        System.out.println("3. Delete a BTO project");
+	        System.out.println("4. Toggle visibility of project");
+	        System.out.println("5. View all created projects");
+	        System.out.println("6. View projects created by me");
+	        System.out.println("7. View and approve/reject HDB Officer registrations");
+	        System.out.println("8. View and approve/reject applicant's BTO application");
+	        System.out.println("9. View and approve/reject applicant's withdrawal application");
+	        System.out.println("10. Generate applicant list report");
+	        System.out.println("11. View inquiries for ALL projects");
+	        System.out.println("12. View and reply to inquiries for the projects you are handling");
+	        System.out.println("13. Filter projects.");
+	        System.out.println("14. Quit");
+	        System.out.print("Select an option: ");
+        
+	        int choice;
+            try {
+                choice = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
+                continue;
+            }
+            
 	        switch (choice) {
 	            // Create new BTO project
 	            case 1:
-	            //////////////////////////////////////////////////////////////////
-	            /// Not sure how to implement checking for whether HDB manager ///
-	            ///   is only handling one project within application period   ///
-	            //////////////////////////////////////////////////////////////////
-	                // Enter project details
+	            	// Enter project details
 	                System.out.println("Please enter the relevant information");
 	                
 	                // Enter project name
@@ -96,20 +98,41 @@ public class HDBManagerUI {
 	                    option = scanner.nextLine();
 	                } while (option.equalsIgnoreCase("yes"));
 	                
+	                // Enter flat prices for each flat type
+	                Map<String, Integer> flatPrices = new HashMap<>();
+	                for (String flatType : flatTotal.keySet()) {
+	                    System.out.print("Enter price for " + flatType + ": ");
+	                    int price = scanner.nextInt();
+	                    scanner.nextLine(); // consume newline
+	                    flatPrices.put(flatType, price);
+	                }
+	                
 	                Date openingDate = new Date();
 	                Date closingDate = new Date();
-	                try {
-	                    // Enter application opening date
-	                    System.out.print("Application opening date(dd/MM/yyyy): ");
-	                    String applicationOpenDate = scanner.nextLine();
-	                    openingDate = dateFormat.parse(applicationOpenDate);
-	
-	                    // Enter application closing date
-	                    System.out.print("Application closing date(dd/MM/yyyy): ");
-	                    String applicationCloseDate = scanner.nextLine();
-	                    closingDate = dateFormat.parse(applicationCloseDate);
-	                } catch (Exception e) {
-	                    System.out.println("Invalid date format! Please use dd/MM/yyyy.");
+	                validDate = false;
+	                while (!validDate) {
+	                	validDate = true;
+		                try {
+		                    // Enter application opening date
+		                    System.out.print("Application opening date(dd/MM/yyyy): ");
+		                    String applicationOpenDate = scanner.nextLine();
+		                    openingDate = dateFormat.parse(applicationOpenDate);
+		
+		                    // Enter application closing date
+		                    System.out.print("Application closing date(dd/MM/yyyy): ");
+		                    String applicationCloseDate = scanner.nextLine();
+		                    closingDate = dateFormat.parse(applicationCloseDate);
+		                } catch (Exception e) {
+		                    System.out.println("Invalid date format! Please use dd/MM/yyyy.");
+		                }
+		                //ASSUMING getCreatedProject RETURNS A LIST OF CREATED PROJECTS
+		                for (Project createdProject : hdbmanager.getCreatedProjects()) {
+		            		if (openingDate.before(createdProject.getCloseDate()) && closingDate.after(createdProject.getOpenDate())) {
+		            			System.out.println("You are currently handling another project!");
+		            			validDate = false;
+		            			break;
+		            		}
+		            	}
 	                }
 	
 	                // Enter HDB manager in charge
@@ -126,10 +149,11 @@ public class HDBManagerUI {
 	                }
 	
 	                // Create new project
-	                Project newProject = new Project(projectName, neighbourhood, flatTotal, new HashMap<String, Integer>(flatTotal), ////////////////////////////////
-	                new HashMap<String, Integer>(flatTotal), openingDate, closingDate, newHDBManager, availableSlots,                /// Not sure about flat price///
-	                new ArrayList<String>(), false);                                                                      ////////////////////////////////
+	                Project newProject = new Project(projectName, neighbourhood, flatTotal, new HashMap<String, Integer>(flatTotal), 
+	                flatPrices, openingDate, closingDate, newHDBManager, availableSlots,               
+	                new ArrayList<HDBOfficer>(), false);                                                                     
 	                projectController.createProject(hdbmanager, newProject);
+	                System.out.println("Project created successfully.");
 	                break;
 	
 	            // Edit BTO project
@@ -167,6 +191,7 @@ public class HDBManagerUI {
 	                        System.out.println(chosenProject.getName());
 	                        System.out.print("New project name: ");
 	                        String newProjectName = scanner.nextLine();
+	                        //SOME ERROR DUE TO GENERIC METHOD IN PROJECT CONTROLLER
 	                        projectController.editProject(hdbmanager, chosenProject, "name", newProjectName);
 	                        break;
 	
@@ -192,8 +217,21 @@ public class HDBManagerUI {
 	                        } catch (Exception e) {
 	                            System.out.println("Invalid date format! Please use dd/MM/yyyy.");
 	                        }
-	
-	                        projectController.editProject(hdbmanager, chosenProject, "openDate", openDate);
+	                        
+	                        validDate = true;
+	                        
+	                        for (Project createdProject : hdbmanager.getCreatedProjects()) {
+			            		if (!createdProject.getCloseDate().before(openingDate) && !createdProject.getOpenDate().after(openingDate)) {
+			            			validDate = false;
+			            			break;
+			            		}
+			            	}
+	                        
+	                        if (validDate) {
+		                        projectController.editProject(hdbmanager, chosenProject, "openDate", openDate);
+	                        } else {
+	                        	System.out.println("You are handling another project during that period!");
+	                        }
 	                        break;
 	
 	                    // Edit application closing date
@@ -209,8 +247,21 @@ public class HDBManagerUI {
 	                        } catch (Exception e) {
 	                            System.out.println("Invalid date format! Please use dd/MM/yyyy.");
 	                        }
-	
-	                        projectController.editProject(hdbmanager, chosenProject, "closeDate", closeDate);
+	                        
+	                        validDate = true;
+	                        
+	                        for (Project createdProject : hdbmanager.getCreatedProjects()) {
+			            		if (!createdProject.getCloseDate().before(closingDate) && !createdProject.getOpenDate().after(closingDate)) {
+			            			validDate = false;
+			            			break;
+			            		}
+			            	}
+	                        
+	                        if (validDate) {
+	                        	projectController.editProject(hdbmanager, chosenProject, "closeDate", closeDate);
+	                        } else {
+	                        	System.out.println("You are handling another project during that period!");
+	                        }
 	                        break;
 	
 	                    // Edit available HDB officer slots
@@ -396,6 +447,34 @@ public class HDBManagerUI {
 	            ///HOW IS WITHDRAWAL DONE///
 	            ///////////////////////////
 	            case 9:
+	            	while (true) {
+	                	System.out.print("Enter applicant's NRIC: ");
+	                	String nric = scanner.nextLine();
+	                	if (!nric.matches("[ST]\\d{7}[A-Z]")) {
+	                    	//check if nric is valid
+	                    	System.out.println("Invalid NRIC given, please try again.");
+	                    } else {
+	                    	while (true) {
+	                        	for (Applicant a: applicantList) {
+	                                if (a.getNRIC().equalsIgnoreCase(nric)) {
+	                                    applicant = a;
+	                                }
+	                            }
+	                        	if (applicant != null) {
+	                        		System.out.println(applicant.getName() + " with NRIC of " + applicant.getNRIC() + " has a withdrawal status of: " + applicant.getWithdrawalStatus());
+	                        		while (true) {
+		                        		System.out.print("Enter new status: ");
+		                            	String status = scanner.nextLine();
+		                            	projectController.processWithdrawal(hdbmanager, applicant, status);
+	                        		}
+	                        	} else {
+	                        		System.out.println("No applicant with this NRIC was found, please try again.");
+	                        		break;
+	                        	}
+	                    	}
+	                    	break;
+	                    }
+	            	}
 	                break;
 	
 	            case 10:
@@ -407,7 +486,7 @@ public class HDBManagerUI {
 	                System.out.println("5. Filter by Age Range");
 	                System.out.print("Choose a filter option: ");
 	
-	                int filterOption = scanner.nextInt();
+	                filterOption = scanner.nextInt();
 	                scanner.nextLine(); // consume newline
 	
 	                Stream<Applicant> stream = applicantList.stream();
@@ -477,7 +556,7 @@ public class HDBManagerUI {
 	
 	            // View inquiries for ALL projects
 	            case 11:
-	                inquiryList = inquirycontroller.allInquiries();
+	                inquiryList = InquiryController.allInquiries();
 	                for (int inq=1; inq<=inquiryList.size(); inq++) {
 	                    System.out.print(inq);
 	                    System.out.print(". ");
@@ -506,7 +585,7 @@ public class HDBManagerUI {
 	                chosenProject = projectList.get(projectIndex-1);
 	
 	                // View inquiries for chosen project
-	                inquiryList = inquirycontroller.viewInquiries(chosenProject);
+	                inquiryList = InquiryController.viewInquiries(chosenProject);
 	                for (int inq=1; inq<=inquiryList.size(); inq++) {
 	                    System.out.print(inq);
 	                    System.out.print(". ");
@@ -526,14 +605,69 @@ public class HDBManagerUI {
 	                String replyMessage = scanner.nextLine();
 	
 	                // Update inquiry reply
-	                inquirycontroller.replyToInquiry(chosenInquiry.getInquiryId(), replyMessage);
+	                InquiryController.replyToInquiry(chosenInquiry.getInquiryId(), replyMessage);
 	                break;
 	
-	            default:
-	                System.out.println("Invalid option.");
+	            case 13:
+                    // Filter project list based on user-specified criteria
+                    System.out.println("Filter projects by:");
+                    System.out.println("1. Location");
+                    System.out.println("2. Flat Type");
+                    System.out.println("3. Max Price");
+                    System.out.println("4. Min Price");
+                    System.out.println("5. Clear all filters");
+                    System.out.print("Select a filter option: ");
+                    try {
+                        filterOption = Integer.parseInt(scanner.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid choice.");
+                        break;
+                    }
+                    switch (filterOption) {
+                        case 1:
+                            System.out.print("Enter location: ");
+                            projectController.filterByLocation(scanner.nextLine().trim());
+                            break;
+                        case 2:
+                            System.out.print("Enter flat type: ");
+                            projectController.filterByFlatType(scanner.nextLine().trim());
+                            break;
+                        case 3:
+                            System.out.print("Enter max price: ");
+                            projectController.filterByMaxPrice(Integer.parseInt(scanner.nextLine()));
+                            break;
+                        case 4:
+                            System.out.print("Enter min price: ");
+                            projectController.filterByMinPrice(Integer.parseInt(scanner.nextLine()));
+                            break;
+                        case 5:
+                            // Reset filters by creating a new controller instance
+                            projectController = new ProjectController<>();
+                            break;
+                            
+                        default:
+                            System.out.println("Invalid filter option.");
+                            break;
+                    }
+                    // Display filtered project results
+                    List<Project> filtered = projectController.getFilteredProjects(officer);
+                    System.out.println("Filtered projects:");
+                    for (Project proj : filtered) {
+                        System.out.println("- " + proj.getName());
+                    }
+                    break;
+
+                case 14:
+                    // Exit the menu and application loop
+                    System.out.println("Goodbye!");
+                    scanner.close();
+                    return;
+                	
+                default:
+                	// Notify user if selection is invalid
+                    System.out.println("Invalid option. Please try again.");
 	        }
         }
         
-        scanner.close();
     }
 }

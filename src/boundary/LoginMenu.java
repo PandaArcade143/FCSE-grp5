@@ -9,81 +9,88 @@ import entity.HDBOfficer;
 import entity.User;
 import control.AuthController;
 
-public class LoginMenu{
-	AuthController authController = new AuthController();
-    
+public class LoginMenu {
+    AuthController authController = new AuthController();
+
+    //Display the login menu and redirect user based on role
     public Object showMenu(List<Applicant> applicantList, List<HDBManager> managerList, List<HDBOfficer> officerList) {
         Scanner scanner = new Scanner(System.in);
         Object user = null;
-        String nric = "";
-        
-        // Display login prompt
+
         System.out.println("Welcome to the BTO Management System (Enter 'Quit' to quit).");
+
+        // NRIC input and validation loop
         while (true) {
             System.out.print("Enter your NRIC: ");
-            nric = scanner.nextLine();
-            if (nric.compareToIgnoreCase("Quit") == 0) {
-            	scanner.close();
-            	return null;
-            } else if (!validateNRIC(nric)) {
-            	//check if nric is valid
-            	System.out.println("Invalid NRIC given, please try again.");
-            } else {
-            	 user = findUserByNRIC(nric, applicantList);
-                 if (user == null) {
-                     user = findUserByNRIC(nric, managerList);
-                 }
-                 if (user == null) {
-                     user = findUserByNRIC(nric, officerList);
-                 }
+            String nric = scanner.nextLine().trim();
 
-                 if (user == null) {
-                     System.out.println("User for this NRIC does not exist, please try again.");
-                 } else {
-                 	break;
-                 }
-            }
-            
-        }
-        
-        while (true) {
-        	System.out.print("Enter your password: ");
-        	String password = scanner.nextLine();
-        	if (password.compareToIgnoreCase("Quit") == 0) {
-                scanner.close();
-            	return null;
-        	} else if (((User) user).getPassword().compareToIgnoreCase(password) != 0) {
-        		System.out.println("Invalid password, please try again.");
-        	} else {
-        		System.out.println("Login successful! Welcome " + ((User) user).getName() + "!");
-        		System.out.println("Age: " + ((User) user).getAge());
-        		System.out.println("Marital Status: " + ((User) user).getMaritalStatus());
-                if (((User) user).getRole() == "Applicant") {
-                	ApplicantUI applicantUI = new ApplicantUI();
-                	applicantUI.showMenu((Applicant) user);
-                } else if (((User) user).getRole() == "HDBManager") {
-                	HDBManagerUI hdbManagerUI = new HDBManagerUI();
-                	hdbManagerUI.showMenu((HDBManager) user);
-                } else if (((User) user).getRole() == "HDBOfficer") {
-                	HDBOfficerUI hdbOfficerUI = new HDBOfficerUI();
-                	hdbOfficerUI.showMenu((HDBOfficer) user);
-                }
-                scanner.close();
+            if (nric.equalsIgnoreCase("Quit")) {
                 return null;
-        	}
+            }
+
+            // NRIC validation: starts with S/T, 7 digits, ends with uppercase letter
+            if (!nric.matches("[ST]\\d{7}[A-Z]")) {
+                System.out.println("Invalid NRIC format. Please enter S/T + 7 digits + letter (e.g., S1234567A).");
+                continue;
+            }
+
+            // Search user in all role lists
+            user = findUserByNRIC(nric, applicantList);
+            if (user == null) user = findUserByNRIC(nric, managerList);
+            if (user == null) user = findUserByNRIC(nric, officerList);
+
+            if (user == null) {
+                System.out.println("No user found for this NRIC. Please try again.");
+            } else {
+                break;
+            }
         }
-        
+
+        // Password input loop
+        while (true) {
+            System.out.print("Enter your password: ");
+            String password = scanner.nextLine();
+
+            if (password.equalsIgnoreCase("Quit")) {
+                return null;
+            }
+
+            if (!((User) user).getPassword().equals(password)) {
+                System.out.println("Invalid password. Please try again.");
+            } else {
+                break;
+            }
+        }
+
+        // Successful login
+        User loggedInUser = (User) user;
+        System.out.println("\nLogin successful! Welcome " + loggedInUser.getName() + "!");
+        System.out.println("Age: " + loggedInUser.getAge());
+        System.out.println("Marital Status: " + loggedInUser.getMaritalStatus());
+
+        // Redirect based on role
+        switch (loggedInUser.getRole()) {
+            case "Applicant":
+                new ApplicantUI().showMenu((Applicant) loggedInUser);
+                break;
+            case "HDBManager":
+                new HDBManagerUI().showMenu((HDBManager) loggedInUser);
+                break;
+            case "HDBOfficer":
+                new HDBOfficerUI().showMenu((HDBOfficer) loggedInUser);
+                break;
+            default:
+                System.out.println("Unknown role detected.");
+        }
+
+        return null;
     }
-    
-    // Validates the NRIC format (starts with 'S' or 'T', followed by 7 digits, and ends with a letter)
-    private boolean validateNRIC(String nric) {
-        return nric.matches("[ST]\\d{7}[A-Z]");
-    }
-    
+
+    //Generic method to find a User in a list by NRIC
     private static <T> User findUserByNRIC(String nric, List<T> list) {
-        for (T user : list) {
-            if (((User) user).getNRIC().equalsIgnoreCase(nric)) {
-                return (User) user;
+        for (T u : list) {
+            if (u instanceof User && ((User) u).getNRIC().equalsIgnoreCase(nric)) {
+                return (User) u;
             }
         }
         return null;
