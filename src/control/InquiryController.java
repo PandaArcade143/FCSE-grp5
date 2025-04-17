@@ -43,8 +43,8 @@ public class InquiryController {
     }
 
     // Delete inquiry (by applicant)
-    public static void deleteInquiry(String senderNRIC, Inquiry inquiry, Applicant applicant) {
-        if (inquiries.contains(inquiry) && inquiry.getSenderNRIC().equals(applicant.getNRIC())) {
+    public static void deleteInquiry(String senderNRIC, Inquiry inquiry) {
+        if (inquiries.contains(inquiry) && inquiry.getSenderNRIC().equals(senderNRIC)) {
             inquiries.remove(inquiry);
             System.out.println("Inquiry deleted.");
         } else {

@@ -7,8 +7,10 @@ import entity.Applicant;
 import entity.HDBManager;
 import entity.HDBOfficer;
 import entity.User;
+import control.AuthController;
 
 public class LoginMenu{
+	AuthController authController = new AuthController();
     
     public Object showMenu(List<Applicant> applicantList, List<HDBManager> managerList, List<HDBOfficer> officerList) {
         Scanner scanner = new Scanner(System.in);
@@ -56,8 +58,18 @@ public class LoginMenu{
         		System.out.println("Login successful! Welcome " + ((User) user).getName() + "!");
         		System.out.println("Age: " + ((User) user).getAge());
         		System.out.println("Marital Status: " + ((User) user).getMaritalStatus());
+                if (((User) user).getRole() == "Applicant") {
+                	ApplicantUI applicantUI = new ApplicantUI();
+                	applicantUI.showMenu((Applicant) user);
+                } else if (((User) user).getRole() == "HDBManager") {
+                	HDBManagerUI hdbManagerUI = new HDBManagerUI();
+                	hdbManagerUI.showMenu((HDBManager) user);
+                } else if (((User) user).getRole() == "HDBOfficer") {
+                	HDBOfficerUI hdbOfficerUI = new HDBOfficerUI();
+                	hdbOfficerUI.showMenu((HDBOfficer) user);
+                }
                 scanner.close();
-        		return user;
+                return null;
         	}
         }
         

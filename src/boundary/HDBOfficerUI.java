@@ -9,13 +9,16 @@ import entity.HDBOfficer;
 import entity.Inquiry;
 import entity.Project;
 import entity.User;
+import helpers.DataManager;
 
 public class HDBOfficerUI {
 	ProjectController projectController = new ProjectController();
     InquiryController inquiryController = new InquiryController();
+    List<Applicant> applicantList = DataManager.getApplicants();
+
     
     
-    public void showMenu(HDBOfficer officer, List<Applicant> applicantList) {
+    public void showMenu(HDBOfficer officer) {
         Scanner scanner = new Scanner(System.in);
         List<Project> projectList = projectController.getAvailableProjects(officer); // Fetches list of available projects
         Project registeredProject = officer.getRegisteredProjects();

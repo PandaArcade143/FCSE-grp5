@@ -70,7 +70,7 @@ public class ProjectController <T>{
 
     public boolean applyToProject (Applicant a, String projectName){
         //Check if already applied project
-        if (a.getApplicationStatus().equals("Pending") || a.getApplicationStatus().equals("Successful") || a.getApplicationStatus().equals("Booked")){
+        if ("Pending".equals(a.getApplicationStatus()) || "Successful".equals(a.getApplicationStatus()) || "Booked".equals(a.getApplicationStatus())){
             return false;
         }
         
