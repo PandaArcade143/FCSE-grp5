@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class ApplicantUI {
-    ProjectController projectController = new ProjectController();
+    ProjectController<Applicant> projectController = new ProjectController();
     InquiryController inquiryController = new InquiryController();
 
     // Display menu for Applicant user
@@ -51,6 +51,7 @@ public class ApplicantUI {
                 // Applicant applies for a project
                 case 2:
                     System.out.println("Enter the name of the project you wish to apply: ");
+                    scanner.nextLine();
                     String projectName = scanner.nextLine(); // Applicant inputs the name of the project they wish to apply
                     boolean projectApplied = projectController.applyToProject(applicant, projectName); // Applies to the project and gets whether applicant is eligible for application
                     
