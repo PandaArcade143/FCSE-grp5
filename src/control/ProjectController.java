@@ -219,4 +219,14 @@ public class ProjectController <T>{
             System.out.println("Invalid Status");
         }
     }
+
+    public void processWithdrawal(HDBManager manager, Applicant a, String status){
+        if (status.equals("approved")){
+            a.setWithdrawalStatus(status);
+        } else if (status.equals("denied")){
+            a.setWithdrawalStatus(status);
+        } else{
+            return;
+        }
+    }
 }
