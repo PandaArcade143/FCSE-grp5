@@ -2,9 +2,12 @@ package control;
 import entity.*;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import helpers.DataManager;
 
 public class ProjectController <T>{
@@ -12,10 +15,95 @@ public class ProjectController <T>{
     private List <Applicant> applicants = DataManager.getApplicants();
     private List <HDBOfficer> officers = DataManager.getOfficers();
     private List <HDBManager> manager = DataManager.getManagers();
+    private Map<String, String> filters;
+
 
     public ProjectController(){
-
+    	this.filters = new HashMap<>();
+    	filters.put("location", "");
+    	filters.put("flatType", "");
+    	filters.put("maxPrice", "");
+    	filters.put("minPrice", "");
     }
+    
+    public void filterByLocation(String location) {
+    	filters.put("location", location);
+    }
+    
+    public void filterByFlatType(String flatType) {
+    	filters.put("flatType", flatType);
+    }
+    
+    public void filterByMaxPrice(int maxPrice) {
+    	filters.put("maxPrice", Integer.toString(maxPrice));
+    }
+    
+    public void filterByMinPrice(int minPrice) {
+    	filters.put("minPrice", Integer.toString(minPrice));
+    }
+    
+    public Map<String, String> getFilters() {
+    	return filters;
+    }
+    
+    public List <Project> getFilteredProjects(User user) {
+    	List <Project> res = getAvailableProjects(user);
+    	if (!filters.get("location").equals("")) {
+    		res = res.stream()
+					.filter(project -> project.getLocation().equals(filters.get("location")))
+					.collect(Collectors.toList());
+    	}
+    	
+    	if (!filters.get("flatType").equals("")) {
+    		res = res.stream()
+    				.filter(project -> project.getFlatTypeTotal().containsKey(filters.get("flatType")))
+					.collect(Collectors.toList());
+    	}
+    	
+    	if (!filters.get("maxPrice").equals("")) {
+    		res = res.stream()
+    				.filter(project -> Collections.max(project.getFlatPrices().values()) < Integer.parseInt(filters.get("maxPrice")))
+    				.collect(Collectors.toList());
+    	}
+
+    	if (!filters.get("minPrice").equals("")) {
+    		res = res.stream()
+    				.filter(project -> Collections.min(project.getFlatPrices().values()) > Integer.parseInt(filters.get("minPrice")))
+    				.collect(Collectors.toList());
+    	}
+    	
+    	return res;
+    }
+
+    public List <Project> getFilteredProjects(List<Project> p) {
+    	List <Project> res = new ArrayList<>(p);
+    	if (!filters.get("location").equals("")) {
+    		res = res.stream()
+					.filter(project -> project.getLocation().equals(filters.get("location")))
+					.collect(Collectors.toList());
+    	}
+    	
+    	if (!filters.get("flatType").equals("")) {
+    		res = res.stream()
+    				.filter(project -> project.getFlatTypeTotal().containsKey(filters.get("flatType")))
+					.collect(Collectors.toList());
+    	}
+    	
+    	if (!filters.get("maxPrice").equals("")) {
+    		res = res.stream()
+    				.filter(project -> Collections.max(project.getFlatPrices().values()) < Integer.parseInt(filters.get("maxPrice")))
+    				.collect(Collectors.toList());
+    	}
+
+    	if (!filters.get("minPrice").equals("")) {
+    		res = res.stream()
+    				.filter(project -> Collections.min(project.getFlatPrices().values()) > Integer.parseInt(filters.get("minPrice")))
+    				.collect(Collectors.toList());
+    	}
+    	
+    	return res;
+    }
+
     
 
     public List <Project> getAvailableProjects(User user){
