@@ -7,6 +7,10 @@ import java.util.Map;
 
 import java.util.ArrayList;
 
+/**
+ * Represents a BTO project that contains flat types, pricing, officer assignment,
+ * availability status, and application time window.
+ */
 public class Project {
 	String name;
 	String location;
@@ -20,8 +24,22 @@ public class Project {
 	List <HDBOfficer> temp;
 	List <HDBOfficer> officers;
 	boolean visibility;
-	
-	//Constructor
+
+	/**
+     * Constructs a Project with specified data.
+     *
+     * @param projectName the name of the project
+     * @param neighbourhood the location
+     * @param flatTotal map of flat types and their total count
+     * @param flatAvailable map of flat types and their available count
+     * @param flatPrices map of flat types and their prices
+     * @param openingDate application open date
+     * @param closingDate application close date
+     * @param manager name or ID of managing officer
+     * @param officerSlot number of officer slots
+     * @param officers assigned officers
+     * @param visibility visibility status
+     */	
 	public Project(String projectName, String neighbourhood, Map<String, Integer> flatTotal,
 			Map<String, Integer> flatAvailable, Map<String, Integer> flatPrices, Date openingDate, Date closingDate,
 			String manager, int officerSlot, List<HDBOfficer> officers, boolean visibility) {
@@ -38,125 +56,238 @@ public class Project {
 		this.visibility = visibility;
 	}
 
-	public List<HDBOfficer> getTemp() {
-		return temp;
-	}
 
-	public void setTemp(List<HDBOfficer> temp) {
-		this.temp = temp;
-	}
-
-	//Setter for visibility
-	public void toggleVisibility(Boolean t){
-		this.visibility = t;
-	}
-
-	//Getter for visibility
-	public boolean getVisibility(){
-		return this.visibility;
-	}
-
-	//Check whether there is still the flat type available
+	 /**
+     * Checks if a specific flat type is available in this project.
+     * @param type the flat type
+     * @return true if there are available units, false otherwise
+     */
 	public boolean hasFlatType (String type){
-		//Check the number of flats for the selected flat type 
-		//Will initilisation definitely have the two different flat types?
-
-		if (this.flatTypeAvailable.get(type) <= 0){
-			return false;
-		}
-		return true;
+        return this.flatTypeAvailable.getOrDefault(type, 0) > 0;
 	}
-
+	
+	/**
+     * Books a flat of the specified type.
+     * @param book the flat type to book
+     * @return true if booking is successful, false otherwise
+     */
 	public boolean bookFlat (String book){
-		//Checks if there is enough flats of this type
 		if (this.hasFlatType(book)){
-			//Reduce the numbers of flats of the selected type by 1
 			int temp =  this.flatTypeAvailable.get(book) - 1;
-			//Replace the value of the number of flats in the Map
 			this.flatTypeAvailable.replace(book, temp);
-			//Tells user that the booking was successful
 			return true;
 		}
 
 		return false;
 	}	
 
-	//Getter for name
+	/**
+	 * Gets the name of the project.
+	 *
+	 * @return the project name
+	 */
 	public String getName(){
 		return this.name;
 	}
 
-	//Setter for name
+	/**
+	 * Sets the name of the project.
+	 *
+	 * @param n the new name to set
+	 */
 	public void setName (String n){
 		this.name = n;
 	}
 
-	//Getter for location
+	/**
+	 * Gets the location of the project.
+	 *
+	 * @return the location
+	 */ 
 	public String getLocation (){
 		return this.location;
 	}
 
-	//Setter for location
+	/**
+	 * Sets the location of the project.
+	 *
+	 * @param loc the new location
+	 */	
 	public void setLocation (String loc){
 		this.location = loc;
 	}
 
+	/**
+	 * Gets the map of available flat types and their quantities.
+	 *
+	 * @return map of flat types to available counts
+	 */
 	public Map<String, Integer> getFlatTypeAvailable(){
 		return this.flatTypeAvailable;
 	}
 
+	/**
+	 * Sets the flat type availability map.
+	 *
+	 * @param t map of flat types to available counts
+	 */
 	public void setFlatTypeAvailable (Map <String, Integer> t){
 		this.flatTypeAvailable = t;
 	}
 
+	/**
+	 * Adds or updates availability for a flat type.
+	 *
+	 * @param t the flat type
+	 * @param i the number of available units
+	 */
 	public void addFlatTypeAvailable (String t, int i){
 		this.flatTypeAvailable.put(t, i);
 	}
 
+
+	/**
+	 * Gets the open date for BTO application.
+	 *
+	 * @return the open date
+	 */	
 	public Date getOpenDate(){
 		return this.openDate;
 	}
 
+	/**
+	 * Sets the open date for BTO application.
+	 *
+	 * @param d the new open date
+	 */
 	public void setOpenDate(Date d){
 		this.openDate = d;
 	}
 
+
+	/**
+	 * Gets the close date for BTO application.
+	 *
+	 * @return the close date
+	 */	
 	public Date getCloseDate(){
 		return this.closeDate;
 	}
 
+	/**
+	 * Sets the close date for BTO application.
+	 *
+	 * @param d the new close date
+	 */
 	public void setCloseDate(Date d){
 		this.closeDate = d;
 	}
 
+	/**
+	 * Gets the number of officer slots assigned to the project.
+	 *
+	 * @return the officer slot count
+	 */
 	public int getOfficerSlot (){
 		return this.officerSlot;
 	}
 
+	/**
+	 * Sets the number of officer slots.
+	 *
+	 * @param i the number of slots to assign
+	 */
 	public void setOfficerSlot (int i){
 		this.officerSlot = i;
 	}
 
+	/**
+	 * Gets the flat price map by flat type.
+	 *
+	 * @return map of flat types to prices
+	 */
 	public Map <String, Integer> getFlatPrices (){
 		return this.flatPrices;
 	}
 
+	/**
+	 * Sets the flat price map.
+	 *
+	 * @param t map of flat types to prices
+	 */
 	public void setFlatPrices (Map <String, Integer> t){
 		this.flatPrices = t;
 	}
 
+	/**
+	 * Gets the manager identifier or name.
+	 *
+	 * @return the manager
+	 */
 	public String getManager(){
 		return this.manager;
 	}
 
+	/**
+	 * Sets the manager's identifier or name.
+	 *
+	 * @param m the manager
+	 */
 	public void setManager(String m){
 		this.manager = m;
 	}
 
+	/**
+	 * Gets the map of total flats by type.
+	 *
+	 * @return map of flat types to total counts
+	 */
 	public List <HDBOfficer> getOfficers(){
 		return this.officers;
 	}
+	
 
+	/**
+	 * Sets the total number of flats for each type.
+	 *
+	 * @param flatTypeTotal map of flat types to total counts
+ 	*/
+	public List<HDBOfficer> getTemp() {
+		return temp;
+	}
+	
+	/**
+	 * sets the temporary HDBOfficers that have applied
+	 *
+	 * @param list of HDBOfficers
+ 	*/
+
+	public void setTemp(List<HDBOfficer> temp) {
+		this.temp = temp;
+	}
+
+	/**
+	 * toggles the visibility of project
+	 *
+	 * @param the boolean value of the visibility to set
+ 	*/
+	public void toggleVisibility(Boolean t){
+		this.visibility = t;
+	}
+
+	/**
+	 * Gets the visibility of project.
+	 *
+	 * @return returns the visibility of the project
+ 	*/
+	public boolean getVisibility(){
+		return this.visibility;
+	}
+
+	/**
+     * Adds an officer to the list of assigned officers.
+     * @param m the officer to add
+     */
 	public void addOfficer(HDBOfficer m){
 		this.officers.add(m);
 	}
@@ -169,14 +300,26 @@ public class Project {
 		this.flatTypeTotal = flatTypeTotal;
 	}	
 
+	/**
+     * Returns a list of temporary officers.
+     * @return list of temporary HDB officers
+     */
 	public List <HDBOfficer> getTemporaryOfficers(){
 		return this.temp;
 	}
 
+	/**
+     * Adds a temporary officer to the list.
+     * @param n the officer to add temporarily
+     */
 	public void addTemporaryOfficer(HDBOfficer n){
 		this.temp.add(n);
 	}
 
+	 /**
+     * Removes a temporary officer from the list.
+     * @param n the officer to remove
+     */
 	public void removeTemporaryOfficer (HDBOfficer n){
 		this.temp.remove(n);
 	}
