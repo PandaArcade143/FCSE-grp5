@@ -1,6 +1,7 @@
 package helpers;
 
 import java.io.*;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,6 +18,12 @@ import entity.Inquiry;
 import entity.Project;
 import entity.User;
 
+/**
+ * Manages application-wide data including reading and writing of users,
+ * projects, and inquiries from/to CSV files. Also handles runtime data setup
+ * and cleanup on application exit.
+ */
+
 public class DataManager {
 	private static List<Project> projects = new ArrayList<>();
 	private static List<Applicant> applicants = new ArrayList<>();
@@ -26,6 +33,11 @@ public class DataManager {
 	private static String type1 = "2-Room";
 	private static String type2 = "3-Room";
 	
+    /**
+     * Loads users, inquiries, and projects into memory on class initialization
+     * and sets a shutdown hook to save data on exit.
+     */	
+
 	static {
 		DataManager.loadUsers("data/ApplicantList.csv", Applicant.class);
 		DataManager.loadUsers("data/ManagerList.csv", HDBManager.class);
@@ -40,47 +52,83 @@ public class DataManager {
 	}
 	
 	
-	
+    /**
+     * @return the current list of projects in memory
+     */	
 	public static List<Project> getProjects() {
 		return projects;
 	}
 
+	 /**
+     * @param projects list to replace the current in-memory project list
+     */
 	public static void setProjects(List<Project> projects) {
 		DataManager.projects = projects;
 	}
 
+    /**
+     * @return the list of all applicants
+     */
 	public static List<Applicant> getApplicants() {
 		return applicants;
 	}
 
+	 /**
+     * @param applicants the list of applicants to set
+     */
 	public static void setApplicants(List<Applicant> applicants) {
 		DataManager.applicants = applicants;
 	}
-
+	
+    /**
+     * @return the list of HDB officers
+     */
 	public static List<HDBOfficer> getOfficers() {
 		return officers;
 	}
 
+	 /**
+     * @param officers list of HDB officers to set
+     */
 	public static void setOfficers(List<HDBOfficer> officers) {
 		DataManager.officers = officers;
 	}
 
+	/**
+     * @return the list of HDB managers
+     */
 	public static List<HDBManager> getManagers() {
 		return managers;
 	}
 
+    /**
+     * @param managers list of managers to set
+     */
 	public static void setManagers(List<HDBManager> managers) {
 		DataManager.managers = managers;
 	}
 
+	/**
+     * @return list of all inquiries
+     */
 	public static List<Inquiry> getInquiries() {
 		return inquiries;
 	}
 
+
+    /**
+     * @param inquiries list of inquiries to set
+     */
 	public static void setInquiries(List<Inquiry> inquiries) {
 		DataManager.inquiries = inquiries;
 	}
-
+	
+	   /**
+     * Splits a CSV line while preserving quoted substrings as one field
+     *
+     * @param line the CSV line to split
+     * @return a String array of parsed fields
+     */
 	// custom parser to work with quoted strings
 	private static String[] smartSplit(String line) {
 		List<String> res = new ArrayList<>();
@@ -103,18 +151,34 @@ public class DataManager {
 		res.add(sb.toString().trim());
 		return res.toArray(new String[0]);
 	}
+	
 
+    /**
+     * Joins a list of strings into a quoted CSV string
+     *
+     * @param list list of strings to join
+     * @return the quoted, comma-separated string
+     */
 	private static String stringify(List<String> list) {
 		String res = String.join(",",list);
 		res = "\"" + res + "\"";
 		return res;
 	}
-
-	// Safe wrapper to substitude missing data with an empty string
+	
+	  /**
+     * Safely retrieves a CSV field by index, returns empty string if missing
+     *
+     * @param parts the array of fields
+     * @param index the index to access
+     * @return the field value or "" if index is out of bounds
+     */
 	private static String getCSVField(String[] parts, int index) {
 	    return (index < parts.length) ? parts[index] : "";
 	}
 
+	 /**
+     * Saves all entities to their respective CSV files
+     */
 	public static void saveAll() {
 
 		System.out.println("Saving data before exiting....");
@@ -124,6 +188,12 @@ public class DataManager {
 		saveProjects("data/ProjectList.csv");
 		saveInquiries("data/InquiryList.csv");
 	}
+
+	 /**
+     * Saves the list of applicants to a CSV file.
+     *
+     * @param filename the path to the file to write
+     */
 	public static void saveApplicants(String path) {
 		try (PrintWriter writer = new PrintWriter(new FileWriter(path))) {
 			writer.println("Name,NRIC,Age,Marital Status,Password,Applied Project,Status");
@@ -141,6 +211,12 @@ public class DataManager {
 			System.err.println("Error saving applicants to " + path + ": " + e.getMessage());
 		}
 	}
+
+	/**
+     * Saves the list of HDB officers to a CSV file.
+     *
+     * @param filename the path to the file to write
+     */
 	public static void saveOfficers(String path) {
 		try (PrintWriter writer = new PrintWriter(new FileWriter(path))) {
 			writer.println("Name,NRIC,Age,Marital Status,Password,Applied Project,Status");
@@ -158,6 +234,12 @@ public class DataManager {
 			System.err.println("Error saving applicants to " + path + ": " + e.getMessage());
 		}
 	}
+
+	/**
+     * Saves the list of HDB managers to a CSV file.
+     *
+     * @param filename the path to the file to write
+     */
 	public static void saveManagers(String path) {
 		try (PrintWriter writer = new PrintWriter(new FileWriter(path))) {
 			writer.println("Name,NRIC,Age,Marital Status,Password,Created Projects");
@@ -174,6 +256,12 @@ public class DataManager {
 			System.err.println("Error saving applicants to " + path + ": " + e.getMessage());
 		}
 	}
+
+	 /**
+     * Saves the list of projects to a CSV file.
+     *
+     * @param filename the path to the file to write
+     */
     public static void saveProjects(String path) {
     	SimpleDateFormat formatter = new SimpleDateFormat("dd/mm/yy");
 
@@ -213,6 +301,12 @@ public class DataManager {
     	System.err.println("Error saving projects: " + e.getMessage());
     	}
     }
+
+    /**
+     * Saves the list of inquiries to a CSV file.
+     *
+     * @param filename the path to the file to write
+     */
     public static void saveInquiries(String filePath) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath))) {
             writer.println("InquiryID,SenderNRIC,Subject,Message,Status,CreatedAt,ResolvedAt,RelatedProject,Reply");
@@ -235,7 +329,11 @@ public class DataManager {
     }
 
 	
-	
+    /**
+     * Loads a list of users from a CSV file.
+     *
+     * @param filename the path to the CSV file to read and Class type of user
+     */	
 	public static <T> void loadUsers(String path, Class<T> c) {
 		try (BufferedReader br = new BufferedReader(new FileReader(path))) {
 			String currentLine;
@@ -258,6 +356,8 @@ public class DataManager {
 					applicants.add(applicant);
 				} else if (c == HDBOfficer.class) {
 					HDBOfficer hdbOfficer = new HDBOfficer(name, nric, age, maritalStatus, password);
+					hdbOfficer.setAppliedProjectString(projectName);
+					hdbOfficer.setApplicationStatus(status);
 					officers.add(hdbOfficer);
 				} else if (c == HDBManager.class) {
 					HDBManager hdbManager = new HDBManager(name, nric, age, maritalStatus, password);
@@ -271,6 +371,12 @@ public class DataManager {
 		
 	}
 	
+	/**
+     * Loads a list of Projects from a CSV file.
+     *
+     * @param filename the path to the CSV file to read
+     * @return list of Project objects
+     */
 	public static List<Project> loadProjects(String path) {
 
 		List<Project> projects = new ArrayList<Project>();
@@ -339,6 +445,12 @@ public class DataManager {
 		
 	}
 	
+    /**
+     * Loads a list of inquiries from a CSV file.
+     *
+     * @param filename the path to the CSV file to read
+     * @return list of Inquiry objects
+     */
 	public static List<Inquiry> loadInquiries(String path) {
 		inquiries = new ArrayList<>();
 		File file = new File(path); 
