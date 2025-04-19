@@ -3,6 +3,8 @@ package entity;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+
 import java.util.ArrayList;
 
 public class Project {
@@ -34,6 +36,14 @@ public class Project {
 		this.officerSlot = officerSlot;
 		this.officers = officers;
 		this.visibility = visibility;
+	}
+
+	public List<HDBOfficer> getTemp() {
+		return temp;
+	}
+
+	public void setTemp(List<HDBOfficer> temp) {
+		this.temp = temp;
 	}
 
 	//Setter for visibility
@@ -170,4 +180,8 @@ public class Project {
 	public void removeTemporaryOfficer (HDBOfficer n){
 		this.temp.remove(n);
 	}
+	
+	
+	
+	
 }
