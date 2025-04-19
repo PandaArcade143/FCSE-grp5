@@ -20,7 +20,7 @@ public class HDBOfficer extends Applicant{
 		return this.registeredProject;
 	}
 
-	public String getRegistrationStatus(String key){ // Added a key value to be received
+	public String getRegistrationStatus(){ 
 		return this.registrationStatus;
 	}
 
