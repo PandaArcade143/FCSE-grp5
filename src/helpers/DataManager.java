@@ -332,7 +332,8 @@ public class DataManager {
     /**
      * Loads a list of users from a CSV file.
      *
-     * @param filename the path to the CSV file to read and Class type of user
+     * @param filename the path to the CSV file to read
+     * @param Class type of user
      */	
 	public static <T> void loadUsers(String path, Class<T> c) {
 		try (BufferedReader br = new BufferedReader(new FileReader(path))) {
