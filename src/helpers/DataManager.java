@@ -23,7 +23,6 @@ import entity.User;
  * projects, and inquiries from/to CSV files. Also handles runtime data setup
  * and cleanup on application exit.
  */
-
 public class DataManager {
 	private static List<Project> projects = new ArrayList<>();
 	private static List<Applicant> applicants = new ArrayList<>();
@@ -37,7 +36,6 @@ public class DataManager {
      * Loads users, inquiries, and projects into memory on class initialization
      * and sets a shutdown hook to save data on exit.
      */	
-
 	static {
 		DataManager.loadUsers("data/ApplicantList.csv", Applicant.class);
 		DataManager.loadUsers("data/ManagerList.csv", HDBManager.class);
