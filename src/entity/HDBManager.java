@@ -23,6 +23,14 @@ public class HDBManager extends User{
 		this.createdProject = p;
 	}
 
+	public void addCreatedProjects(Project p) {
+		createdProject.add(p);
+	}
+	
+	public void removeCreatedProjects(Project p) {
+		createdProject.remove(p);
+	}
+
 	
 	
 }
