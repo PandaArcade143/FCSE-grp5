@@ -251,7 +251,7 @@ public class ProjectController <T>{
 
     }
 
-    public void editProject (HDBManager manager, Project p,  String field, Object info){
+    public <T> void editProject (HDBManager manager, Project p,  String field, T info){
         if (field.equals("name")){
             p.setName((String)info);
         } else if (field.equals("location")){
