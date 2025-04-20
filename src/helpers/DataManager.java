@@ -267,7 +267,7 @@ public class DataManager {
     				+ "Type 1,Number of units for Type 1,Selling price for Type 1,"
     				+ "Type 2,Number of units for Type 2,Selling price for Type 2,"
     				+ "Application opening date,Application closing date,"
-    				+ "Manager,Officer Slot,Officer,Temp");
+    				+ "Manager,Officer Slot,Officer,Temp,Visiblity");
     		for (Project p : projects) {
     			List<HDBOfficer> projectOfficers = p.getOfficers();
     			List<String> projectOfficersName = projectOfficers.stream()
@@ -277,7 +277,7 @@ public class DataManager {
     			List<String> tempOfficersName = tempOfficers.stream()
     					.map(HDBOfficer::getName)
     					.collect(Collectors.toList());
-    			writer.printf("%s,%s,%s,%d,%d,%s,%d,%d,%s,%s,%s,%d,%s,%s\n", 
+    			writer.printf("%s,%s,%s,%d,%d,%s,%d,%d,%s,%s,%s,%d,%s,%s,%s\n", 
     					p.getName(),
     					p.getLocation(),
     					type1,
@@ -288,10 +288,11 @@ public class DataManager {
     					p.getFlatPrices().get(type2),
     					formatter.format(p.getOpenDate()),
     					formatter.format(p.getCloseDate()),
-    					p.getManager(),
+    					p.getManagerName(),
     					p.getOfficerSlot(),
     					stringify(projectOfficersName),
-    					stringify(tempOfficersName)
+    					stringify(tempOfficersName),
+    					p.getVisibility()
     				);
     	}
     } catch (IOException e) {
@@ -408,10 +409,11 @@ public class DataManager {
 						.collect(Collectors.toList());
 
 				boolean visibility;
-				if (data.length <= 13) {
+				// By default, if the visibility field is empty, it is visible
+				if ("".equals(getCSVField(data,14))) {
 					visibility = true;
 				} else {
-					visibility = Boolean.parseBoolean(data[13]);
+					visibility = Boolean.parseBoolean(getCSVField(data,14));
 				}
 				
 				Map<String, Integer> flatTotal = new HashMap<>();
