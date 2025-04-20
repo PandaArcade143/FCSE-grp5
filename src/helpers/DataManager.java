@@ -40,8 +40,8 @@ public class DataManager {
 		DataManager.loadUsers("data/ApplicantList.csv", Applicant.class);
 		DataManager.loadUsers("data/ManagerList.csv", HDBManager.class);
 		DataManager.loadUsers("data/OfficerList.csv", HDBOfficer.class);
-		inquiries = DataManager.loadInquiries("data/inquiryList.csv");
 		projects = DataManager.loadProjects("data/ProjectList.csv");
+		inquiries = DataManager.loadInquiries("data/InquiryList.csv");
 		
 		// Creates a shutdown hook that will save data everytime the program closes
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -453,7 +453,7 @@ public class DataManager {
 		}
 		
 		for (HDBOfficer officer : officers) {
-			Project p ;
+			Project p;
 			p = projects.stream()
 					.filter(project -> project.getOfficers().contains(officer))
 					.findFirst()
@@ -462,6 +462,7 @@ public class DataManager {
 			officer.addRegisteredProjects(p);
 			}
 		}
+		
 		for (Applicant applicant : applicants) {
 			Project p;
 			p = projects.stream()
@@ -502,15 +503,19 @@ public class DataManager {
 				String subject = getCSVField(data,2);
 				String message = getCSVField(data,3);
 				String status = getCSVField(data,4);
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");				
 				String createdAtStr = getCSVField(data,5);
-				LocalDateTime createdAt = LocalDateTime.parse(createdAtStr, formatter);
+				LocalDateTime createdAt = LocalDateTime.parse(createdAtStr,DateTimeFormatter.ISO_LOCAL_DATE_TIME );
 				String resolvedAtStr = getCSVField(data,6);
-				LocalDateTime resolvedAt = LocalDateTime.parse(resolvedAtStr, formatter);
+				LocalDateTime resolvedAt;
+				if ("null".equals(resolvedAtStr)) {
+					resolvedAt = null;
+				} else {
+					resolvedAt = LocalDateTime.parse(resolvedAtStr, DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+				}
 				String projectName = getCSVField(data,7);
 				String reply = getCSVField(data,8);
 				Project relatedProject = projects.stream()
-						.filter(p -> p.getName().equalsIgnoreCase(projectName))
+						.filter(p -> p.getName().equals(projectName))
 						.findFirst()
 						.orElse(null);
 				if (relatedProject == null) {
