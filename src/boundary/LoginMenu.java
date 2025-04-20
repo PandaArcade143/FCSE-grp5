@@ -16,13 +16,14 @@ public class LoginMenu {
     	AuthController authController = new AuthController();
     	Scanner scanner = new Scanner(System.in);
         Object user = null;
+        String nric;
 
         System.out.println("Welcome to the BTO Management System (Enter 'Quit' to quit).");
 
         // NRIC input and validation loop
         while (true) {
             System.out.print("Enter your NRIC: ");
-            String nric = scanner.nextLine().trim();
+            nric = scanner.nextLine().trim();
 
             if (nric.equalsIgnoreCase("Quit")) {
             	scanner.close();
@@ -34,6 +35,7 @@ public class LoginMenu {
                 System.out.println("Invalid NRIC format. Please enter S/T + 7 digits + letter (e.g., S1234567A).");
                 continue;
             }
+            
 
             // Search user in all role lists
             user = findUserByNRIC(nric, applicantList);
@@ -56,12 +58,19 @@ public class LoginMenu {
             	scanner.close();
                 return;
             }
-
-            if (!((User) user).getPassword().equals(password)) {
-                System.out.println("Invalid password. Please try again.");
+            
+            
+            if (authController.login(nric, password) == null) {
+            	System.out.println("Invalid password. Please try again.");
             } else {
-                break;
+            	break;
             }
+
+//            if (!((User) user).getPassword().equals(password)) {
+//                System.out.println("Invalid password. Please try again.");
+//            } else {
+//                break;
+//            }
         }
 
         // Successful login
@@ -75,6 +84,7 @@ public class LoginMenu {
         	System.out.println("Login Menu:");
         	System.out.println("1. Proceed to other menus");
         	System.out.println("2. Change password");
+        	System.out.println("3. Quit");
         	
         	int choice;
             try {
@@ -148,6 +158,17 @@ public class LoginMenu {
                  			}
              			}
              		}
+             		break;
+             		
+             	case 3:
+                    // Exit the menu and application loop
+                    System.out.println("Goodbye!");
+                    scanner.close();
+                    break;
+                	
+                default:
+                	// Notify user if selection is invalid
+                    System.out.println("Invalid option. Please try again.");
              }
         }
     }

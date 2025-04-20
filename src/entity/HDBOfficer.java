@@ -1,9 +1,5 @@
 package entity;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class HDBOfficer extends Applicant{
 	Project registeredProject;
@@ -38,7 +34,7 @@ public class HDBOfficer extends Applicant{
 		if (this.registeredProject == p && this.getAppliedProject() == p) return false;
 
 		// Project must not be be in the same date range
-		if (p.after(proj.getOpenDate()) && p.before(proj.getCloseDate())) {
+		if (p.getOpenDate().after(registeredProject.getOpenDate()) && p.getOpenDate().before(registeredProject.getCloseDate())) {
 			return false;
 		}
 		

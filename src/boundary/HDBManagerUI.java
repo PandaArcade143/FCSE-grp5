@@ -27,9 +27,8 @@ public class HDBManagerUI {
         Scanner scanner = new Scanner(System.in);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         ProjectController<HDBManager> projectController = new ProjectController<>();
-        InquiryController inquirycontroller = new InquiryController();
-        HDBOfficer officer;
-        Applicant applicant;
+        HDBOfficer officer = null;
+        Applicant applicant = null;
         Project chosenProject;
         boolean validDate;
         List<Project> projectList;
@@ -258,7 +257,7 @@ public class HDBManagerUI {
 	                        validDate = true;
 	                        
 	                        for (Project createdProject : hdbmanager.getCreatedProjects()) {
-			            		if (!createdProject.getCloseDate().before(openingDate) && !createdProject.getOpenDate().after(openingDate)) {
+			            		if (!createdProject.getCloseDate().before(openDate) && !createdProject.getOpenDate().after(openDate)) {
 			            			validDate = false;
 			            			break;
 			            		}
@@ -288,7 +287,7 @@ public class HDBManagerUI {
 	                        validDate = true;
 	                        
 	                        for (Project createdProject : hdbmanager.getCreatedProjects()) {
-			            		if (!createdProject.getCloseDate().before(closingDate) && !createdProject.getOpenDate().after(closingDate)) {
+			            		if (!createdProject.getCloseDate().before(closeDate) && !createdProject.getOpenDate().after(closeDate)) {
 			            			validDate = false;
 			            			break;
 			            		}
@@ -487,7 +486,7 @@ public class HDBManagerUI {
 	                        		while (true) {
 	                        		System.out.print("Enter new status: ");
 	                            	String status = scanner.nextLine();
-	                            	projectController.processRegistrations(hdbmanager, officer,status);
+	                            	projectController.processRegistrations(hdbmanager, officer.getRegisteredProjects(), officer,status);
 	                        		}
 	                        	} else {
 	                        		System.out.println("No officer with this NRIC was found, please try again.");
@@ -533,7 +532,6 @@ public class HDBManagerUI {
                     	break;
                     }
                     break;
-	            	break;
 	            
 	            // Approve / reject BTO applications
 	            case 10:
@@ -664,7 +662,7 @@ public class HDBManagerUI {
 	                        String project = scanner.nextLine();
 	                        stream = stream.filter(a ->
 	                            a.getAppliedProject() != null &&
-	                            a.getAppliedProject().getName().equalsIgnoreCase(projectName)
+	                            a.getAppliedProject().getName().equalsIgnoreCase(project)
 	                        );
 	                        break;
 	                    case 5:
