@@ -1,13 +1,18 @@
 package boundary;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import control.ProjectController;
 import control.InquiryController;
 import entity.Applicant;
+import entity.HDBManager;
+import entity.HDBOfficer;
 import entity.Inquiry;
 import entity.Project;
+import entity.User;
+import helpers.DataManager;
 
 public class ApplicantUI {
 
@@ -18,17 +23,20 @@ public class ApplicantUI {
         List<Inquiry> inquiries = InquiryController.viewInquiries(applicant.getNRIC());
         List<Project> projectList = projectController.getAvailableProjects(applicant);
 
+        String status;
+        
         while (true) {
             // Display main menu options
         	System.out.println("Applicant Menu:");
             System.out.println("1. View available BTO projects");
             System.out.println("2. Apply for a project");
-            System.out.println("3. View my application status");
+            System.out.println("3. View details of project applied for and application status");
             System.out.println("4. Withdraw my application");
             System.out.println("5. Submit an inquiry");
             System.out.println("6. View and manage inquiries");
-            System.out.println("7. Filter projects.");
-            System.out.println("8. Quit");
+            System.out.println("7. Filter projects");
+            System.out.println("8. Switch menus");
+            System.out.println("9. Quit");
             System.out.print("Select an option: ");
 
             int choice;
@@ -45,7 +53,25 @@ public class ApplicantUI {
                     // Display all currently available projects for this applicant
                     System.out.println("Projects available:");
                     for (Project project : projectList) {
-                        System.out.println("- " + project.getName());
+                    	if (project != null) {
+    	                	System.out.println("\nProject Name: " + project.getName());
+    	                	System.out.println("Neighborhood: " + project.getLocation());
+    	                    
+    	                	System.out.println("Flat types and available number of units left for corresponding types:");
+    	                	for (Map.Entry<String, Integer> pair : project.getFlatTypeAvailable().entrySet()) {
+    	                       System.out.print("	Flat type: " + pair.getKey() + ", available number of units left: " + pair.getValue());
+    	                    }
+    	                	System.out.println("Flat types and prices for corresponding types:");
+    	                	for (Map.Entry<String, Integer> pair : project.getFlatPrices().entrySet()) {
+    	                       System.out.print("	Flat type: " + pair.getKey() + ", selling price: " + pair.getValue());
+    	                    }
+    	                	System.out.println("Application opening date: " + project.getOpenDate());
+    	                	System.out.println("Application closing date: " + project.getCloseDate());
+    	                	
+                    	} else {
+                            System.out.println("You are not allowed to view any project.");
+                        }
+                    	break;
                     }
                     break;
 
@@ -62,20 +88,41 @@ public class ApplicantUI {
                     break;
 
                 case 3:
-                    // View the status of the current application
-                    String status = applicant.getApplicationStatus();
-                    if (status != null) {
-                        System.out.println("Current application status: " + status);
-                    } else {
-                        System.out.println("No application found.");
+                    // View the details and status of the current application
+                	Project project = applicant.getAppliedProject();
+                	if (project != null) {
+	                	System.out.println("Project Name: " + project.getName());
+	                	System.out.println("Neighborhood: " + project.getLocation());
+	                    
+	                	System.out.println("Flat types and available number of units left for corresponding types:");
+	                	for (Map.Entry<String, Integer> pair : project.getFlatTypeAvailable().entrySet()) {
+	                       System.out.print("	Flat type: " + pair.getKey() + ", available number of units left: " + pair.getValue());
+	                    }
+	                	System.out.println("Flat types and prices for corresponding types:");
+	                	for (Map.Entry<String, Integer> pair : project.getFlatPrices().entrySet()) {
+	                       System.out.print("	Flat type: " + pair.getKey() + ", selling price: " + pair.getValue());
+	                    }
+	                	System.out.println("Application opening date: " + project.getOpenDate());
+	                	System.out.println("Application closing date: " + project.getCloseDate());
+	                	System.out.println("Current application status: " + applicant.getApplicationStatus());
+	                	
+                	} else {
+                        System.out.println("You did not apply for any project.");
                     }
-                    break;
 
                 case 4:
                     // Attempt to withdraw current application
-                    ////////////////////////////////////////////////////////////////
-                    ///HOW WILL APPLICANT SEND WITHDRAWAL NOTICE TO HDBMANAGER???///
-                    ////////////////////////////////////////////////////////////////
+                	status = applicant.getApplicationStatus();
+                	if (status != null) {
+                		if (status.equals("withdrawing")) {
+                			System.out.println("Application already pending withdrawal.");
+                		} else {
+                			applicant.setApplicationStatus("withdrawing");
+                			System.out.println("Application is now pending for withdrawal.");
+                		}
+                    } else {
+                        System.out.println("No application found.");
+                    }
                     break;
 
                 case 5:
@@ -96,12 +143,12 @@ public class ApplicantUI {
                         System.out.println("Invalid project selection.");
                         break;
                     }
-                    Project project = projectList.get(projectIndex);
+                    Project selectedProject = projectList.get(projectIndex);
                     System.out.print("Subject: ");
                     String subject = scanner.nextLine().trim();
                     System.out.print("Message: ");
                     String message = scanner.nextLine().trim();
-                    InquiryController.createInquiry(applicant.getNRIC(), subject, project, message);
+                    InquiryController.createInquiry(applicant.getNRIC(), subject, selectedProject, message);
                     break;
 
                 case 6:
@@ -215,24 +262,52 @@ public class ApplicantUI {
                             System.out.println("Invalid filter option.");
                             break;
                     }
-                    // Display filtered project results
-                    List<Project> filtered = projectController.getFilteredProjects(applicant);
-                    System.out.println("Filtered projects:");
-                    for (Project proj : filtered) {
-                        System.out.println("- " + proj.getName());
+                    break;
+                
+                case 8:
+                	// Switch menu if applicant has access
+                	List <HDBOfficer> officerList = DataManager.getOfficers();
+                	List <HDBManager> managerList = DataManager.getManagers();
+                	    
+                	Object user = findUserByNRIC(applicant.getNRIC(), managerList);
+                    if (user == null) user = findUserByNRIC(applicant.getNRIC(), officerList);
+
+                    switch (((User) user).getRole()) {
+                        case "HDBManager":
+                        	System.out.println("Switching to Manager Menu...");
+                        	new HDBManagerUI().showMenu((HDBManager) user);
+                            break;
+                        case "HDBOfficer":
+                        	System.out.println("Switching to Officer Menu...");
+                        	new HDBOfficerUI().showMenu((HDBOfficer) user);
+                        	break;
+                        default:
+                        	System.out.println("You do not have access outside of Applicant Menu.");
                     }
                     break;
-
-                case 8:
+                    
+                case 9:
                     // Exit the menu and application loop
                     System.out.println("Goodbye!");
                     scanner.close();
-                    return;
+                    break;
 
                 default:
                     // Notify user if selection is invalid
                     System.out.println("Invalid option. Please try again.");
             }
+            
+            
         }
+    }
+    
+    //Generic method to find a User in a list by NRIC
+    private static <T> User findUserByNRIC(String nric, List<T> list) {
+        for (T u : list) {
+            if (u instanceof User && ((User) u).getNRIC().equalsIgnoreCase(nric)) {
+                return (User) u;
+            }
+        }
+        return null;
     }
 }

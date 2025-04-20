@@ -12,26 +12,26 @@ import helpers.DataManager;
 
 public class HDBOfficerUI {
 
-    public void showMenu(HDBOfficer officer) {
+    public void showMenu(HDBOfficer hdbofficer) {
 
     	ProjectController<HDBOfficer> projectController = new ProjectController<>();
-        InquiryController inquiryController = new InquiryController();
         List<Applicant> applicantList = DataManager.getApplicants();
         Scanner scanner = new Scanner(System.in);
-        List<Project> projectList = projectController.getAvailableProjects(officer); // Fetches list of available projects
-        Project registeredProject = officer.getRegisteredProjects();
+        List<Project> projectList = projectController.getAvailableProjects(hdbofficer); // Fetches list of available projects
+        Project registeredProject = hdbofficer.getRegisteredProjects();
         
         while (true) {
 	        // Display menu
 	        System.out.println("HDB Officer Menu:");
 	        System.out.println("1. View available BTO projects");
 	        System.out.println("2. Register for a project");
-	        System.out.println("3. View registration status for projects");
-	        System.out.println("4. View project details");
+	        System.out.println("3. View registration status for project");
+	        System.out.println("4. View details of project registered for / handling.");
 	        System.out.println("5. Respond to enquiries");
 	        System.out.println("6. Update BTO status and generate applicant receipt");
-	        System.out.println("7. Filter projects.");
-	        System.out.println("8. Quit");
+	        System.out.println("7. Filter projects");
+	        System.out.println("8. Switch menus");
+	        System.out.println("9. Quit");
 	        System.out.print("Select an option: ");
         	
         	int choice;
@@ -46,11 +46,37 @@ public class HDBOfficerUI {
             switch (choice) {
                 case 1:
                 	// Display list of available projects
-                	System.out.println("Projects available:");
-                	for (Project project : projectList) {
-                        System.out.println("- " + project.getName());
-                    }
-                    break;
+                	 System.out.println("Projects available:");
+                     for (Project project : projectList) {
+                     	if (project != null) {
+     	                	System.out.println("Project Name: " + project.getName());
+     	                	System.out.println("Neighborhood: " + project.getLocation());
+     	                	System.out.println("Flat types and total number of units for corresponding types:");
+     	                	for (Map.Entry<String, Integer> pair : project.getFlatTypeTotal().entrySet()) {
+     	                       System.out.print("	Flat type: " + pair.getKey() + ", total number of units: " + pair.getValue());
+     	                    }
+     	                	System.out.println("Flat types and available number of units left for corresponding types:");
+     	                	for (Map.Entry<String, Integer> pair : project.getFlatTypeAvailable().entrySet()) {
+     	                       System.out.print("	Flat type: " + pair.getKey() + ", available number of units left: " + pair.getValue());
+     	                    }
+     	                	System.out.println("Flat types and prices for corresponding types:");
+     	                	for (Map.Entry<String, Integer> pair : project.getFlatPrices().entrySet()) {
+     	                       System.out.print("	Flat type: " + pair.getKey() + ", selling price: " + pair.getValue());
+     	                    }
+     	                	System.out.println("Application opening date: " + project.getOpenDate());
+     	                	System.out.println("Application closing date: " + project.getCloseDate());
+     	                	System.out.println("Manager of project: " + project.getManager());
+     	                	System.out.println("Officer slots for project: " + project.getOfficerSlot());
+     	                	System.out.println("Officers of project: ");
+     	                	for (HDBOfficer officer: project.getOfficers()) {
+     	                		System.out.println("	" + officer.getName());
+     	                    }
+                     	} else {
+                             System.out.println("You are not allowed to view any project.");
+                         }
+                     	break;
+                     }
+                     break;
                     
                 case 2:
                 	// HDB officer registers for a project
@@ -63,19 +89,18 @@ public class HDBOfficerUI {
                         }
                     }
                     // Displays message depending on whether project is successfully applied
-                    if (officer.isEligibleForRegistration(registeredProject) == false) {
+                    if (hdbofficer.isEligibleForRegistration(registeredProject) == false) {
                         System.out.println("Project is unable to be registered for as you are already applying as an applicant.");
-                    } else if (projectName == officer.getRegisteredProjects().getName()){
+                    } else if (projectName == hdbofficer.getRegisteredProjects().getName()){
                         System.out.println("You have already registered for this project.");
-                    } else if (officer.getRegisteredProjects() != null && !officer.getRegisteredProjects().getOpenDate().after(currDate) && !officer.getRegisteredProjects().getCloseDate().before(currDate)) {
+                    } else if (hdbofficer.getRegisteredProjects() != null && !hdbofficer.getRegisteredProjects().getOpenDate().after(currDate) && !hdbofficer.getRegisteredProjects().getCloseDate().before(currDate)) {
                     	System.out.println("You have already registered for another project.");
                     } else if (registeredProject.getOfficerSlot() == registeredProject.getOfficers().size()){
                     	System.out.println("No free officer slots left for this project.");
                     } else{
                     	System.out.println("Project successfully registered!");
-                    	//NOT SURE IF THIS IS HOW TO REGISTER HDBOFFICER
-                    	registeredProject.addTemporaryOfficer(officer);
-                        officer.addRegisteredProjects(registeredProject);
+                    	registeredProject.addTemporaryOfficer(hdbofficer);
+                    	hdbofficer.addRegisteredProjects(registeredProject);
                     }
                     break;
                     
@@ -85,8 +110,7 @@ public class HDBOfficerUI {
                         System.out.println("You are not registered for any project.");
                     } else {
                     	System.out.println("Registration status:");
-                    	//WHAT IS THE KEY THING THAT getRegistrationStatus SHOULD TAKE IN?
-                    	System.out.println(officer.getRegistrationStatus());
+                    	System.out.println(hdbofficer.getRegistrationStatus());
                     }
                 	
                     break;
@@ -113,8 +137,8 @@ public class HDBOfficerUI {
 	                	System.out.println("Manager of project: " + registeredProject.getManager());
 	                	System.out.println("Officer slots for project: " + registeredProject.getOfficerSlot());
 	                	System.out.println("Officers of project: ");
-	                	for (HDBOfficer hdbofficer: registeredProject.getOfficers()) {
-	                		System.out.println("	" + hdbofficer.getName());
+	                	for (HDBOfficer officer: registeredProject.getOfficers()) {
+	                		System.out.println("	" + officer.getName());
 	                    }
                 	} else {
                         System.out.println("You are not registered for any project.");
@@ -248,19 +272,19 @@ public class HDBOfficerUI {
                             System.out.println("Invalid filter option.");
                             break;
                     }
-                    // Display filtered project results
-                    List<Project> filtered = projectController.getFilteredProjects(officer);
-                    System.out.println("Filtered projects:");
-                    for (Project proj : filtered) {
-                        System.out.println("- " + proj.getName());
-                    }
+                    break;
+                    
+                case 8:
+                	// Switch menu to applicant
+                	System.out.println("Switching to Applicant Menu...");
+                    new ApplicantUI().showMenu((Applicant) hdbofficer);
                     break;
 
-                case 8:
+                case 9:
                     // Exit the menu and application loop
                     System.out.println("Goodbye!");
                     scanner.close();
-                    return;
+                    break;
                 	
                 default:
                 	// Notify user if selection is invalid
