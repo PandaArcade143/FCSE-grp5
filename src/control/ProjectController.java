@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 import helpers.DataManager;
 
-public class ProjectController <T>{
+public class ProjectController {
     private List <Project> projects = DataManager.getProjects();
     private List <Applicant> applicants = DataManager.getApplicants();
     private List <HDBOfficer> officers = DataManager.getOfficers();
