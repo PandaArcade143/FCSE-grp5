@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HDBManager extends User{
-	List<Project> createdProject;
+	List<Project> createdProjects;
 
 	public HDBManager(String name, String nric, int age, String maritalStatus, String password) {
 		super(name, nric, age, maritalStatus, password);
+		this.createdProjects = new ArrayList<>();
 	}
 	
 	public String getRole() {
@@ -15,12 +16,21 @@ public class HDBManager extends User{
 		
 	}
 
-	public List <Project> getCreatedProjects(){ // UML diagram said to return a string and I don't see an Override ToString in UML
-		return this.createdProject;
+	public List<Project> getCreatedProjects(){
+		return this.createdProjects;
 	}
 
-	public void setCreatedProjects(List<Project> p){
-		this.createdProject = p;
+	// Performs actions to add/remove created projects
+	public void addCreatedProjects(Project p){
+		if (p != null){ // Check for null for safety
+            this.createdProjects.add(p);
+        }
+	}
+
+	public void removeCreatedProject(Project p){
+		if (p != null){ // Check for null for safety
+            this.createdProjects.remove(p);
+        }
 	}
 
 	public void addCreatedProjects(Project p) {
@@ -31,6 +41,8 @@ public class HDBManager extends User{
 		createdProject.remove(p);
 	}
 
-	
-	
+	// Legacy function - remove once unneeded
+	public void setCreatedProjects(List<Project> p){
+		this.createdProject = p;
+	}
 }
