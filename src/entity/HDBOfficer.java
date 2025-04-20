@@ -1,6 +1,7 @@
 package entity;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -47,4 +48,17 @@ public class HDBOfficer extends Applicant{
 	}
 
 	// What info should be in ToString()?
+	
+	@Override
+	public boolean equals(Object obj) {
+	    if (this == obj) return true;
+	    if (!(obj instanceof HDBOfficer)) return false;
+	    HDBOfficer o = (HDBOfficer) obj;
+	    return this.getNRIC().equals(o.getNRIC()); // or whatever uniquely identifies an officer
+	}
+
+	@Override
+	public int hashCode() {
+	    return Objects.hash(this.getNRIC());
+	}
 }
