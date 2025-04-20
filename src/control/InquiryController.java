@@ -8,10 +8,11 @@ import java.util.stream.Collectors;
 
 import entity.Inquiry;
 import entity.Project;
+import helpers.DataManager;
 import entity.Applicant;
 
 public class InquiryController {
-    private static List<Inquiry> inquiries = new ArrayList<>();
+    private static List<Inquiry> inquiries = DataManager.getInquiries();
 
     // Create an inquiry
     public static void createInquiry(String senderNRIC, String subject, Project project, String message) {
