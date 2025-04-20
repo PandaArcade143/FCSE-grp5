@@ -37,17 +37,13 @@ public class HDBOfficer extends Applicant{
 		// If officer has applied for the same project as an application, he is not allowed to join the project
 		if (this.registeredProject == p && this.getAppliedProject() == p) return false;
 
-		// Unable to compute date range yet, confirm during meeting
-		// for (Project proj : registeredProjects){
-
-		// }
-		
+		// Project must not be be in the same date range
+		if (p.after(proj.getOpenDate()) && p.before(proj.getCloseDate())) {
+			return false;
+		}
 		
 		return true;
-
 	}
-
-	// What info should be in ToString()?
 	
 	@Override
 	public boolean equals(Object obj) {

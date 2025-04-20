@@ -33,14 +33,6 @@ public class HDBManager extends User{
         }
 	}
 
-	public void addCreatedProjects(Project p) {
-		createdProject.add(p);
-	}
-	
-	public void removeCreatedProjects(Project p) {
-		createdProject.remove(p);
-	}
-
 	// Legacy function - remove once unneeded
 	public void setCreatedProjects(List<Project> p){
 		this.createdProject = p;
