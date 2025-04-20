@@ -19,7 +19,9 @@ public class Project {
 	Map<String, Integer> flatPrices;
 	Date openDate;
 	Date closeDate;
-	String manager;
+	String managerName;
+	HDBManager manager;
+	
 	int officerSlot;
 	List <HDBOfficer> temp;
 	List <HDBOfficer> officers;
@@ -50,12 +52,20 @@ public class Project {
 		this.flatPrices = flatPrices;
 		this.openDate = openingDate;
 		this.closeDate = closingDate;
-		this.manager = manager;
+		this.managerName = manager;
 		this.officerSlot = officerSlot;
 		this.officers = officers;
 		this.visibility = visibility;
 	}
 
+	public HDBManager getManager() {
+		return manager;
+	}
+
+
+	public void setManager(HDBManager manager) {
+		this.manager = manager;
+	}
 
 	 /**
      * Checks if a specific flat type is available in this project.
@@ -222,19 +232,19 @@ public class Project {
 	/**
 	 * Gets the manager identifier or name.
 	 *
-	 * @return the manager
+	 * @return the managerName
 	 */
-	public String getManager(){
-		return this.manager;
+	public String getManagerName(){
+		return this.managerName;
 	}
 
 	/**
 	 * Sets the manager's identifier or name.
 	 *
-	 * @param m the manager
+	 * @param m the managerName
 	 */
-	public void setManager(String m){
-		this.manager = m;
+	public void setManagerName(String m){
+		this.managerName = m;
 	}
 
 	/**
