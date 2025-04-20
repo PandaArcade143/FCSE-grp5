@@ -451,7 +451,7 @@ public class DataManager {
 		}
 		
 		for (HDBOfficer officer : officers) {
-			Project p;
+			Project p ;
 			p = projects.stream()
 					.filter(project -> project.getOfficers().contains(officer))
 					.findFirst()
@@ -460,11 +460,20 @@ public class DataManager {
 			officer.addRegisteredProjects(p);
 			}
 		}
-		
+		for (Applicant applicant : applicants) {
+			Project p;
+			p = projects.stream()
+					.filter(project -> project.getName().equals(applicant.getAppliedProjectString()))
+					.findFirst()
+					.orElse(null);
+			if (p != null) {
+			applicant.setAppliedProject(p);
+			}
+		}
 
 		return projects;
 		
-		
+	
 	}
 	
     /**
