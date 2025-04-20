@@ -69,47 +69,87 @@ public class LoginMenu {
         System.out.println("\nLogin successful! Welcome " + loggedInUser.getName() + "!");
         System.out.println("Age: " + loggedInUser.getAge());
         System.out.println("Marital Status: " + loggedInUser.getMaritalStatus());
-
-        // Redirect based on role
-        String menuChoice;
-        switch (loggedInUser.getRole()) {
-            case "Applicant":
-                new ApplicantUI().showMenu((Applicant) loggedInUser);
-                break;
-            case "HDBManager":
-            	while (true) {
-            		System.out.print("Access Applicant Menu or Manager Menu?: ");
-                    menuChoice = scanner.nextLine();
-                    if (menuChoice.equalsIgnoreCase("Applicant")) {
-                    	new ApplicantUI().showMenu((Applicant) loggedInUser);
-                        break;
-                    } else if (menuChoice.equalsIgnoreCase("Manager")) {
-                    	new HDBManagerUI().showMenu((HDBManager) loggedInUser);
-                        break;
-                    } else {
-                    	System.out.print("Invalid option, please try again.");
+        
+        // Menu
+        while (true) {
+        	System.out.println("Login Menu:");
+        	System.out.println("1. Proceed to other menus");
+        	System.out.println("2. Change password");
+        	
+        	int choice;
+            try {
+                choice = Integer.parseInt(scanner.nextLine());
+            } catch (NumberFormatException e) {
+                // Handle non-integer input
+                System.out.println("Invalid input. Please enter a number.");
+                continue;
+            }
+             switch (choice) {
+             	case 1:
+             		// Redirect based on role
+                    String menuChoice;
+                    switch (loggedInUser.getRole()) {
+                        case "Applicant":
+                            new ApplicantUI().showMenu((Applicant) loggedInUser);
+                            break;
+                        case "HDBManager":
+                        	while (true) {
+                        		System.out.println("Access Applicant Menu or Manager Menu?: ");
+                                menuChoice = scanner.nextLine();
+                                if (menuChoice.equalsIgnoreCase("Applicant")) {
+                                	new ApplicantUI().showMenu((Applicant) loggedInUser);
+                                    break;
+                                } else if (menuChoice.equalsIgnoreCase("Manager")) {
+                                	new HDBManagerUI().showMenu((HDBManager) loggedInUser);
+                                    break;
+                                } else {
+                                	System.out.println("Invalid option, please try again.");
+                                }
+                        	}
+                            break;
+                        case "HDBOfficer":
+                        	while (true) {
+                        		System.out.println("Access Applicant Menu or Officer Menu?: ");
+                                menuChoice = scanner.nextLine();
+                                if (menuChoice.equalsIgnoreCase("Applicant")) {
+                                	new ApplicantUI().showMenu((Applicant) loggedInUser);
+                                    break;
+                                } else if (menuChoice.equalsIgnoreCase("Officer")) {
+                                	new HDBOfficerUI().showMenu((HDBOfficer) loggedInUser);
+                                    break;
+                                } else {
+                                	System.out.println("Invalid option, please try again.");
+                                }
+                        	}
+                            break;
                     }
-            	}
-                break;
-            case "HDBOfficer":
-            	while (true) {
-            		System.out.print("Access Applicant Menu or Officer Menu?: ");
-                    menuChoice = scanner.nextLine();
-                    if (menuChoice.equalsIgnoreCase("Applicant")) {
-                    	new ApplicantUI().showMenu((Applicant) loggedInUser);
-                        break;
-                    } else if (menuChoice.equalsIgnoreCase("Officer")) {
-                    	new HDBOfficerUI().showMenu((HDBOfficer) loggedInUser);
-                        break;
-                    } else {
-                    	System.out.print("Invalid option, please try again.");
-                    }
-            	}
-                break;
+                    scanner.close();
+                    return;
+                    
+             	case 2:
+             		// Change user's password
+             		while (true) {
+             			System.out.println("Enter new password: ");
+             			String newPassword = scanner.nextLine();
+             			if (newPassword.equals(((User) user).getPassword())) {
+             				System.out.println("Please enter a different password from your old one.");
+             			} else if (newPassword.length() < 6) {
+             				System.out.println("Please enter a password that is 6 characters or longer.");
+             			} else {
+             				System.out.println("Re-enter the password: ");
+                 			String newPasswordConfirmation = scanner.nextLine();
+                 			if (newPasswordConfirmation.equals(newPassword)) {
+                 				authController.changePassword((User) user, newPassword);
+                 				System.out.println("Password successfully changed!");
+                 				break;
+                 			} else {
+                 				System.out.println("Re-entered password does not match the new password, please try again.");
+                 				break;
+                 			}
+             			}
+             		}
+             }
         }
-        scanner.close();
-        return;
-
     }
 
     //Generic method to find a User in a list by NRIC
