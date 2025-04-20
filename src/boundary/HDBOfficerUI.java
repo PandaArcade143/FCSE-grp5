@@ -22,7 +22,7 @@ public class HDBOfficerUI {
         
         while (true) {
 	        // Display menu
-	        System.out.println("HDB Officer Menu:");
+	        System.out.println("\n\n\nHDB Officer Menu:");
 	        System.out.println("1. View available BTO projects");
 	        System.out.println("2. Register for a project");
 	        System.out.println("3. View registration status for project");
@@ -38,7 +38,7 @@ public class HDBOfficerUI {
             try {
                 choice = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number.");
+                System.out.println("\nInvalid input. Please enter a number.");
                 continue;
             }
             
@@ -46,22 +46,22 @@ public class HDBOfficerUI {
             switch (choice) {
                 case 1:
                 	// Display list of available projects
-                	 System.out.println("Projects available:");
+                	 System.out.println("\nProjects available:");
                      for (Project project : projectList) {
                      	if (project != null) {
-     	                	System.out.println("Project Name: " + project.getName());
+     	                	System.out.println("\nProject Name: " + project.getName());
      	                	System.out.println("Neighborhood: " + project.getLocation());
      	                	System.out.println("Flat types and total number of units for corresponding types:");
      	                	for (Map.Entry<String, Integer> pair : project.getFlatTypeTotal().entrySet()) {
-     	                       System.out.print("	Flat type: " + pair.getKey() + ", total number of units: " + pair.getValue());
+     	                       System.out.print(" - Flat type: " + pair.getKey() + ", total number of units: " + pair.getValue());
      	                    }
      	                	System.out.println("Flat types and available number of units left for corresponding types:");
      	                	for (Map.Entry<String, Integer> pair : project.getFlatTypeAvailable().entrySet()) {
-     	                       System.out.print("	Flat type: " + pair.getKey() + ", available number of units left: " + pair.getValue());
+     	                       System.out.print(" - Flat type: " + pair.getKey() + ", available number of units left: " + pair.getValue());
      	                    }
      	                	System.out.println("Flat types and prices for corresponding types:");
      	                	for (Map.Entry<String, Integer> pair : project.getFlatPrices().entrySet()) {
-     	                       System.out.print("	Flat type: " + pair.getKey() + ", selling price: " + pair.getValue());
+     	                       System.out.print(" - Flat type: " + pair.getKey() + ", selling price: " + pair.getValue());
      	                    }
      	                	System.out.println("Application opening date: " + project.getOpenDate());
      	                	System.out.println("Application closing date: " + project.getCloseDate());
@@ -69,10 +69,10 @@ public class HDBOfficerUI {
      	                	System.out.println("Officer slots for project: " + project.getOfficerSlot());
      	                	System.out.println("Officers of project: ");
      	                	for (HDBOfficer officer: project.getOfficers()) {
-     	                		System.out.println("	" + officer.getName());
+     	                		System.out.println(" - " + officer.getName());
      	                    }
                      	} else {
-                             System.out.println("You are not allowed to view any project.");
+                             System.out.println("\nYou are not allowed to view any project.");
                          }
                      	break;
                      }
@@ -80,7 +80,7 @@ public class HDBOfficerUI {
                     
                 case 2:
                 	// HDB officer registers for a project
-                	System.out.println("Enter the name of the project you wish to register for: ");
+                	System.out.println("\nEnter the name of the project you wish to register for: ");
                     String projectName = scanner.nextLine().trim();
                     Date currDate = new Date();
                     for (Project project : projectList) {
@@ -89,16 +89,16 @@ public class HDBOfficerUI {
                         }
                     }
                     // Displays message depending on whether project is successfully applied
-                    if (hdbofficer.isEligibleForRegistration(registeredProject) == false) {
-                        System.out.println("Project is unable to be registered for as you are already applying as an applicant.");
+                    if (hdbofficer.getAppliedProject() == hdbofficer.getRegisteredProjects()) {
+                        System.out.println("\nProject is unable to be registered for as you are already applying as an applicant.");
                     } else if (projectName == hdbofficer.getRegisteredProjects().getName()){
-                        System.out.println("You have already registered for this project.");
+                        System.out.println("\nYou have already registered for this project.");
                     } else if (hdbofficer.getRegisteredProjects() != null && !hdbofficer.getRegisteredProjects().getOpenDate().after(currDate) && !hdbofficer.getRegisteredProjects().getCloseDate().before(currDate)) {
-                    	System.out.println("You have already registered for another project.");
+                    	System.out.println("\nYou have already registered for another project.");
                     } else if (registeredProject.getOfficerSlot() == registeredProject.getOfficers().size()){
-                    	System.out.println("No free officer slots left for this project.");
+                    	System.out.println("\nNo free officer slots left for this project.");
                     } else{
-                    	System.out.println("Project successfully registered!");
+                    	System.out.println("\nProject successfully registered!");
                     	registeredProject.addTemporaryOfficer(hdbofficer);
                     	hdbofficer.addRegisteredProjects(registeredProject);
                     }
@@ -107,10 +107,9 @@ public class HDBOfficerUI {
                 case 3:
                 	// View registration status
                 	if (registeredProject == null) {
-                        System.out.println("You are not registered for any project.");
+                        System.out.println("\nYou are not registered for any project.");
                     } else {
-                    	System.out.println("Registration status:");
-                    	System.out.println(hdbofficer.getRegistrationStatus());
+                    	System.out.println("\nRegistration status: " + hdbofficer.getRegistrationStatus());
                     }
                 	
                     break;
@@ -118,19 +117,19 @@ public class HDBOfficerUI {
                 case 4:
                 	// View project details
                 	if (registeredProject != null) {
-	                	System.out.println("Project Name: " + registeredProject.getName());
+	                	System.out.println("\nProject Name: " + registeredProject.getName());
 	                	System.out.println("Neighborhood: " + registeredProject.getLocation());
 	                	System.out.println("Flat types and total number of units for corresponding types:");
 	                	for (Map.Entry<String, Integer> pair : registeredProject.getFlatTypeTotal().entrySet()) {
-	                       System.out.print("	Flat type: " + pair.getKey() + ", total number of units: " + pair.getValue());
+	                       System.out.print(" - Flat type: " + pair.getKey() + ", total number of units: " + pair.getValue());
 	                    }
 	                	System.out.println("Flat types and available number of units left for corresponding types:");
 	                	for (Map.Entry<String, Integer> pair : registeredProject.getFlatTypeAvailable().entrySet()) {
-	                       System.out.print("	Flat type: " + pair.getKey() + ", available number of units left: " + pair.getValue());
+	                       System.out.print(" - Flat type: " + pair.getKey() + ", available number of units left: " + pair.getValue());
 	                    }
 	                	System.out.println("Flat types and prices for corresponding types:");
 	                	for (Map.Entry<String, Integer> pair : registeredProject.getFlatPrices().entrySet()) {
-	                       System.out.print("	Flat type: " + pair.getKey() + ", selling price: " + pair.getValue());
+	                       System.out.print(" - Flat type: " + pair.getKey() + ", selling price: " + pair.getValue());
 	                    }
 	                	System.out.println("Application opening date: " + registeredProject.getOpenDate());
 	                	System.out.println("Application closing date: " + registeredProject.getCloseDate());
@@ -138,10 +137,10 @@ public class HDBOfficerUI {
 	                	System.out.println("Officer slots for project: " + registeredProject.getOfficerSlot());
 	                	System.out.println("Officers of project: ");
 	                	for (HDBOfficer officer: registeredProject.getOfficers()) {
-	                		System.out.println("	" + officer.getName());
+	                		System.out.println(" - " + officer.getName());
 	                    }
                 	} else {
-                        System.out.println("You are not registered for any project.");
+                        System.out.println("\nYou are not registered for any project.");
                     }
                 	break;
                 	
@@ -149,18 +148,18 @@ public class HDBOfficerUI {
                 	// Respond to inquiries
                 	List<Inquiry> inquiries = InquiryController.viewInquiries(registeredProject);
                     if (inquiries.isEmpty()) {
-                        System.out.println("No inquiries found.");
+                        System.out.println("\nNo inquiries found.");
                     } else {
-                        System.out.println("Inquiries for project " + registeredProject.getName() + ":");
+                        System.out.println("\nInquiries for project " + registeredProject.getName() + ":\n");
                         for (Inquiry inquiry : inquiries) {
                             System.out.println(inquiry.getInquiryId() + ": " + inquiry.getMessage());
                         }
-                        System.out.print("Enter Inquiry ID to respond to or type 'back' to return: ");
+                        System.out.print("Enter Inquiry ID to respond to or type 'Back' to return: ");
                         String inquiryId = scanner.nextLine();
-                        if (inquiryId.equalsIgnoreCase("back")) {
+                        if (inquiryId.equalsIgnoreCase("Back")) {
                             break;
                         }
-                        System.out.print("Enter your reply: ");
+                        System.out.print("\nEnter your reply: ");
                         String replyMessage = scanner.nextLine();
                         InquiryController.replyToInquiry(inquiryId, replyMessage);
                     }
@@ -171,7 +170,7 @@ public class HDBOfficerUI {
                 	Map<String, Integer> flatTypeAvailable = registeredProject.getFlatTypeAvailable();
 
                 	while (true) {
-                		System.out.print("Enter flat type to update: ");
+                		System.out.print("\nEnter flat type to update: ");
                     	String flatType = scanner.nextLine();
                     	System.out.print("Enter new available number of flats: ");
                     	int availableFlats = scanner.nextInt();
@@ -180,14 +179,14 @@ public class HDBOfficerUI {
                         	registeredProject.setFlatTypeAvailable(flatTypeAvailable);
                         	break;
                     	} else {
-                    		System.out.print("No such flat type found in the project.");
+                    		System.out.print("\nNo such flat type found in the project.");
                     	}
                 	}
 
                 	Applicant applicant = null;
                 	
                 	while (true) {
-                    	System.out.print("Enter applicant's NRIC: ");
+                    	System.out.print("\nEnter applicant's NRIC: ");
                     	String nric = scanner.nextLine();
                     	if (!nric.matches("[ST]\\d{7}[A-Z]")) {
                         	//check if nric is valid
@@ -200,18 +199,18 @@ public class HDBOfficerUI {
                                     }
                                 }
                             	if (applicant != null) {
-                            		System.out.println(applicant.getName() + " with NRIC of " + applicant.getNRIC() + " has a BTO status of " + applicant.getApplicationStatus());
-                            		System.out.print("Enter new status: ");
+                            		System.out.println("\n" + applicant.getName() + " with NRIC of " + applicant.getNRIC() + " has a BTO status of " + applicant.getApplicationStatus());
+                            		System.out.print("\nEnter new status: ");
                                 	String status = scanner.nextLine();
                                 	applicant.setApplicationStatus(status);
                                 	System.out.print("Status updated.");
-                                	System.out.print("Enter flat type of applicant: ");
+                                	System.out.print("\nEnter flat type of applicant: ");
                                 	String flatType = scanner.nextLine();
                                 	applicant.setFlatType(flatType);
                                 	System.out.print("Flat type updated.");
                             		break;
                             	} else {
-                            		System.out.println("No applicant with this NRIC was found, please try again.");
+                            		System.out.println("\nNo applicant with this NRIC was found, please try again.");
                             		break;
                             	}
                         	}
@@ -220,7 +219,9 @@ public class HDBOfficerUI {
                         }
                 	}
                 	
-                	System.out.println("Applicant's name: " + applicant.getName());
+                	// Generate receipt
+                	System.out.println("\n\nApplicant Receipt");
+                	System.out.println("\nApplicant's name: " + applicant.getName());
                 	System.out.println("Applicant's NRIC: " + applicant.getNRIC());
                 	System.out.println("Applicant's age: " + applicant.getAge());
                 	System.out.println("Applicant's marital status: " + applicant.getMaritalStatus());
@@ -232,35 +233,35 @@ public class HDBOfficerUI {
                 
                 case 7:
                     // Filter project list based on user-specified criteria
-                    System.out.println("Filter projects by:");
+                    System.out.println("\n\nFilter projects by:");
                     System.out.println("1. Location");
                     System.out.println("2. Flat Type");
                     System.out.println("3. Max Price");
                     System.out.println("4. Min Price");
                     System.out.println("5. Clear all filters");
-                    System.out.print("Select a filter option: ");
+                    System.out.print("\nSelect a filter option: ");
                     int filterOption;
                     try {
                         filterOption = Integer.parseInt(scanner.nextLine());
                     } catch (NumberFormatException e) {
-                        System.out.println("Invalid choice.");
+                        System.out.println("\nInvalid choice.");
                         break;
                     }
                     switch (filterOption) {
                         case 1:
-                            System.out.print("Enter location: ");
+                            System.out.print("\nEnter location: ");
                             projectController.filterByLocation(scanner.nextLine().trim());
                             break;
                         case 2:
-                            System.out.print("Enter flat type: ");
+                            System.out.print("\nEnter flat type: ");
                             projectController.filterByFlatType(scanner.nextLine().trim());
                             break;
                         case 3:
-                            System.out.print("Enter max price: ");
+                            System.out.print("\nEnter max price: ");
                             projectController.filterByMaxPrice(Integer.parseInt(scanner.nextLine()));
                             break;
                         case 4:
-                            System.out.print("Enter min price: ");
+                            System.out.print("\nEnter min price: ");
                             projectController.filterByMinPrice(Integer.parseInt(scanner.nextLine()));
                             break;
                         case 5:
@@ -269,26 +270,26 @@ public class HDBOfficerUI {
                             break;
                             
                         default:
-                            System.out.println("Invalid filter option.");
+                            System.out.println("\nInvalid filter option.");
                             break;
                     }
                     break;
                     
                 case 8:
                 	// Switch menu to applicant
-                	System.out.println("Switching to Applicant Menu...");
+                	System.out.println("\n\nSwitching to Applicant Menu...");
                     new ApplicantUI().showMenu((Applicant) hdbofficer);
                     break;
 
                 case 9:
                     // Exit the menu and application loop
-                    System.out.println("Goodbye!");
+                    System.out.println("\nGoodbye!");
                     scanner.close();
                     break;
                 	
                 default:
                 	// Notify user if selection is invalid
-                    System.out.println("Invalid option. Please try again.");
+                    System.out.println("\nInvalid option. Please try again.");
             }
         }
         

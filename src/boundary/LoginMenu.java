@@ -22,7 +22,7 @@ public class LoginMenu {
 
         // NRIC input and validation loop
         while (true) {
-            System.out.print("Enter your NRIC: ");
+            System.out.print("\nEnter your NRIC: ");
             nric = scanner.nextLine().trim();
 
             if (nric.equalsIgnoreCase("Quit")) {
@@ -81,7 +81,7 @@ public class LoginMenu {
         
         // Menu
         while (true) {
-        	System.out.println("Login Menu:");
+        	System.out.println("\n\n\nLogin Menu:");
         	System.out.println("1. Proceed to other menus");
         	System.out.println("2. Change password");
         	System.out.println("3. Quit");
@@ -91,7 +91,7 @@ public class LoginMenu {
                 choice = Integer.parseInt(scanner.nextLine());
             } catch (NumberFormatException e) {
                 // Handle non-integer input
-                System.out.println("Invalid input. Please enter a number.");
+                System.out.println("\nInvalid input. Please enter a number.");
                 continue;
             }
              switch (choice) {
@@ -104,7 +104,7 @@ public class LoginMenu {
                             break;
                         case "HDBManager":
                         	while (true) {
-                        		System.out.println("Access Applicant Menu or Manager Menu?: ");
+                        		System.out.println("\nAccess Applicant Menu or Manager Menu?: ");
                                 menuChoice = scanner.nextLine();
                                 if (menuChoice.equalsIgnoreCase("Applicant")) {
                                 	new ApplicantUI().showMenu((Applicant) loggedInUser);
@@ -119,7 +119,7 @@ public class LoginMenu {
                             break;
                         case "HDBOfficer":
                         	while (true) {
-                        		System.out.println("Access Applicant Menu or Officer Menu?: ");
+                        		System.out.println("\nAccess Applicant Menu or Officer Menu?: ");
                                 menuChoice = scanner.nextLine();
                                 if (menuChoice.equalsIgnoreCase("Applicant")) {
                                 	new ApplicantUI().showMenu((Applicant) loggedInUser);
@@ -139,18 +139,18 @@ public class LoginMenu {
              	case 2:
              		// Change user's password
              		while (true) {
-             			System.out.println("Enter new password: ");
+             			System.out.println("\nEnter new password: ");
              			String newPassword = scanner.nextLine();
              			if (newPassword.equals(((User) user).getPassword())) {
              				System.out.println("Please enter a different password from your old one.");
              			} else if (newPassword.length() < 6) {
              				System.out.println("Please enter a password that is 6 characters or longer.");
              			} else {
-             				System.out.println("Re-enter the password: ");
+             				System.out.println("\nRe-enter the password: ");
                  			String newPasswordConfirmation = scanner.nextLine();
                  			if (newPasswordConfirmation.equals(newPassword)) {
                  				authController.changePassword((User) user, newPassword);
-                 				System.out.println("Password successfully changed!");
+                 				System.out.println("\nPassword successfully changed!");
                  				break;
                  			} else {
                  				System.out.println("Re-entered password does not match the new password, please try again.");
@@ -162,13 +162,13 @@ public class LoginMenu {
              		
              	case 3:
                     // Exit the menu and application loop
-                    System.out.println("Goodbye!");
+                    System.out.println("\nGoodbye!");
                     scanner.close();
                     break;
                 	
                 default:
                 	// Notify user if selection is invalid
-                    System.out.println("Invalid option. Please try again.");
+                    System.out.println("\nInvalid option. Please try again.");
              }
         }
     }
