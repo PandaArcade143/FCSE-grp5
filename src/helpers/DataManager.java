@@ -248,7 +248,6 @@ public class DataManager {
 						manager.getAge(),
 						manager.getMaritalStatus(),
 						manager.getPassword());
-						//manager.getCreatedProjects());
 			}
 		} catch (IOException e) {
 			System.err.println("Error saving applicants to " + path + ": " + e.getMessage());
@@ -439,6 +438,39 @@ public class DataManager {
 			e.printStackTrace();
 		}
 		
+		// Connects the projects to the users 
+		for (HDBManager manager : managers) {
+			List<Project> managerProject = new ArrayList<Project>();
+			managerProject = projects.stream() 
+					.filter(project -> project.getManagerName().contains(manager.getName()))
+					.collect(Collectors.toList());
+			for(Project p : managerProject) {
+				p.setManager(manager);
+			}
+			manager.setCreatedProjects(managerProject);
+		}
+		
+		for (HDBOfficer officer : officers) {
+			Project p;
+			p = projects.stream()
+					.filter(project -> project.getOfficers().contains(officer))
+					.findFirst()
+					.orElse(null);
+			if (p != null) {
+			officer.addRegisteredProjects(p);
+			}
+		}
+		for (Applicant applicant : applicants) {
+			Project p;
+			p = projects.stream()
+					.filter(project -> project.getName().contains(applicant.getAppliedProjectString()))
+					.findFirst()
+					.orElse(null);
+			if (p != null) {
+			applicant.setAppliedProject(p);
+			}
+		}
+
 		return projects;
 		
 		
