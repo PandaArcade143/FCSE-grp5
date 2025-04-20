@@ -236,8 +236,7 @@ public class ProjectController <T>{
     }
 
     public void createProject (HDBManager m, Project p){
-        //CHange the HDBMAnager class to just one project, change the method for setting 
-        m.setCreatedProjects(p);
+        m.addCreatedProjects(p);
         if (this.projects.contains(p)){
             return;
         } else {
@@ -247,21 +246,21 @@ public class ProjectController <T>{
 
     public void deleteProject (HDBManager m, Project p){
         // Do we need to remove from the list of HDBManager, do we need to keep the manager attribute as list or just project
-        m.setCreatedProjects(null);
+        m.removeCreatedProjects(null);
         this.projects.remove(p);
 
     }
 
-    public void editProject (HDBManager manager, Project p,  String field, T info){
-        if (field == "name"){
+    public void editProject (HDBManager manager, Project p,  String field, Object info){
+        if (field.equals("name")){
             p.setName((String)info);
-        } else if (field == "location"){
+        } else if (field.equals("location")){
             p.setLocation((String)info);
-        } else if (field == "openDate"){
+        } else if (field.equals("openDate")){
             p.setOpenDate((Date) info);
-        } else if (field == "closeDate"){
+        } else if (field.equals("closeDate")){
             p.setCloseDate((Date) info);
-        } else if (field == "officerSlot"){
+        } else if (field.equals("officerSlot")){
             p.setOfficerSlot((int) info);
         } else {
             return;
@@ -291,14 +290,14 @@ public class ProjectController <T>{
         return this.applicants;
     }
 
-    public void processRegistrations(HDBManager manager, HDBOfficer officer, String status){
+    public void processRegistrations(HDBManager manager, Project p, HDBOfficer officer, String status){
         if (status == "Approved"){
-            manager.getCreatedProjects().removeTemporaryOfficer(officer);
-            manager.getCreatedProjects().addOfficer(officer);
+            p.removeTemporaryOfficer(officer);
+            p.addOfficer(officer);
             officer.setRegistrationStatus(status);
         	System.out.print("Status updated.");
         } else if (status == "Denied"){
-            manager.getCreatedProjects().removeTemporaryOfficer(officer);
+            p.removeTemporaryOfficer(officer);
             officer.setRegistrationStatus(status);
         	System.out.print("Status updated.");
         } else{
