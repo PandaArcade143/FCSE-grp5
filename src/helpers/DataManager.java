@@ -339,11 +339,11 @@ public class DataManager {
 			
 			while ((currentLine = br.readLine()) != null) {
 				String[] data = smartSplit(currentLine);
-				String name = data[0];
-				String nric = data[1];
-				int age = Integer.parseInt(data[2]);
-				String maritalStatus = data[3];
-				String password = data[4];
+				String name = getCSVField(data,0);
+				String nric = getCSVField(data, 1);
+				int age = Integer.parseInt(getCSVField(data,2));
+				String maritalStatus = getCSVField(data,3);
+				String password = getCSVField(data,4);
 				String projectName = getCSVField(data,5);
 				String status = getCSVField(data,6);
 				
@@ -460,16 +460,7 @@ public class DataManager {
 			officer.addRegisteredProjects(p);
 			}
 		}
-		for (Applicant applicant : applicants) {
-			Project p;
-			p = projects.stream()
-					.filter(project -> project.getName().contains(applicant.getAppliedProjectString()))
-					.findFirst()
-					.orElse(null);
-			if (p != null) {
-			applicant.setAppliedProject(p);
-			}
-		}
+		
 
 		return projects;
 		
