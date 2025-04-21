@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 
-import java.util.ArrayList;
-
 /**
  * Represents a BTO project that contains flat types, pricing, officer assignment,
  * availability status, and application time window.

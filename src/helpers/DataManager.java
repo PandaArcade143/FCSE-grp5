@@ -2,13 +2,11 @@ package helpers;
 
 import java.io.*;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import entity.Applicant;
@@ -16,7 +14,6 @@ import entity.HDBManager;
 import entity.HDBOfficer;
 import entity.Inquiry;
 import entity.Project;
-import entity.User;
 
 /**
  * Manages application-wide data including reading and writing of users,

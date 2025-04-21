@@ -2,14 +2,12 @@ package control;
 
 import java.time.LocalDateTime;
 
-import entity.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import entity.Inquiry;
 import entity.Project;
 import helpers.DataManager;
-import entity.Applicant;
 
 public class InquiryController {
     private static List<Inquiry> inquiries = DataManager.getInquiries();
