@@ -26,7 +26,7 @@ public class HDBManagerUI {
     	List<HDBOfficer> hdbOfficerList = DataManager.getOfficers();
         Scanner scanner = new Scanner(System.in);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        ProjectController<HDBManager> projectController = new ProjectController<>();
+        ProjectController projectController = new ProjectController();
         HDBOfficer officer = null;
         Applicant applicant = null;
         Project chosenProject;
@@ -57,8 +57,7 @@ public class HDBManagerUI {
 	        System.out.println("13. View inquiries for ALL projects");
 	        System.out.println("14. View and reply to inquiries for the projects you are handling");
 	        System.out.println("15. Filter projects");
-	        System.out.println("16. Switch menus");
-	        System.out.println("17. Quit");
+	        System.out.println("16. Quit");
 	        System.out.print("\nSelect an option: ");
         
 	        int choice;
@@ -118,16 +117,17 @@ public class HDBManagerUI {
 	                	validDate = true;
 		                try {
 		                    // Enter application opening date
-		                    System.out.print("\nApplication opening date(dd/MM/yyyy): ");
+		                    System.out.print("\nApplication opening date(dd/mm/yyyy): ");
 		                    String applicationOpenDate = scanner.nextLine();
 		                    openingDate = dateFormat.parse(applicationOpenDate);
 		
 		                    // Enter application closing date
-		                    System.out.print("Application closing date(dd/MM/yyyy): ");
+		                    System.out.print("\nApplication closing date(dd/mm/yyyy): ");
 		                    String applicationCloseDate = scanner.nextLine();
+		                    scanner.nextLine();
 		                    closingDate = dateFormat.parse(applicationCloseDate);
 		                } catch (Exception e) {
-		                    System.out.println("\nInvalid date format! Please use dd/MM/yyyy.");
+		                    System.out.println("\nInvalid date format! Please use dd/mm/yyyy.");
 		                }
 		                for (Project createdProject : hdbmanager.getCreatedProjects()) {
 		            		if (openingDate.before(createdProject.getCloseDate()) && closingDate.after(createdProject.getOpenDate())) {
@@ -148,7 +148,7 @@ public class HDBManagerUI {
 	                    System.out.println("\nInvalid number of slots (max 10)");
 	                    break;
 	                }
-	
+	                
 	                // Create new project
 	                Project newProject = new Project(projectName, neighbourhood, flatTotal, new HashMap<String, Integer>(flatTotal), 
 	                flatPrices, openingDate, closingDate, newHDBManager, availableSlots,               
@@ -182,11 +182,12 @@ public class HDBManagerUI {
 	                System.out.println("1. Project Name");
 	                System.out.println("2. Neighbourhood");
 	                System.out.println("3. Type of flats, number and price of units for each type");
-	                System.out.println("3. Application Opening Date");
-	                System.out.println("4. Application Closing Date");
-	                System.out.println("5. Available HDB officer slots");
+	                System.out.println("4. Application Opening Date");
+	                System.out.println("5. Application Closing Date");
+	                System.out.println("6. Available HDB officer slots");
 	                System.out.print("\nSelect an option: ");
 	                int selected = scanner.nextInt();
+	                scanner.nextLine();
 	                switch (selected) {
 	                    // Edit project name
 	                    case 1:
@@ -378,15 +379,15 @@ public class HDBManagerUI {
     	                	System.out.println("Neighborhood: " + project.getLocation());
     	                	System.out.println("Flat types and total number of units for corresponding types:");
     	                	for (Map.Entry<String, Integer> pair : project.getFlatTypeTotal().entrySet()) {
-    	                       System.out.print(" - Flat type: " + pair.getKey() + ", total number of units: " + pair.getValue());
+    	                       System.out.println(" - Flat type: " + pair.getKey() + ", total number of units: " + pair.getValue());
     	                    }
     	                	System.out.println("Flat types and available number of units left for corresponding types:");
     	                	for (Map.Entry<String, Integer> pair : project.getFlatTypeAvailable().entrySet()) {
-    	                       System.out.print(" - Flat type: " + pair.getKey() + ", available number of units left: " + pair.getValue());
+    	                       System.out.println(" - Flat type: " + pair.getKey() + ", available number of units left: " + pair.getValue());
     	                    }
     	                	System.out.println("Flat types and prices for corresponding types:");
     	                	for (Map.Entry<String, Integer> pair : project.getFlatPrices().entrySet()) {
-    	                       System.out.print(" - Flat type: " + pair.getKey() + ", selling price: " + pair.getValue());
+    	                       System.out.println(" - Flat type: " + pair.getKey() + ", selling price: " + pair.getValue());
     	                    }
     	                	System.out.println("Application opening date: " + project.getOpenDate());
     	                	System.out.println("Application closing date: " + project.getCloseDate());
@@ -413,15 +414,15 @@ public class HDBManagerUI {
     	                	System.out.println("Neighborhood: " + project.getLocation());
     	                	System.out.println("Flat types and total number of units for corresponding types:");
     	                	for (Map.Entry<String, Integer> pair : project.getFlatTypeTotal().entrySet()) {
-    	                       System.out.print(" - Flat type: " + pair.getKey() + ", total number of units: " + pair.getValue());
+    	                       System.out.println(" - Flat type: " + pair.getKey() + ", total number of units: " + pair.getValue());
     	                    }
     	                	System.out.println("Flat types and available number of units left for corresponding types:");
     	                	for (Map.Entry<String, Integer> pair : project.getFlatTypeAvailable().entrySet()) {
-    	                       System.out.print(" - Flat type: " + pair.getKey() + ", available number of units left: " + pair.getValue());
+    	                       System.out.println(" - Flat type: " + pair.getKey() + ", available number of units left: " + pair.getValue());
     	                    }
     	                	System.out.println("Flat types and prices for corresponding types:");
     	                	for (Map.Entry<String, Integer> pair : project.getFlatPrices().entrySet()) {
-    	                       System.out.print(" - Flat type: " + pair.getKey() + ", selling price: " + pair.getValue());
+    	                       System.out.println(" - Flat type: " + pair.getKey() + ", selling price: " + pair.getValue());
     	                    }
     	                	System.out.println("Application opening date: " + project.getOpenDate());
     	                	System.out.println("Application closing date: " + project.getCloseDate());
@@ -795,7 +796,7 @@ public class HDBManagerUI {
                             break;
                         case 5:
                             // Reset filters by creating a new controller instance
-                            projectController = new ProjectController<>();
+                            projectController = new ProjectController();
                             break;
                             
                         default:
@@ -803,18 +804,12 @@ public class HDBManagerUI {
                             break;
                     }
                     break;
-                    
-	            case 16:
-                	// Switch menu to applicant
-                	System.out.println("\n\nSwitching to Applicant Menu...");
-                    new ApplicantUI().showMenu((Applicant) officer);
-                    break;
 
-                case 17:
+                case 16:
                     // Exit the menu and application loop
                     System.out.println("\nGoodbye!");
                     scanner.close();
-                    break;
+                    return;
                 	
                 default:
                 	// Notify user if selection is invalid

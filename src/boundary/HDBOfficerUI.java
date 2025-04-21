@@ -14,7 +14,7 @@ public class HDBOfficerUI {
 
     public void showMenu(HDBOfficer hdbofficer) {
 
-    	ProjectController<HDBOfficer> projectController = new ProjectController<>();
+    	ProjectController projectController = new ProjectController();
         List<Applicant> applicantList = DataManager.getApplicants();
         Scanner scanner = new Scanner(System.in);
         List<Project> projectList = projectController.getAvailableProjects(hdbofficer); // Fetches list of available projects
@@ -32,7 +32,7 @@ public class HDBOfficerUI {
 	        System.out.println("7. Filter projects");
 	        System.out.println("8. Switch menus");
 	        System.out.println("9. Quit");
-	        System.out.print("Select an option: ");
+	        System.out.println("\nSelect an option: ");
         	
         	int choice;
             try {
@@ -53,15 +53,15 @@ public class HDBOfficerUI {
      	                	System.out.println("Neighborhood: " + project.getLocation());
      	                	System.out.println("Flat types and total number of units for corresponding types:");
      	                	for (Map.Entry<String, Integer> pair : project.getFlatTypeTotal().entrySet()) {
-     	                       System.out.print(" - Flat type: " + pair.getKey() + ", total number of units: " + pair.getValue());
+     	                       System.out.println(" - Flat type: " + pair.getKey() + ", total number of units: " + pair.getValue());
      	                    }
      	                	System.out.println("Flat types and available number of units left for corresponding types:");
      	                	for (Map.Entry<String, Integer> pair : project.getFlatTypeAvailable().entrySet()) {
-     	                       System.out.print(" - Flat type: " + pair.getKey() + ", available number of units left: " + pair.getValue());
+     	                       System.out.println(" - Flat type: " + pair.getKey() + ", available number of units left: " + pair.getValue());
      	                    }
      	                	System.out.println("Flat types and prices for corresponding types:");
      	                	for (Map.Entry<String, Integer> pair : project.getFlatPrices().entrySet()) {
-     	                       System.out.print(" - Flat type: " + pair.getKey() + ", selling price: " + pair.getValue());
+     	                       System.out.println(" - Flat type: " + pair.getKey() + ", selling price: " + pair.getValue());
      	                    }
      	                	System.out.println("Application opening date: " + project.getOpenDate());
      	                	System.out.println("Application closing date: " + project.getCloseDate());
@@ -106,7 +106,7 @@ public class HDBOfficerUI {
                     
                 case 3:
                 	// View registration status
-                	if (registeredProject == null) {
+                	if (hdbofficer.getRegistrationStatus() == null) {
                         System.out.println("\nYou are not registered for any project.");
                     } else {
                     	System.out.println("\nRegistration status: " + hdbofficer.getRegistrationStatus());
@@ -116,20 +116,20 @@ public class HDBOfficerUI {
                     
                 case 4:
                 	// View project details
-                	if (registeredProject != null) {
+                	if (hdbofficer.getRegistrationStatus() == null) {
 	                	System.out.println("\nProject Name: " + registeredProject.getName());
 	                	System.out.println("Neighborhood: " + registeredProject.getLocation());
 	                	System.out.println("Flat types and total number of units for corresponding types:");
 	                	for (Map.Entry<String, Integer> pair : registeredProject.getFlatTypeTotal().entrySet()) {
-	                       System.out.print(" - Flat type: " + pair.getKey() + ", total number of units: " + pair.getValue());
+	                       System.out.println(" - Flat type: " + pair.getKey() + ", total number of units: " + pair.getValue());
 	                    }
 	                	System.out.println("Flat types and available number of units left for corresponding types:");
 	                	for (Map.Entry<String, Integer> pair : registeredProject.getFlatTypeAvailable().entrySet()) {
-	                       System.out.print(" - Flat type: " + pair.getKey() + ", available number of units left: " + pair.getValue());
+	                       System.out.println(" - Flat type: " + pair.getKey() + ", available number of units left: " + pair.getValue());
 	                    }
 	                	System.out.println("Flat types and prices for corresponding types:");
 	                	for (Map.Entry<String, Integer> pair : registeredProject.getFlatPrices().entrySet()) {
-	                       System.out.print(" - Flat type: " + pair.getKey() + ", selling price: " + pair.getValue());
+	                       System.out.println(" - Flat type: " + pair.getKey() + ", selling price: " + pair.getValue());
 	                    }
 	                	System.out.println("Application opening date: " + registeredProject.getOpenDate());
 	                	System.out.println("Application closing date: " + registeredProject.getCloseDate());
@@ -161,6 +161,7 @@ public class HDBOfficerUI {
                         }
                         System.out.print("\nEnter your reply: ");
                         String replyMessage = scanner.nextLine();
+                        System.out.print("\n\n\n");
                         InquiryController.replyToInquiry(inquiryId, replyMessage);
                     }
                     break;
@@ -172,7 +173,8 @@ public class HDBOfficerUI {
                 	while (true) {
                 		System.out.print("\nEnter flat type to update: ");
                     	String flatType = scanner.nextLine();
-                    	System.out.print("Enter new available number of flats: ");
+                    	scanner.nextLine();
+                    	System.out.println("Enter new available number of flats: ");
                     	int availableFlats = scanner.nextInt();
                     	if (flatTypeAvailable.containsKey(flatType)) {
                         	flatTypeAvailable.put(flatType, availableFlats);
@@ -266,7 +268,7 @@ public class HDBOfficerUI {
                             break;
                         case 5:
                             // Reset filters by creating a new controller instance
-                            projectController = new ProjectController<>();
+                            projectController = new ProjectController();
                             break;
                             
                         default:
@@ -285,7 +287,7 @@ public class HDBOfficerUI {
                     // Exit the menu and application loop
                     System.out.println("\nGoodbye!");
                     scanner.close();
-                    break;
+                    return;
                 	
                 default:
                 	// Notify user if selection is invalid

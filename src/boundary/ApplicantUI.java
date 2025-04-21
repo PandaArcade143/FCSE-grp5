@@ -7,18 +7,15 @@ import java.util.Scanner;
 import control.ProjectController;
 import control.InquiryController;
 import entity.Applicant;
-import entity.HDBManager;
 import entity.HDBOfficer;
 import entity.Inquiry;
 import entity.Project;
-import entity.User;
-import helpers.DataManager;
 
 public class ApplicantUI {
 
     //Display menu for an Applicant and handle their actions
     public void showMenu(Applicant applicant) {
-        ProjectController<Applicant> projectController = new ProjectController<>();
+        ProjectController projectController = new ProjectController();
         Scanner scanner = new Scanner(System.in);
         List<Inquiry> inquiries = InquiryController.viewInquiries(applicant.getNRIC());
         List<Project> projectList = projectController.getAvailableProjects(applicant);
@@ -59,11 +56,11 @@ public class ApplicantUI {
     	                    
     	                	System.out.println("Flat types and available number of units left for corresponding types:");
     	                	for (Map.Entry<String, Integer> pair : project.getFlatTypeAvailable().entrySet()) {
-    	                       System.out.print(" - Flat type: " + pair.getKey() + ", available number of units left: " + pair.getValue());
+    	                       System.out.println(" - Flat type: " + pair.getKey() + ", available number of units left: " + pair.getValue());
     	                    }
     	                	System.out.println("Flat types and prices for corresponding types:");
     	                	for (Map.Entry<String, Integer> pair : project.getFlatPrices().entrySet()) {
-    	                       System.out.print(" - Flat type: " + pair.getKey() + ", selling price: " + pair.getValue());
+    	                       System.out.println(" - Flat type: " + pair.getKey() + ", selling price: " + pair.getValue());
     	                    }
     	                	System.out.println("Application opening date: " + project.getOpenDate());
     	                	System.out.println("Application closing date: " + project.getCloseDate());
@@ -96,11 +93,11 @@ public class ApplicantUI {
 	                    
 	                	System.out.println("Flat types and available number of units left for corresponding types:");
 	                	for (Map.Entry<String, Integer> pair : project.getFlatTypeAvailable().entrySet()) {
-	                       System.out.print(" - Flat type: " + pair.getKey() + ", available number of units left: " + pair.getValue());
+	                       System.out.println(" - Flat type: " + pair.getKey() + ", available number of units left: " + pair.getValue());
 	                    }
 	                	System.out.println("Flat types and prices for corresponding types:");
 	                	for (Map.Entry<String, Integer> pair : project.getFlatPrices().entrySet()) {
-	                       System.out.print(" - Flat type: " + pair.getKey() + ", selling price: " + pair.getValue());
+	                       System.out.println(" - Flat type: " + pair.getKey() + ", selling price: " + pair.getValue());
 	                    }
 	                	System.out.println("Application opening date: " + project.getOpenDate());
 	                	System.out.println("Application closing date: " + project.getCloseDate());
@@ -109,6 +106,7 @@ public class ApplicantUI {
                 	} else {
                         System.out.println("\nYou did not apply for any project.");
                     }
+                	break;
 
                 case 4:
                     // Attempt to withdraw current application
@@ -149,12 +147,13 @@ public class ApplicantUI {
                     String subject = scanner.nextLine().trim();
                     System.out.print("\nMessage: ");
                     String message = scanner.nextLine().trim();
+                    System.out.print("\n\n");
                     InquiryController.createInquiry(applicant.getNRIC(), subject, selectedProject, message);
                     break;
 
                 case 6:
                     // Allow applicant to view, edit, or delete their own inquiries
-                    if (inquiries.isEmpty()) {
+                    if (inquiries == null) {
                         System.out.println("\nNo inquiries found.");
                         break;
                     }
@@ -164,11 +163,11 @@ public class ApplicantUI {
                         System.out.printf("%d. [%s] %s - %s%n", i + 1, iq.getStatus(), iq.getSubject(), iq.getMessage());
                     }
                     // Inquiry management sub-menu
-                    System.out.print("\n\nInquiry Menu:");
+                    System.out.println("\n\nInquiry Menu:");
                     System.out.println("1. Edit an inquiry");
                     System.out.println("2. Delete an inquiry");
                     System.out.println("3. Back");
-                    System.out.print("\nSelect an option: ");
+                    System.out.println("\nSelect an option: ");
                     int actionChoice;
                     try {
                         actionChoice = Integer.parseInt(scanner.nextLine());
@@ -258,7 +257,7 @@ public class ApplicantUI {
                             break;
                         case 5:
                             // Reset filters by creating a new controller instance
-                            projectController = new ProjectController<>();
+                            projectController = new ProjectController();
                             break;
                         default:
                             System.out.println("\nInvalid filter option.");
@@ -268,23 +267,12 @@ public class ApplicantUI {
                 
                 case 8:
                 	// Switch menu if applicant has access
-                	List <HDBOfficer> officerList = DataManager.getOfficers();
-                	List <HDBManager> managerList = DataManager.getManagers();
-                	    
-                	Object user = findUserByNRIC(applicant.getNRIC(), managerList);
-                    if (user == null) user = findUserByNRIC(applicant.getNRIC(), officerList);
-
-                    switch (((User) user).getRole()) {
-                        case "HDBManager":
-                        	System.out.println("\n\nSwitching to Manager Menu...");
-                        	new HDBManagerUI().showMenu((HDBManager) user);
-                            break;
-                        case "HDBOfficer":
-                        	System.out.println("\n\nSwitching to Officer Menu...");
-                        	new HDBOfficerUI().showMenu((HDBOfficer) user);
-                        	break;
-                        default:
-                        	System.out.println("\nYou do not have access outside of Applicant Menu.");
+                    if (applicant.getRole().equals("HDBOfficer")) {
+                        System.out.println("\n\nSwitching to Officer Menu...");
+                        new HDBOfficerUI().showMenu((HDBOfficer) applicant);
+                        break;
+                    } else {
+                        System.out.println("\nYou do not have access outside of Applicant Menu.");
                     }
                     break;
                     
@@ -292,7 +280,7 @@ public class ApplicantUI {
                     // Exit the menu and application loop
                     System.out.println("\nGoodbye!");
                     scanner.close();
-                    break;
+                    return;
 
                 default:
                     // Notify user if selection is invalid
@@ -301,15 +289,5 @@ public class ApplicantUI {
             
             
         }
-    }
-    
-    //Generic method to find a User in a list by NRIC
-    private static <T> User findUserByNRIC(String nric, List<T> list) {
-        for (T u : list) {
-            if (u instanceof User && ((User) u).getNRIC().equalsIgnoreCase(nric)) {
-                return (User) u;
-            }
-        }
-        return null;
     }
 }

@@ -13,8 +13,6 @@ import helpers.DataManager;
 public class ProjectController {
     private List <Project> projects = DataManager.getProjects();
     private List <Applicant> applicants = DataManager.getApplicants();
-    private List <HDBOfficer> officers = DataManager.getOfficers();
-    private List <HDBManager> manager = DataManager.getManagers();
     private Map<String, String> filters;
 
 
@@ -165,7 +163,7 @@ public class ProjectController {
         //Check for HDBOfficer
         if (a.getRole().equals("HDBOfficer")){
             for (Project n : this.projects){
-                if (n.getName().equals(projectName)){
+                if (n.getName().equalsIgnoreCase(projectName)){
                     //Check if n is an officer for the slot
                     if (n.getOfficers().contains(a)){
                         return false;
@@ -184,7 +182,7 @@ public class ProjectController {
             //Married, 21 and above
             if (a.getAge() >= 21 && a.getMaritalStatus().equals("Married")){
                 for (Project n : this.projects){
-                    if (n.getName().equals(projectName)){
+                    if (n.getName().equalsIgnoreCase(projectName)){
                         a.setAppliedProject(n);
                         a.setApplicationStatus("Pending");
                         return true;
@@ -196,7 +194,7 @@ public class ProjectController {
 
 
                 for (Project n : this.projects){
-                    if (n.getName().equals(projectName)){
+                    if (n.getName().equalsIgnoreCase(projectName)){
                         //Check if there is 2 room flats
                         if (n.getFlatTypeAvailable().get("2-Room") != null){
                             a.setAppliedProject(n);

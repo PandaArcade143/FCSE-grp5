@@ -37,4 +37,8 @@ public class HDBManager extends User{
 	public void setCreatedProjects(List<Project> p){
 		this.createdProjects = p;
 	}
+	
+	public String toString() {
+		return this.getName();
+	}
 }

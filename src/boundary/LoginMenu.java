@@ -103,19 +103,7 @@ public class LoginMenu {
                             new ApplicantUI().showMenu((Applicant) loggedInUser);
                             break;
                         case "HDBManager":
-                        	while (true) {
-                        		System.out.println("\nAccess Applicant Menu or Manager Menu?: ");
-                                menuChoice = scanner.nextLine();
-                                if (menuChoice.equalsIgnoreCase("Applicant")) {
-                                	new ApplicantUI().showMenu((Applicant) loggedInUser);
-                                    break;
-                                } else if (menuChoice.equalsIgnoreCase("Manager")) {
-                                	new HDBManagerUI().showMenu((HDBManager) loggedInUser);
-                                    break;
-                                } else {
-                                	System.out.println("Invalid option, please try again.");
-                                }
-                        	}
+                        	new HDBManagerUI().showMenu((HDBManager) loggedInUser);
                             break;
                         case "HDBOfficer":
                         	while (true) {
@@ -164,7 +152,7 @@ public class LoginMenu {
                     // Exit the menu and application loop
                     System.out.println("\nGoodbye!");
                     scanner.close();
-                    break;
+                    return;
                 	
                 default:
                 	// Notify user if selection is invalid
