@@ -244,7 +244,7 @@ public class ProjectController {
 
     public void deleteProject (HDBManager m, Project p){
         // Do we need to remove from the list of HDBManager, do we need to keep the manager attribute as list or just project
-        m.removeCreatedProjects(p);
+        m.removeCreatedProject(p);
         this.projects.remove(p);
 
     }
