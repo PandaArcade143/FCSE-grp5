@@ -3,12 +3,12 @@ package entity;
 import java.time.LocalDateTime;
 
 public class Inquiry {
-    private String inquiryId; //need anot??
+    private String inquiryId; 
     private String senderNRIC;
-    private String subject; // also need?? wdy guys think
+    private String subject; 
     private String message;
     private String reply;
-    private String status; // "Open", "Resolved" ONLY, should I change to enum??
+    private String status; 
     private LocalDateTime createdAt;
     private LocalDateTime resolvedAt;
     private Project relatedProject;
@@ -26,7 +26,6 @@ public class Inquiry {
         this.relatedProject = relatedProject;
     }
 
-    // Getters and Setters
 
     public String getInquiryId() {
         return inquiryId;
