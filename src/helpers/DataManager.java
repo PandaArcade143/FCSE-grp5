@@ -306,7 +306,7 @@ public class DataManager {
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath))) {
             writer.println("InquiryID,SenderNRIC,Subject,Message,Status,CreatedAt,ResolvedAt,RelatedProject,Reply");
             for (Inquiry i : inquiries) {
-                writer.printf("%s,%s,%s,%s,%s,%s,%s,%s\n",
+                writer.printf("%s,%s,%s,%s,%s,%s,%s,%s,%s\n",
                 		i.getInquiryId(),
                 		i.getSenderNRIC(),
                 		i.getSubject(),
