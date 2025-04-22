@@ -1,5 +1,6 @@
 package entity;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +55,7 @@ public class Project {
 		this.officerSlot = officerSlot;
 		this.officers = officers;
 		this.visibility = visibility;
+		this.temp = new ArrayList<>();
 	}
 
 	public HDBManager getManager() {
