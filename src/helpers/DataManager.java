@@ -257,7 +257,7 @@ public class DataManager {
      * @param filename the path to the file to write
      */
     public static void saveProjects(String path) {
-    	SimpleDateFormat formatter = new SimpleDateFormat("dd/mm/yy");
+    	SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
 
     	try(PrintWriter writer = new PrintWriter(new FileWriter(path))) {
     		writer.println("Project Name,Neighborhood,"
