@@ -121,7 +121,7 @@ public class ApplicantUI {
                 	if (status != null) {
                 		if (status.equals("withdrawing")) {
                 			System.out.println("\nApplication already pending withdrawal.");
-                		} else if (status == "Withdrawn") {
+                		} else if (status.equals("Withdrawn")) {
                             System.out.println("Application is already withdrawn");
                         } else {
                 			applicant.setApplicationStatus("withdrawing");
