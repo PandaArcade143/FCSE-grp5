@@ -116,7 +116,7 @@ public class HDBOfficerUI {
                 	if (hdbofficer.getRegisteredProjects() != null && !hdbofficer.getRegistrationStatus().equals("Pending")) {
                 		System.out.println("\nYou are already registered for the " + hdbofficer.getRegisteredProjects().getName() + " project.");
                 	} else if (hdbofficer.getRegistrationStatus() == null) {
-                        System.out.println("\nYou are not registered for any project.");
+                        System.out.println("\nYou are not registered for any project or your registration has been rejected.");
                     } else {
                     	System.out.println("\nRegistered Project: " + hdbofficer.getRegisteredProjects().getName());
                     	System.out.println("Registration status: " + hdbofficer.getRegistrationStatus());
@@ -150,7 +150,7 @@ public class HDBOfficerUI {
 	                		System.out.println(" - " + officer.getName());
 	                    }
                 	} else {
-                        System.out.println("\nYou are not registered for any project.");
+                        System.out.println("\nYou are not registered for any project or your registration has been rejected.");
                     }
                 	break;
                 	
