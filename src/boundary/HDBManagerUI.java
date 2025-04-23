@@ -94,7 +94,7 @@ public class HDBManagerUI {
 		                    }
 		                	System.out.println("Application opening date: " + project.getOpenDate());
 		                	System.out.println("Application closing date: " + project.getCloseDate());
-		                	System.out.println("Manager of project: " + project.getManager());
+		                	System.out.println("Manager of project: " + project.getManagerName());
 		                	System.out.println("Officer slots for project: " + project.getOfficerSlot());
 		                	System.out.println("Officers of project: ");
 		                	for (HDBOfficer hdbofficer: project.getOfficers()) {
@@ -111,7 +111,7 @@ public class HDBManagerUI {
 	                projectList = hdbmanager.getCreatedProjects();
 	                System.out.println("\nProjects available:");
 	                for (Project project : projectList) {
-	                	if (project != null) {
+	                	if (project != null && project.getManagerName().equalsIgnoreCase(hdbmanager.getName())) {
 		                	System.out.println("\nProject Name: " + project.getName());
 		                	System.out.println("Neighborhood: " + project.getLocation());
 		                	System.out.println("Flat types and total number of units for corresponding types:");
@@ -128,7 +128,7 @@ public class HDBManagerUI {
 		                    }
 		                	System.out.println("Application opening date: " + project.getOpenDate());
 		                	System.out.println("Application closing date: " + project.getCloseDate());
-		                	System.out.println("Manager of project: " + project.getManager());
+		                	System.out.println("Manager of project: " + project.getManagerName());
 		                	System.out.println("Officer slots for project: " + project.getOfficerSlot());
 		                	System.out.println("Officers of project: ");
 		                	for (HDBOfficer hdbofficer: project.getOfficers()) {
@@ -136,6 +136,7 @@ public class HDBManagerUI {
 		                    }
 	                	} else {
 	                        System.out.println("\nYou did not create any projects.");
+							break;
 	                    }
 	                }
 	                break;
@@ -497,7 +498,7 @@ public class HDBManagerUI {
 	                }
 	
 	                // Select project
-	                System.out.print("\nSelect a project to toggle visibility:");
+	                System.out.print("\nSelect a project to toggle visibility (select index):");
 	                projectIndex = scanner.nextInt();
 	                scanner.nextLine();
 	                if (projectIndex < 0 || projectIndex > projectList.size()) {
