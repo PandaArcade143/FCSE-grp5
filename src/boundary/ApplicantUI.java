@@ -18,11 +18,12 @@ public class ApplicantUI {
         ProjectController projectController = new ProjectController();
         Scanner scanner = new Scanner(System.in);
         List<Inquiry> inquiries = InquiryController.viewInquiries(applicant.getNRIC());
-        List<Project> projectList = projectController.getAvailableProjects(applicant);
+        
 
         String status;
         
         while (true) {
+        	List<Project> projectList = projectController.getFilteredProjects(applicant);
             // Display main menu options
         	System.out.println("\n\n\nApplicant Menu:");
             System.out.println("1. View available BTO projects");
@@ -51,6 +52,13 @@ public class ApplicantUI {
                     System.out.println("\nProjects available:");
                     for (Project project : projectList) {
                     	if (project != null) {
+                    		if (applicant.getRole() == "HDBOfficer") {
+                    			if (((HDBOfficer) applicant).getRegisteredProjects() != null) {
+	                    			if (project.getName().equals(((HDBOfficer) applicant).getRegisteredProjects().getName())) {
+	                    				continue;
+	                    			}
+                    			}
+                    		}
     	                	System.out.println("\nProject Name: " + project.getName());
     	                	System.out.println("Neighborhood: " + project.getLocation());
     	                    
@@ -68,7 +76,6 @@ public class ApplicantUI {
                     	} else {
                             System.out.println("\nYou are not allowed to view any project.");
                         }
-                    	break;
                     }
                     break;
 
@@ -127,18 +134,23 @@ public class ApplicantUI {
                     // Allow user to submit an inquiry about a selected project
                 	System.out.print("\nProjects available:\n");
                     projectList = projectController.getAvailableProjects(applicant); // refresh project list
+                    int j = 0;
                     for (int i = 0; i < projectList.size(); i++) {
-                        System.out.printf("%d. %s%n", i + 1, projectList.get(i).getName());
+                    	if (applicant.getRole() == "HDBOfficer" && projectList.get(i).getName().equals(((HDBOfficer) applicant).getRegisteredProjects().getName())) {
+                			j += 1;
+                    		continue;
+                		}
+                        System.out.printf("%d. %s%n", i + 1 - j, projectList.get(i).getName());
                     }
                     System.out.print("\nSelect project number to inquire: ");
                     int projectIndex;
                     try {
-                        projectIndex = Integer.parseInt(scanner.nextLine()) - 1;
+                        projectIndex = Integer.parseInt(scanner.nextLine()) - 1 + j;
                     } catch (NumberFormatException e) {
                         System.out.println("\nInvalid number.");
                         break;
                     }
-                    if (projectIndex < 0 || projectIndex >= projectList.size()) {
+                    if (projectIndex < 0 || projectIndex  >= projectList.size()) {
                         System.out.println("\nInvalid project selection.");
                         break;
                     }
@@ -153,7 +165,8 @@ public class ApplicantUI {
 
                 case 6:
                     // Allow applicant to view, edit, or delete their own inquiries
-                    if (inquiries == null) {
+                    inquiries = InquiryController.viewInquiries(applicant.getNRIC());
+                	if (inquiries.size() == 0) {
                         System.out.println("\nNo inquiries found.");
                         break;
                     }
@@ -221,47 +234,65 @@ public class ApplicantUI {
                             System.out.println("\nInvalid option.");
                     }
                     break;
-
+                    
                 case 7:
                     // Filter project list based on user-specified criteria
                     System.out.println("\n\nFilter projects by:");
                     System.out.println("1. Location");
-                    System.out.println("2. Flat Type");
-                    System.out.println("3. Max Price");
-                    System.out.println("4. Min Price");
-                    System.out.println("5. Clear all filters");
+                    System.out.println("2. Max Price");
+                    System.out.println("3. Min Price");
+                    System.out.println("4. Clear all filters");
                     System.out.print("\nSelect a filter option: ");
-                    int filterOption;
+                    
                     try {
-                        filterOption = Integer.parseInt(scanner.nextLine());
+                        int filterOption = Integer.parseInt(scanner.nextLine());
+                        
+                        switch (filterOption) {
+                            case 1:
+                                System.out.print("\nEnter location: ");
+                                projectController.filterByLocation(scanner.nextLine().trim());
+                                System.out.println("Location filter applied.");
+                                break;
+                                
+                            case 2:
+                                System.out.print("\nEnter max price: ");
+                                try {
+                                    int maxPrice = Integer.parseInt(scanner.nextLine());
+                                    projectController.filterByMaxPrice(maxPrice);
+                                    System.out.println("Max price filter applied.");
+                                } catch (NumberFormatException e) {
+                                    System.out.println("Invalid price. Please enter a number.");
+                                }
+                                break;
+                                
+                            case 3:
+                                System.out.print("\nEnter min price: ");
+                                try {
+                                    int minPrice = Integer.parseInt(scanner.nextLine());
+                                    projectController.filterByMinPrice(minPrice);
+                                    System.out.println("Min price filter applied.");
+                                } catch (NumberFormatException e) {
+                                    System.out.println("Invalid price. Please enter a number.");
+                                }
+                                break;
+                                
+                            case 4:
+                                // Clear all filters
+                                projectController.getFilters().clear();
+                                projectController.getFilters().put("location", "");
+                                projectController.getFilters().put("flatType", "");
+                                projectController.getFilters().put("maxPrice", "");
+                                projectController.getFilters().put("minPrice", "");
+                                System.out.println("All filters cleared.");
+                                break;
+                                
+                                
+                            default:
+                                System.out.println("\nInvalid filter option.");
+                        }
+                        
                     } catch (NumberFormatException e) {
-                        System.out.println("\nInvalid choice.");
-                        break;
-                    }
-                    switch (filterOption) {
-                        case 1:
-                            System.out.print("\nEnter location: ");
-                            projectController.filterByLocation(scanner.nextLine().trim());
-                            break;
-                        case 2:
-                            System.out.print("\nEnter flat type: ");
-                            projectController.filterByFlatType(scanner.nextLine().trim());
-                            break;
-                        case 3:
-                            System.out.print("\nEnter max price: ");
-                            projectController.filterByMaxPrice(Integer.parseInt(scanner.nextLine()));
-                            break;
-                        case 4:
-                            System.out.print("\nEnter min price: ");
-                            projectController.filterByMinPrice(Integer.parseInt(scanner.nextLine()));
-                            break;
-                        case 5:
-                            // Reset filters by creating a new controller instance
-                            projectController = new ProjectController();
-                            break;
-                        default:
-                            System.out.println("\nInvalid filter option.");
-                            break;
+                        System.out.println("\nInvalid choice. Please enter a number.");
                     }
                     break;
                 
@@ -270,7 +301,7 @@ public class ApplicantUI {
                     if (applicant.getRole().equals("HDBOfficer")) {
                         System.out.println("\n\nSwitching to Officer Menu...");
                         new HDBOfficerUI().showMenu((HDBOfficer) applicant);
-                        break;
+                        return;
                     } else {
                         System.out.println("\nYou do not have access outside of Applicant Menu.");
                     }

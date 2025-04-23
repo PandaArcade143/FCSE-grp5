@@ -51,7 +51,7 @@ public class LoginMenu {
 
         // Password input loop
         while (true) {
-            System.out.print("Enter your password: ");
+            System.out.print("\nEnter your password: ");
             String password = scanner.nextLine();
 
             if (password.equalsIgnoreCase("Quit")) {

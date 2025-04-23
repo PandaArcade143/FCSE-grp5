@@ -16,11 +16,12 @@ public class HDBOfficerUI {
 
     	ProjectController projectController = new ProjectController();
         List<Applicant> applicantList = DataManager.getApplicants();
+        List<HDBOfficer> hdbOfficerList = DataManager.getOfficers();
         Scanner scanner = new Scanner(System.in);
-        List<Project> projectList = projectController.getAvailableProjects(hdbofficer); // Fetches list of available projects
         Project registeredProject = hdbofficer.getRegisteredProjects();
         
         while (true) {
+        	List<Project> projectList = projectController.getFilteredProjects(hdbofficer); // Fetches list of available projects
 	        // Display menu
 	        System.out.println("\n\n\nHDB Officer Menu:");
 	        System.out.println("1. View available BTO projects");
@@ -74,7 +75,6 @@ public class HDBOfficerUI {
                      	} else {
                              System.out.println("\nYou are not allowed to view any project.");
                          }
-                     	break;
                      }
                      break;
                     
@@ -89,14 +89,20 @@ public class HDBOfficerUI {
                         }
                     }
                     // Displays message depending on whether project is successfully applied
-                    if (hdbofficer.getAppliedProject() == hdbofficer.getRegisteredProjects()) {
+                    if (hdbofficer.getAppliedProject() == registeredProject) {
                         System.out.println("\nProject is unable to be registered for as you are already applying as an applicant.");
-                    } else if (projectName == hdbofficer.getRegisteredProjects().getName()){
+                    } else if (registeredProject == hdbofficer.getRegisteredProjects()){
                         System.out.println("\nYou have already registered for this project.");
-                    } else if (hdbofficer.getRegisteredProjects() != null && !hdbofficer.getRegisteredProjects().getOpenDate().after(currDate) && !hdbofficer.getRegisteredProjects().getCloseDate().before(currDate)) {
-                    	System.out.println("\nYou have already registered for another project.");
                     } else if (registeredProject.getOfficerSlot() == registeredProject.getOfficers().size()){
                     	System.out.println("\nNo free officer slots left for this project.");
+                    } else if (hdbofficer.getRegisteredProjects() != null) {
+                    	if (!hdbofficer.getRegisteredProjects().getOpenDate().after(currDate) && !hdbofficer.getRegisteredProjects().getCloseDate().before(currDate)) {
+                    		System.out.println("\nYou have already registered for another project.");
+                    	} else {
+                    		System.out.println("\nProject successfully registered!");
+                        	registeredProject.addTemporaryOfficer(hdbofficer);
+                        	hdbofficer.addRegisteredProjects(registeredProject);
+                    	}
                     } else{
                     	System.out.println("\nProject successfully registered!");
                     	registeredProject.addTemporaryOfficer(hdbofficer);
@@ -106,7 +112,9 @@ public class HDBOfficerUI {
                     
                 case 3:
                 	// View registration status
-                	if (hdbofficer.getRegistrationStatus() == null) {
+                	if (hdbofficer.getRegisteredProjects() != null && !hdbofficer.getRegistrationStatus().equals("Pending")) {
+                		System.out.println("\nYou are already registered for the " + hdbofficer.getRegisteredProjects().getName() + " project.");
+                	} else if (hdbofficer.getRegistrationStatus() == null) {
                         System.out.println("\nYou are not registered for any project.");
                     } else {
                     	System.out.println("\nRegistration status: " + hdbofficer.getRegistrationStatus());
@@ -146,134 +154,168 @@ public class HDBOfficerUI {
                 	
                 case 5:
                 	// Respond to inquiries
-                	List<Inquiry> inquiries = InquiryController.viewInquiries(registeredProject);
-                    if (inquiries.isEmpty()) {
-                        System.out.println("\nNo inquiries found.");
-                    } else {
-                        System.out.println("\nInquiries for project " + registeredProject.getName() + ":\n");
-                        for (Inquiry inquiry : inquiries) {
-                            System.out.println(inquiry.getInquiryId() + ": " + inquiry.getMessage());
+                	if (registeredProject == null || !((hdbofficer.getRegistrationStatus()).equals("Pending"))) {
+                		System.out.println("\nYou are not handling any project.");
+                	} else {
+                		List<Inquiry> inquiries = InquiryController.viewInquiries(registeredProject);
+                        if (inquiries.isEmpty()) {
+                            System.out.println("\nNo inquiries found.");
+                        } else {
+                            System.out.println("\nInquiries for project " + registeredProject.getName() + ":\n");
+                            for (Inquiry inquiry : inquiries) {
+                                System.out.println(inquiry.getInquiryId() + ": " + inquiry.getMessage());
+                            }
+                            System.out.print("Enter Inquiry ID to respond to or type 'Back' to return: ");
+                            String inquiryId = scanner.nextLine();
+                            if (inquiryId.equalsIgnoreCase("Back")) {
+                                break;
+                            }
+                            System.out.print("\nEnter your reply: ");
+                            String replyMessage = scanner.nextLine();
+                            System.out.print("\n\n\n");
+                            InquiryController.replyToInquiry(inquiryId, replyMessage);
                         }
-                        System.out.print("Enter Inquiry ID to respond to or type 'Back' to return: ");
-                        String inquiryId = scanner.nextLine();
-                        if (inquiryId.equalsIgnoreCase("Back")) {
-                            break;
-                        }
-                        System.out.print("\nEnter your reply: ");
-                        String replyMessage = scanner.nextLine();
-                        System.out.print("\n\n\n");
-                        InquiryController.replyToInquiry(inquiryId, replyMessage);
-                    }
-                    break;
+                        break;
+                	}
+                	break;
+                	
                     
                 case 6:
-                	// Update BTO status and generate receipt
-                	Map<String, Integer> flatTypeAvailable = registeredProject.getFlatTypeAvailable();
+                	if (registeredProject == null || !((hdbofficer.getRegistrationStatus()).equals("Pending"))) {
+                		System.out.print("\nYou are not handling any project.");
+                	} else {
+                		// Update BTO status and generate receipt
+                    	Map<String, Integer> flatTypeAvailable = registeredProject.getFlatTypeAvailable();
 
-                	while (true) {
-                		System.out.print("\nEnter flat type to update: ");
-                    	String flatType = scanner.nextLine();
-                    	scanner.nextLine();
-                    	System.out.println("Enter new available number of flats: ");
-                    	int availableFlats = scanner.nextInt();
-                    	if (flatTypeAvailable.containsKey(flatType)) {
-                        	flatTypeAvailable.put(flatType, availableFlats);
-                        	registeredProject.setFlatTypeAvailable(flatTypeAvailable);
-                        	break;
-                    	} else {
-                    		System.out.print("\nNo such flat type found in the project.");
-                    	}
-                	}
-
-                	Applicant applicant = null;
-                	
-                	while (true) {
-                    	System.out.print("\nEnter applicant's NRIC: ");
-                    	String nric = scanner.nextLine();
-                    	if (!nric.matches("[ST]\\d{7}[A-Z]")) {
-                        	//check if nric is valid
-                        	System.out.println("Invalid NRIC given, please try again.");
-                        } else {
-                        	while (true) {
-                            	for (Applicant a: applicantList) {
-                                    if (a.getNRIC().equalsIgnoreCase(nric)) {
-                                        applicant = a;
-                                    }
-                                }
-                            	if (applicant != null) {
-                            		System.out.println("\n" + applicant.getName() + " with NRIC of " + applicant.getNRIC() + " has a BTO status of " + applicant.getApplicationStatus());
-                            		System.out.print("\nEnter new status: ");
-                                	String status = scanner.nextLine();
-                                	applicant.setApplicationStatus(status);
-                                	System.out.print("Status updated.");
-                                	System.out.print("\nEnter flat type of applicant: ");
-                                	String flatType = scanner.nextLine();
-                                	applicant.setFlatType(flatType);
-                                	System.out.print("Flat type updated.");
-                            		break;
-                            	} else {
-                            		System.out.println("\nNo applicant with this NRIC was found, please try again.");
-                            		break;
-                            	}
+                    	while (true) {
+                    		System.out.print("\nEnter flat type to update: ");
+                        	String flatType = scanner.nextLine();
+                        	System.out.println("Enter new available number of flats: ");
+                        	int availableFlats = scanner.nextInt();
+                        	scanner.nextLine();
+                        	if (flatTypeAvailable.containsKey(flatType)) {
+                            	flatTypeAvailable.put(flatType, availableFlats);
+                            	registeredProject.setFlatTypeAvailable(flatTypeAvailable);
+                            	break;
+                        	} else {
+                        		System.out.print("\nNo such flat type found in the project.");
                         	}
-                        	break;
-                        
-                        }
+                    	}
+
+                    	Applicant applicant = null;
+                    	
+                    	while (true) {
+                        	System.out.print("\nEnter applicant's NRIC: ");
+                        	String nric = scanner.nextLine();
+                        	if (!nric.matches("[ST]\\d{7}[A-Z]")) {
+                            	//check if nric is valid
+                            	System.out.println("Invalid NRIC given, please try again.");
+                            } else {
+                            	while (true) {
+                                	for (Applicant a: applicantList) {
+                                        if (a.getNRIC().equalsIgnoreCase(nric)) {
+                                            applicant = a;
+                                        }
+                                    }
+                                	if (applicant == null) {
+                                		for (HDBOfficer o: hdbOfficerList) {
+                                            if (o.getNRIC().equalsIgnoreCase(nric)) {
+                                                applicant = (Applicant) o;
+                                            }
+                                        }
+                                	}
+                                	if (applicant != null) {
+                                		System.out.println("\n" + applicant.getName() + " with NRIC of " + applicant.getNRIC() + " has a BTO status of " + applicant.getApplicationStatus());
+                                		System.out.print("\nEnter new status: ");
+                                    	String status = scanner.nextLine();
+                                    	applicant.setApplicationStatus(status);
+                                    	System.out.print("Status updated.");
+                                    	System.out.print("\nEnter flat type of applicant: ");
+                                    	String flatType = scanner.nextLine();
+                                    	applicant.setFlatType(flatType);
+                                    	System.out.print("Flat type updated.");
+                                		break;
+                                	} else {
+                                		System.out.println("\nNo applicant with this NRIC was found, please try again.");
+                                	}
+                            	}
+                            	break;
+                            
+                            }
+                    	}
+                    	
+                    	// Generate receipt
+                    	System.out.println("\n\nApplicant Receipt");
+                    	System.out.println("\nApplicant's name: " + applicant.getName());
+                    	System.out.println("Applicant's NRIC: " + applicant.getNRIC());
+                    	System.out.println("Applicant's age: " + applicant.getAge());
+                    	System.out.println("Applicant's marital status: " + applicant.getMaritalStatus());
+                    	System.out.println("Applicant's flat type booked: " + applicant.getFlatType());
+                    	System.out.println("Project Name: " + registeredProject.getName());
+                    	System.out.println("Neighborhood: " + registeredProject.getLocation());
+                    	
                 	}
-                	
-                	// Generate receipt
-                	System.out.println("\n\nApplicant Receipt");
-                	System.out.println("\nApplicant's name: " + applicant.getName());
-                	System.out.println("Applicant's NRIC: " + applicant.getNRIC());
-                	System.out.println("Applicant's age: " + applicant.getAge());
-                	System.out.println("Applicant's marital status: " + applicant.getMaritalStatus());
-                	System.out.println("Applicant's flat type booked: " + applicant.getFlatType());
-                	System.out.println("Project Name: " + registeredProject.getName());
-                	System.out.println("Neighborhood: " + registeredProject.getLocation());
-                	
                 	break;
+                	
                 
                 case 7:
                     // Filter project list based on user-specified criteria
                     System.out.println("\n\nFilter projects by:");
                     System.out.println("1. Location");
-                    System.out.println("2. Flat Type");
-                    System.out.println("3. Max Price");
-                    System.out.println("4. Min Price");
-                    System.out.println("5. Clear all filters");
+                    System.out.println("2. Max Price");
+                    System.out.println("3. Min Price");
+                    System.out.println("4. Clear all filters");
                     System.out.print("\nSelect a filter option: ");
-                    int filterOption;
+                    
                     try {
-                        filterOption = Integer.parseInt(scanner.nextLine());
+                        int filterOption = Integer.parseInt(scanner.nextLine());
+                        
+                        switch (filterOption) {
+                            case 1:
+                                System.out.print("\nEnter location: ");
+                                projectController.filterByLocation(scanner.nextLine().trim());
+                                System.out.println("Location filter applied.");
+                                break;
+                                
+                            case 2:
+                                System.out.print("\nEnter max price: ");
+                                try {
+                                    int maxPrice = Integer.parseInt(scanner.nextLine());
+                                    projectController.filterByMaxPrice(maxPrice);
+                                    System.out.println("Max price filter applied.");
+                                } catch (NumberFormatException e) {
+                                    System.out.println("Invalid price. Please enter a number.");
+                                }
+                                break;
+                                
+                            case 3:
+                                System.out.print("\nEnter min price: ");
+                                try {
+                                    int minPrice = Integer.parseInt(scanner.nextLine());
+                                    projectController.filterByMinPrice(minPrice);
+                                    System.out.println("Min price filter applied.");
+                                } catch (NumberFormatException e) {
+                                    System.out.println("Invalid price. Please enter a number.");
+                                }
+                                break;
+                                
+                            case 4:
+                                // Clear all filters
+                                projectController.getFilters().clear();
+                                projectController.getFilters().put("location", "");
+                                projectController.getFilters().put("flatType", "");
+                                projectController.getFilters().put("maxPrice", "");
+                                projectController.getFilters().put("minPrice", "");
+                                System.out.println("All filters cleared.");
+                                break;
+                                
+                                
+                            default:
+                                System.out.println("\nInvalid filter option.");
+                        }
+                        
                     } catch (NumberFormatException e) {
-                        System.out.println("\nInvalid choice.");
-                        break;
-                    }
-                    switch (filterOption) {
-                        case 1:
-                            System.out.print("\nEnter location: ");
-                            projectController.filterByLocation(scanner.nextLine().trim());
-                            break;
-                        case 2:
-                            System.out.print("\nEnter flat type: ");
-                            projectController.filterByFlatType(scanner.nextLine().trim());
-                            break;
-                        case 3:
-                            System.out.print("\nEnter max price: ");
-                            projectController.filterByMaxPrice(Integer.parseInt(scanner.nextLine()));
-                            break;
-                        case 4:
-                            System.out.print("\nEnter min price: ");
-                            projectController.filterByMinPrice(Integer.parseInt(scanner.nextLine()));
-                            break;
-                        case 5:
-                            // Reset filters by creating a new controller instance
-                            projectController = new ProjectController();
-                            break;
-                            
-                        default:
-                            System.out.println("\nInvalid filter option.");
-                            break;
+                        System.out.println("\nInvalid choice. Please enter a number.");
                     }
                     break;
                     
@@ -281,7 +323,7 @@ public class HDBOfficerUI {
                 	// Switch menu to applicant
                 	System.out.println("\n\nSwitching to Applicant Menu...");
                     new ApplicantUI().showMenu((Applicant) hdbofficer);
-                    break;
+                    return;
 
                 case 9:
                     // Exit the menu and application loop

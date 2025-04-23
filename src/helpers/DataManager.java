@@ -2,12 +2,16 @@ package helpers;
 
 import java.io.*;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.ResolverStyle;
+import java.time.temporal.ChronoField;
 
 import entity.Applicant;
 import entity.HDBManager;
@@ -222,7 +226,7 @@ public class DataManager {
 						officer.getAge(),
 						officer.getMaritalStatus(),
 						officer.getPassword(),
-						officer.getAppliedProject() == null ? "" : officer.getAppliedProject(),
+						officer.getAppliedProject() == null ? "" : officer.getAppliedProject().getName(),
 						officer.getApplicationStatus() == null ? "" : officer.getApplicationStatus());
 			}
 		} catch (IOException e) {
@@ -257,8 +261,8 @@ public class DataManager {
      * @param filename the path to the file to write
      */
     public static void saveProjects(String path) {
-    	SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-
+    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy");
+    	
     	try(PrintWriter writer = new PrintWriter(new FileWriter(path))) {
     		writer.println("Project Name,Neighborhood,"
     				+ "Type 1,Number of units for Type 1,Selling price for Type 1,"
@@ -274,6 +278,17 @@ public class DataManager {
     			List<String> tempOfficersName = tempOfficers.stream()
     					.map(HDBOfficer::getName)
     					.collect(Collectors.toList());
+    			
+    			String openDateStr = "\"" + p.getOpenDate().toInstant()
+    	                .atZone(ZoneId.systemDefault())
+    	                .toLocalDate()
+    	                .format(formatter) + "\"";
+    	                
+    	        String closeDateStr = "\"" + p.getCloseDate().toInstant()
+    	                .atZone(ZoneId.systemDefault())
+    	                .toLocalDate()
+    	                .format(formatter) + "\"";
+    	            
     			writer.printf("%s,%s,%s,%d,%d,%s,%d,%d,%s,%s,%s,%d,%s,%s,%s\n", 
     					p.getName(),
     					p.getLocation(),
@@ -283,8 +298,8 @@ public class DataManager {
     					type2,
     					p.getFlatTypeTotal().get(type2),
     					p.getFlatPrices().get(type2),
-    					formatter.format(p.getOpenDate()),
-    					formatter.format(p.getCloseDate()),
+    					openDateStr, 
+    	                closeDateStr,
     					p.getManagerName(),
     					p.getOfficerSlot(),
     					stringify(projectOfficersName),
@@ -379,6 +394,13 @@ public class DataManager {
 		try (BufferedReader br = new BufferedReader(new FileReader(path))) {
 			String currentLine;
 			br.readLine();
+
+			DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+		            .appendPattern("dd/MM/")
+		            .appendValueReduced(ChronoField.YEAR, 2, 2, 2000)
+		            .toFormatter()
+		            .withResolverStyle(ResolverStyle.STRICT);
+			
 			while ((currentLine = br.readLine()) != null) {
 				String[] data = smartSplit(currentLine);
 				String projectName = getCSVField(data,0);
@@ -389,10 +411,15 @@ public class DataManager {
 				type2 = getCSVField(data,5);
 				int units2 = Integer.parseInt(getCSVField(data,6));
 				int price2 = Integer.parseInt(getCSVField(data,7));
-				SimpleDateFormat formatter = new SimpleDateFormat("dd/mm/yy");
-				Date openingDate = formatter.parse(getCSVField(data,8));
-				Date closingDate = formatter.parse(getCSVField(data,9));
-				String manager = getCSVField(data,10);
+				//SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yy");
+				LocalDate openingLocalDate = LocalDate.parse(getCSVField(data, 8), formatter);
+	            LocalDate closingLocalDate = LocalDate.parse(getCSVField(data, 9), formatter);
+	            
+	            // Convert to java.util.Date
+	            Date openingDate = Date.from(openingLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+	            Date closingDate = Date.from(closingLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+				
+	            String manager = getCSVField(data,10);
 				int officerSlot = Integer.parseInt(getCSVField(data,11));
 				List<HDBOfficer> officersList = new ArrayList<HDBOfficer>();
 				List<HDBOfficer> tempOfficersList = new ArrayList<HDBOfficer>();
@@ -433,8 +460,6 @@ public class DataManager {
 			
 		} catch (IOException e) {
 			System.out.println("Error while reading file: " + e.getMessage());
-		} catch (ParseException e) {
-			e.printStackTrace();
 		}
 		
 		// Connects the projects to the users 

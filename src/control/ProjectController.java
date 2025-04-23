@@ -422,14 +422,14 @@ public class ProjectController {
      * @param status the registration status to set ("Approved" or "Denied")
      */
     public void processRegistrations(HDBManager manager, Project p, HDBOfficer officer, String status){
-        if (status == "Approved"){
+        if (status.equalsIgnoreCase("Approved")){
             p.removeTemporaryOfficer(officer);
             p.addOfficer(officer);
-            officer.setRegistrationStatus(status);
+            officer.setRegistrationStatus("approved");
         	System.out.print("Status updated.");
-        } else if (status == "Denied"){
+        } else if (status.equalsIgnoreCase("Denied")){
             p.removeTemporaryOfficer(officer);
-            officer.setRegistrationStatus(status);
+            officer.setRegistrationStatus("denied");
         	System.out.print("Status updated.");
         } else{
             System.out.println("Invalid Status");
