@@ -13,6 +13,7 @@ public class Applicant extends User{
 	String flatType;
 	String applicationStatus;
 	String withdrawalStatus;
+	String role;
 	List<Inquiry> inquiries = new ArrayList<Inquiry>();
 
 	 /**
@@ -26,6 +27,7 @@ public class Applicant extends User{
      */
 	public Applicant(String name, String nric, int age, String maritalStatus, String password) {
 		super(name, nric, age, maritalStatus, password);
+		role = "Applicant";
 	}
 	
 	/**
@@ -53,7 +55,11 @@ public class Applicant extends User{
      */
 	@Override
 	public String getRole() {
-		return "Applicant";
+		return role;
+	}
+	
+	public void setRole(String role) {
+		this.role = role;
 	}
 
 	/**

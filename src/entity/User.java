@@ -110,6 +110,7 @@ public abstract class User {
 	public void setMaritalStatus(String maritalStatus) {
 		this.maritalStatus = maritalStatus;
 	}
+	
 
 	
 }

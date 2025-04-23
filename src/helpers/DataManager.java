@@ -378,6 +378,13 @@ public class DataManager {
 					applicant.setAppliedProjectString(projectName);
 					applicant.setApplicationStatus(status);
 					applicant.setFlatType(flatType);
+					if(applicant.getApplicationStatus().equals("Withdrawing")) {
+						applicant.setWithdrawalStatus("Pending");
+					} else if (applicant.getApplicationStatus().equals("Withdrawn")) {
+						applicant.setWithdrawalStatus("Approved");
+					} else if (applicant.getApplicationStatus().equals("RejectWithdrawal")) {
+						applicant.setWithdrawalStatus("Denied");
+					}
 					applicants.add(applicant);
 					combinedApplicants.add(applicant);
 				} else if (c == HDBOfficer.class) {
@@ -385,6 +392,14 @@ public class DataManager {
 					hdbOfficer.setAppliedProjectString(projectName);
 					hdbOfficer.setApplicationStatus(status);
 					hdbOfficer.setFlatType(flatType);
+					if(hdbOfficer.getApplicationStatus().equals("Withdrawing")) {
+						hdbOfficer.setWithdrawalStatus("Pending");
+					} else if (hdbOfficer.getApplicationStatus().equals("Withdrawn")) {
+						hdbOfficer.setWithdrawalStatus("Approved");
+					} else if (hdbOfficer.getApplicationStatus().equals("RejectWithdrawal")) {
+						hdbOfficer.setWithdrawalStatus("Denied");
+					}
+
 					officers.add(hdbOfficer);
 					combinedApplicants.add(hdbOfficer);
 				} else if (c == HDBManager.class) {
