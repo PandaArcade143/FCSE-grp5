@@ -8,6 +8,7 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -579,7 +580,12 @@ public class HDBManagerUI {
 	                	System.out.println("\nInvalid NRIC given, please try again.");
 	                } else {
 	                	while (true) {
-	                    	for (Applicant a: applicantList) {
+	                		List<Applicant> pendingApplicants = new ArrayList<Applicant>();
+	                		pendingApplicants = applicantList.stream()
+	                				.filter(a -> a.getApplicationStatus().equals("Pending"))
+	                				.collect(Collectors.toList());
+
+	                    	for (Applicant a: pendingApplicants) {
 	                            if (a.getNRIC().equalsIgnoreCase(nric)) {
 	                                applicant = a;
 	                            }
