@@ -525,6 +525,7 @@ public class HDBManagerUI {
 	                    	break;
 	                    }
 	            	}
+	            	break;
 	            
 	            // Display pending / withdrawing applicants
 	            case 9:
