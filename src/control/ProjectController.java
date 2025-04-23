@@ -233,10 +233,10 @@ public class ProjectController {
      */
     public boolean applyToProject (Applicant a, String projectName){
         //Check if already applied project
-        if ("Pending".equals(a.getApplicationStatus()) || "Successful".equals(a.getApplicationStatus()) || "Booked".equals(a.getApplicationStatus())){
+        if ("Pending".equals(a.getApplicationStatus()) || "Successful".equals(a.getApplicationStatus()) || "Booked".equals(a.getApplicationStatus()) || "Withdrawing".equals(a.getApplicationStatus())){
             return false;
         }
-        
+
         //Check for HDBOfficer
         if (a.getRole().equals("HDBOfficer")){
             for (Project n : this.projects){
@@ -467,11 +467,11 @@ public class ProjectController {
 
         if (status.equals("approved")){
             a.setWithdrawalStatus(status);
-            a.setAppliedProject(null);
-            a.setApplicationStatus(null);
+            a.setApplicationStatus("Withdrawn");
             return true;
         } else if (status.equals("denied")){
             a.setWithdrawalStatus(status);
+            a.setApplicationStatus("RejectWithdrawal");
             return true;
         } else{
             return false;
