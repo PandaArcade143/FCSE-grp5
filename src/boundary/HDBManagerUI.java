@@ -664,11 +664,16 @@ public class HDBManagerUI {
 	                    					break;
 	                    			}
 	                            	
-	                    			} else if (status.compareTo("Unsuccessful") == 0){
+	                    			} else if ("Unsuccessful".equalsIgnoreCase(status)){
+										System.out.println(applicant.getName() + "'s status is changed to Unsuccessful");
 	                    				applicant.setApplicationStatus(status);
 	                    				break;
 	                        		
-	                    			} else {
+	                    			} else if ("Pending".equalsIgnoreCase(status)) {
+										System.out.println(applicant.getName() + "'s status is changed to Pending");
+										applicant.setApplicationStatus(status);
+	                    				break;
+									} else {
 	                    				System.out.println("\nInvalid status.");
 	                    			}
 	                    		}
@@ -792,11 +797,14 @@ public class HDBManagerUI {
 	                        String project = "N/A";
 	
 	                        if (a.getAppliedProject() != null) {
-	                            project = a.getAppliedProject().getName();
-	                            Map<String, Integer> flatMap = a.getAppliedProject().getFlatTypeAvailable();
-	                            if (flatMap != null) {
-	                                flatTypes = String.join(", ", flatMap.keySet());
-	                            }
+	                            project = a.getAppliedProjectString();
+								if (a.getFlatType() != ""){
+									flatTypes = a.getFlatType();
+								}
+	                            // Map<String, Integer> flatMap = a.getAppliedProject().getFlatTypeAvailable();
+	                            // if (flatMap != null) {
+	                            //     flatTypes = String.join(", ", flatMap.keySet());
+	                            // }
 	                        }
 	
 	                        System.out.printf("\nName: %s | Age: %d | Marital Status: %s | Flat Type(s): %s | Project: %s%n",
