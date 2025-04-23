@@ -119,10 +119,10 @@ public class ApplicantUI {
                     // Attempt to withdraw current application
                 	status = applicant.getApplicationStatus();
                 	if (status != null) {
-                		if (status.equals("withdrawing")) {
+                		if (status.equalsIgnoreCase("withdrawing")) {
                 			System.out.println("\nApplication already pending withdrawal.");
                 		} else {
-                			applicant.setApplicationStatus("withdrawing");
+                			applicant.setApplicationStatus("Withdrawing");
                 			System.out.println("\nApplication is now pending for withdrawal.");
                 		}
                     } else {
