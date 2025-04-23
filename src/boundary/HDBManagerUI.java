@@ -702,16 +702,24 @@ public class HDBManagerUI {
 	                        );
 	                        break;
 	                    case 5:
-	                        System.out.print("\nEnter min age: ");
-	                        int minAge = scanner.nextInt();
-	                        System.out.print("\nEnter max age: ");
-	                        int maxAge = scanner.nextInt();
-	                        scanner.nextLine();
-	                        stream = stream.filter(a -> a.getAge() >= minAge && a.getAge() <= maxAge);
-	                        break;
+	                    	while (true) {
+	                    		try {
+	                    			System.out.print("\nEnter min age: ");
+	                    			int minAge = scanner.nextInt();
+	                    			System.out.print("\nEnter max age: ");
+	                    			int maxAge = scanner.nextInt();
+	                    			scanner.nextLine();
+	                    			stream = stream.filter(a -> a.getAge() >= minAge && a.getAge() <= maxAge);
+	                    			break;
+	                    		} catch (InputMismatchException e) {
+	                    			System.out.println("\n Invalid input. Please enter a number.");
+	                    			scanner.nextLine();
+	                    		}
+	                    	}
+	                    	break;
 	                    default:
 	                        System.out.println("\nInvalid filter option.");
-	                        return; // Exit early
+	                        break; // Exit early
 	                }
 	
 	                List<Applicant> filteredApplicants = stream.collect(Collectors.toList());
