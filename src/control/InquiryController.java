@@ -128,7 +128,7 @@ public class InquiryController {
                 if (!inq.getStatus().equalsIgnoreCase("Resolved")) {
                     inq.setStatus("Resolved");
                     inq.setResolvedAt(LocalDateTime.now());
-                    System.out.println("Inquiry marked as resolved:\n" + inq);
+                    //System.out.println("Inquiry marked as resolved:\n" + inq);
                 } else {
                     System.out.println("Inquiry is already resolved.");
                 }
@@ -146,6 +146,9 @@ public class InquiryController {
      */
     public static void replyToInquiry(String inquiryId, String replyMessage) {
         for (Inquiry inq : inquiries) {
+        	if(inq.getStatus() == "Resolved") {
+        		System.out.println("Inquiry already resolved.");
+        	}
             if (inq.getInquiryId().equals(inquiryId)) {
                 inq.setReply(replyMessage);
                 System.out.println("Reply sent:\n" + inq);

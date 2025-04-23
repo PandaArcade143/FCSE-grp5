@@ -150,30 +150,58 @@ public class HDBOfficerUI {
                 	
                 case 5:
                 	// Respond to inquiries
-                	if (registeredProject == null && !((hdbofficer.getRegistrationStatus()).equals("Pending"))) {
-                		System.out.println("\nYou are not handling any project.");
+                	System.out.println("Current Projects: ");
+                	hdbofficer.getApprovedProjects().forEach(p->System.out.println(p.getName()));
+                	System.out.println("Select which project to reply inquiries for: ");
+                	String proj = scanner.nextLine();
+                	Optional<Project> s = hdbofficer.getApprovedProjects().stream()
+                			.filter(p -> p.getName().equals(proj))
+                			.findFirst();
+                	if (!s.isPresent()) {
+                		System.out.println("No matching project with that name.");
+                		break;
                 	} else {
-                		List<Inquiry> inquiries = InquiryController.viewInquiries(registeredProject);
-                        if (inquiries.isEmpty()) {
-                            System.out.println("\nNo inquiries found.");
-                        } else {
-                            System.out.println("\nInquiries for project " + registeredProject.getName() + ":\n");
-                            for (Inquiry inquiry : inquiries) {
-                                System.out.println(inquiry.getInquiryId() + ": " + inquiry.getMessage());
-                            }
-                            System.out.print("Enter Inquiry ID to respond to or type 'Back' to return: ");
-                            String inquiryId = scanner.nextLine();
-                            if (inquiryId.equalsIgnoreCase("Back")) {
-                                break;
-                            }
-                            System.out.print("\nEnter your reply: ");
-                            String replyMessage = scanner.nextLine();
-                            System.out.print("\n\n\n");
-                            InquiryController.replyToInquiry(inquiryId, replyMessage);
-                            InquiryController.resolveInquiry(inquiryId);
+                		registeredProject = s.get();
+                	}
 
-                        }
-                        break;
+                	List<Inquiry> inquiries = InquiryController.viewInquiries(registeredProject);
+                	inquiries = inquiries.stream()
+                			.filter(i -> i.getStatus().equals("Open"))
+                			.collect(Collectors.toList());
+
+                	if (inquiries.isEmpty()) {
+                		System.out.println("\nNo inquiries found.");
+                	} else {
+                		System.out.println("\nInquiries for project " + registeredProject.getName() + ":\n");
+                		for (int i = 0; i < inquiries.size(); i++) {
+                		    Inquiry inquiry = inquiries.get(i);
+                		    System.out.println((i + 1) + ". " + inquiry.getSubject() + ": " + inquiry.getMessage());
+                		}
+                		System.out.print("Enter which inquiry to respond to or type 'Back' to return: ");                	
+
+                		String input = scanner.nextLine();
+                		if (input.equalsIgnoreCase("Back")) {
+                		    break;
+                		}
+                		try {
+                		    int index = Integer.parseInt(input) - 1;
+
+                		    if (index >= 0 && index < inquiries.size()) {
+                		        Inquiry selectedInquiry = inquiries.get(index);
+                		        // Now proceed to respond to selectedInquiry
+                		        System.out.print("\nEnter your reply: ");
+                		        String replyMessage = scanner.nextLine();
+                		        System.out.print("\n\n\n");
+                		        InquiryController.replyToInquiry(selectedInquiry.getInquiryId(), replyMessage);
+                		        InquiryController.resolveInquiry(selectedInquiry.getInquiryId());
+                		    } else {
+                		        System.out.println("Invalid inquiry number.");
+                		    }
+                		} catch (NumberFormatException e) {
+                		    System.out.println("Please enter a valid number.");
+                		}
+
+                		break;
                 	}
                 	break;
                 	
