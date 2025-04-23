@@ -33,6 +33,26 @@ public class ProjectController {
     	filters.put("maxPrice", "");
     	filters.put("minPrice", "");
     }
+    
+    
+    public List<String> getFlatAvailability(Applicant a) {
+    	List<String> flats = new ArrayList<String>();
+    	Project p = a.getAppliedProject();
+
+    	if (a.getAge() >= 35 && "single".equalsIgnoreCase(a.getMaritalStatus())){
+    		if (p.getFlatTypeAvailable().get("2-Room") > 0) {
+    			flats.add("2-Room");
+    		}
+    	} else if (a.getAge() >= 21 && "married".equalsIgnoreCase(a.getMaritalStatus())) {
+    		if (p.getFlatTypeAvailable().get("2-Room") > 0) {
+    			flats.add("2-Room");
+    		}
+    		if (p.getFlatTypeAvailable().get("2-Room") > 0) {
+    			flats.add("3-Room");
+    		}
+    	}
+    	return flats;
+    }
 
     /**
      * Applies a location filter.
@@ -422,14 +442,14 @@ public class ProjectController {
      * @param status the registration status to set ("Approved" or "Denied")
      */
     public void processRegistrations(HDBManager manager, Project p, HDBOfficer officer, String status){
-        if (status.equalsIgnoreCase("Approved")){
+        if (status.equalsIgnoreCase("approved")){
             p.removeTemporaryOfficer(officer);
             p.addOfficer(officer);
-            officer.setRegistrationStatus("approved");
+            officer.setRegistrationStatus("Approved");
         	System.out.print("Status updated.");
-        } else if (status.equalsIgnoreCase("Denied")){
+        } else if (status.equalsIgnoreCase("denied")){
             p.removeTemporaryOfficer(officer);
-            officer.setRegistrationStatus("denied");
+            officer.setRegistrationStatus("Denied");
         	System.out.print("Status updated.");
         } else{
             System.out.println("Invalid Status");
@@ -443,13 +463,18 @@ public class ProjectController {
      * @param a the applicant requesting withdrawal
      * @param status the status to apply ("approved" or "denied")
      */
-    public void processWithdrawal(HDBManager manager, Applicant a, String status){
+    public boolean processWithdrawal(HDBManager manager, Applicant a, String status){
+
         if (status.equals("approved")){
             a.setWithdrawalStatus(status);
+            a.setAppliedProject(null);
+            a.setApplicationStatus(null);
+            return true;
         } else if (status.equals("denied")){
             a.setWithdrawalStatus(status);
+            return true;
         } else{
-            return;
+            return false;
         }
     }
 }

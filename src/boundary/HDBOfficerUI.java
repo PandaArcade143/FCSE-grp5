@@ -1,6 +1,7 @@
 package boundary;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import control.InquiryController;
 import control.ProjectController;
@@ -15,7 +16,7 @@ public class HDBOfficerUI {
     public void showMenu(HDBOfficer hdbofficer) {
 
     	ProjectController projectController = new ProjectController();
-        List<Applicant> applicantList = DataManager.getApplicants();
+        List<Applicant> applicantList = DataManager.getCombinedApplicants();
         List<HDBOfficer> hdbOfficerList = DataManager.getOfficers();
         Scanner scanner = new Scanner(System.in);
         Project registeredProject = hdbofficer.getRegisteredProjects();
@@ -117,14 +118,15 @@ public class HDBOfficerUI {
                 	} else if (hdbofficer.getRegistrationStatus() == null) {
                         System.out.println("\nYou are not registered for any project.");
                     } else {
-                    	System.out.println("\nRegistration status: " + hdbofficer.getRegistrationStatus());
+                    	System.out.println("\nRegistered Project: " + hdbofficer.getRegisteredProjects().getName());
+                    	System.out.println("Registration status: " + hdbofficer.getRegistrationStatus());
                     }
                 	
                     break;
                     
                 case 4:
                 	// View project details
-                	if (hdbofficer.getRegistrationStatus() == null) {
+                	if (hdbofficer.getRegistrationStatus() != null) {
 	                	System.out.println("\nProject Name: " + registeredProject.getName());
 	                	System.out.println("Neighborhood: " + registeredProject.getLocation());
 	                	System.out.println("Flat types and total number of units for corresponding types:");
@@ -154,7 +156,7 @@ public class HDBOfficerUI {
                 	
                 case 5:
                 	// Respond to inquiries
-                	if (registeredProject == null || !((hdbofficer.getRegistrationStatus()).equals("Pending"))) {
+                	if (registeredProject == null && !((hdbofficer.getRegistrationStatus()).equals("Pending"))) {
                 		System.out.println("\nYou are not handling any project.");
                 	} else {
                 		List<Inquiry> inquiries = InquiryController.viewInquiries(registeredProject);
@@ -174,6 +176,8 @@ public class HDBOfficerUI {
                             String replyMessage = scanner.nextLine();
                             System.out.print("\n\n\n");
                             InquiryController.replyToInquiry(inquiryId, replyMessage);
+                            InquiryController.resolveInquiry(inquiryId);
+
                         }
                         break;
                 	}
@@ -181,29 +185,22 @@ public class HDBOfficerUI {
                 	
                     
                 case 6:
-                	if (registeredProject == null || !((hdbofficer.getRegistrationStatus()).equals("Pending"))) {
+                	if (registeredProject == null || hdbofficer.getRegistrationStatus().equals("Pending")) {
                 		System.out.print("\nYou are not handling any project.");
                 	} else {
                 		// Update BTO status and generate receipt
-                    	Map<String, Integer> flatTypeAvailable = registeredProject.getFlatTypeAvailable();
-
-                    	while (true) {
-                    		System.out.print("\nEnter flat type to update: ");
-                        	String flatType = scanner.nextLine();
-                        	System.out.println("Enter new available number of flats: ");
-                        	int availableFlats = scanner.nextInt();
-                        	scanner.nextLine();
-                        	if (flatTypeAvailable.containsKey(flatType)) {
-                            	flatTypeAvailable.put(flatType, availableFlats);
-                            	registeredProject.setFlatTypeAvailable(flatTypeAvailable);
-                            	break;
-                        	} else {
-                        		System.out.print("\nNo such flat type found in the project.");
-                        	}
+                    	System.out.println("Project: " + registeredProject.getName());
+                    	System.out.println("Approved Applicants: ");
+                    	List<Applicant> approvedApplicants = new ArrayList<Applicant>();
+                    	approvedApplicants = applicantList.stream()
+                    			.filter(applicant -> "successful".equalsIgnoreCase(applicant.getApplicationStatus()))
+                    			.collect(Collectors.toList());
+                    	for (Applicant applicant : approvedApplicants) {
+                    		System.out.println("Name: " + applicant.getName());
+                    		System.out.println("NRIC: " + applicant.getNRIC());
+                    		System.out.println("Available Flat Types: " + projectController.getFlatAvailability(applicant).toString());
+                    		System.out.println();
                     	}
-
-                    	Applicant applicant = null;
-                    	
                     	while (true) {
                         	System.out.print("\nEnter applicant's NRIC: ");
                         	String nric = scanner.nextLine();
@@ -211,49 +208,39 @@ public class HDBOfficerUI {
                             	//check if nric is valid
                             	System.out.println("Invalid NRIC given, please try again.");
                             } else {
-                            	while (true) {
-                                	for (Applicant a: applicantList) {
-                                        if (a.getNRIC().equalsIgnoreCase(nric)) {
-                                            applicant = a;
-                                        }
-                                    }
-                                	if (applicant == null) {
-                                		for (HDBOfficer o: hdbOfficerList) {
-                                            if (o.getNRIC().equalsIgnoreCase(nric)) {
-                                                applicant = (Applicant) o;
-                                            }
-                                        }
-                                	}
-                                	if (applicant != null) {
+                            		Optional<Applicant> result = approvedApplicants.stream() 
+                            				.filter(applicant -> applicant.getNRIC().equalsIgnoreCase(nric))
+                            				.findFirst();
+                                	if (result.isPresent()) {
+                                		Applicant applicant = result.get();
                                 		System.out.println("\n" + applicant.getName() + " with NRIC of " + applicant.getNRIC() + " has a BTO status of " + applicant.getApplicationStatus());
-                                		System.out.print("\nEnter new status: ");
-                                    	String status = scanner.nextLine();
-                                    	applicant.setApplicationStatus(status);
-                                    	System.out.print("Status updated.");
-                                    	System.out.print("\nEnter flat type of applicant: ");
-                                    	String flatType = scanner.nextLine();
-                                    	applicant.setFlatType(flatType);
-                                    	System.out.print("Flat type updated.");
+                                		while (true) {
+                                			System.out.print("\nEnter flat type of applicant: ");
+                                			String flatType = scanner.nextLine();
+                                			if (projectController.getFlatAvailability(applicant).contains(flatType)) { 
+                                				applicant.setFlatType(flatType);
+                                				applicant.getAppliedProject().decrementFlat(flatType);
+                                				applicant.setApplicationStatus("Booked");
+                                				break;
+                                			} else {
+                                				System.out.print("Invalid flat type or not available. Please Try again.");
+                                			}
+                                    	}
+                                		System.out.print("Status updated to Booked");
+                                		System.out.println("\n\nApplicant Receipt");
+                                		System.out.println("\nApplicant's name: " + applicant.getName());
+                                		System.out.println("Applicant's NRIC: " + applicant.getNRIC());
+                                		System.out.println("Applicant's age: " + applicant.getAge());
+                                		System.out.println("Applicant's marital status: " + applicant.getMaritalStatus());
+                                		System.out.println("Applicant's flat type booked: " + applicant.getFlatType());
+                                		System.out.println("Project Name: " + registeredProject.getName());
+                                		System.out.println("Neighborhood: " + registeredProject.getLocation());
                                 		break;
                                 	} else {
                                 		System.out.println("\nNo applicant with this NRIC was found, please try again.");
                                 	}
-                            	}
-                            	break;
-                            
                             }
                     	}
-                    	
-                    	// Generate receipt
-                    	System.out.println("\n\nApplicant Receipt");
-                    	System.out.println("\nApplicant's name: " + applicant.getName());
-                    	System.out.println("Applicant's NRIC: " + applicant.getNRIC());
-                    	System.out.println("Applicant's age: " + applicant.getAge());
-                    	System.out.println("Applicant's marital status: " + applicant.getMaritalStatus());
-                    	System.out.println("Applicant's flat type booked: " + applicant.getFlatType());
-                    	System.out.println("Project Name: " + registeredProject.getName());
-                    	System.out.println("Neighborhood: " + registeredProject.getLocation());
-                    	
                 	}
                 	break;
                 	

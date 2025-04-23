@@ -57,6 +57,16 @@ public class Project {
 		this.visibility = visibility;
 		this.temp = new ArrayList<>();
 	}
+	
+	public void decrementFlat(String flatType) {
+		Integer no = flatTypeAvailable.getOrDefault(flatType, 0);
+		if (no > 0) {
+			flatTypeAvailable.put(flatType, no - 1);
+		} else {
+			System.err.print("No flat of type " + flatType + " available to decrement.");
+		}
+	
+	}
 
 	public HDBManager getManager() {
 		return manager;

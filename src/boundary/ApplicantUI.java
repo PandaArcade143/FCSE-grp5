@@ -173,13 +173,13 @@ public class ApplicantUI {
                     System.out.println("\nYour inquiries:\n");
                     for (int i = 0; i < inquiries.size(); i++) {
                         Inquiry iq = inquiries.get(i);
-                        System.out.printf("%d. [%s] %s - %s%n", i + 1, iq.getStatus(), iq.getSubject(), iq.getMessage());
+                        System.out.printf("%d. [%s] %s - %s%n\t%s\n", i + 1, iq.getStatus(), iq.getSubject(), iq.getMessage(), "Reply: " + iq.getReply());
                     }
                     // Inquiry management sub-menu
                     System.out.println("\n\nInquiry Menu:");
                     System.out.println("1. Edit an inquiry");
                     System.out.println("2. Delete an inquiry");
-                    System.out.println("3. Back");
+                    System.out.println("4. Back");
                     System.out.println("\nSelect an option: ");
                     int actionChoice;
                     try {

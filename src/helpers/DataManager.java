@@ -30,6 +30,7 @@ public class DataManager {
 	private static List<HDBOfficer> officers = new ArrayList<>();
 	private static List<HDBManager> managers = new ArrayList<>();
 	private static List<Inquiry> inquiries = new ArrayList<>();
+	private static List<Applicant> combinedApplicants = new ArrayList<>();
 	private static String type1 = "2-Room";
 	private static String type2 = "3-Room";
 	
@@ -50,7 +51,15 @@ public class DataManager {
 		}));
 	}
 	
-	
+	public static List<Applicant> getCombinedApplicants() {
+		return combinedApplicants;
+	}
+
+	public static void setCombinedApplicants(List<Applicant> combinedApplicants) {
+		DataManager.combinedApplicants = combinedApplicants;
+	}
+
+
     /**
      * @return the current list of projects in memory
      */	
@@ -195,16 +204,17 @@ public class DataManager {
      */
 	public static void saveApplicants(String path) {
 		try (PrintWriter writer = new PrintWriter(new FileWriter(path))) {
-			writer.println("Name,NRIC,Age,Marital Status,Password,Applied Project,Status");
+			writer.println("Name,NRIC,Age,Marital Status,Password,Applied Project,Status,Flat Type");
 			for (Applicant applicant : applicants) {
-				writer.printf("%s,%s,%s,%s,%s,%s,%s\n",
+				writer.printf("%s,%s,%s,%s,%s,%s,%s,%s\n",
 						applicant.getName(),
 						applicant.getNRIC(),
 						applicant.getAge(),
 						applicant.getMaritalStatus(),
 						applicant.getPassword(),
 						applicant.getAppliedProject() == null ? "" : applicant.getAppliedProject().getName(),
-						applicant.getApplicationStatus() == null ? "" : applicant.getApplicationStatus());
+						applicant.getApplicationStatus() == null ? "" : applicant.getApplicationStatus(),
+						applicant.getFlatType() == null ? "" : applicant.getFlatType());
 			}
 		} catch (IOException e) {
 			System.err.println("Error saving applicants to " + path + ": " + e.getMessage());
@@ -218,19 +228,21 @@ public class DataManager {
      */
 	public static void saveOfficers(String path) {
 		try (PrintWriter writer = new PrintWriter(new FileWriter(path))) {
-			writer.println("Name,NRIC,Age,Marital Status,Password,Applied Project,Status");
+			writer.println("Name,NRIC,Age,Marital Status,Password,Applied Project,Status,Flat Type");
 			for (HDBOfficer officer : officers) {
-				writer.printf("%s,%s,%s,%s,%s,%s,%s\n",
+				writer.printf("%s,%s,%s,%s,%s,%s,%s,%s\n",
 						officer.getName(),
 						officer.getNRIC(),
 						officer.getAge(),
 						officer.getMaritalStatus(),
 						officer.getPassword(),
 						officer.getAppliedProject() == null ? "" : officer.getAppliedProject().getName(),
-						officer.getApplicationStatus() == null ? "" : officer.getApplicationStatus());
+						officer.getApplicationStatus() == null ? "" : officer.getApplicationStatus(),
+						officer.getFlatType() == null ? "" : officer.getFlatType());
+
 			}
 		} catch (IOException e) {
-			System.err.println("Error saving applicants to " + path + ": " + e.getMessage());
+			System.err.println("Error saving officers to " + path + ": " + e.getMessage());
 		}
 	}
 
@@ -251,7 +263,7 @@ public class DataManager {
 						manager.getPassword());
 			}
 		} catch (IOException e) {
-			System.err.println("Error saving applicants to " + path + ": " + e.getMessage());
+			System.err.println("Error saving managers to " + path + ": " + e.getMessage());
 		}
 	}
 
@@ -359,17 +371,22 @@ public class DataManager {
 				String password = getCSVField(data,4);
 				String projectName = getCSVField(data,5);
 				String status = getCSVField(data,6);
+				String flatType = getCSVField(data,7);
 				
 				if (c == Applicant.class) {
 					Applicant applicant = new Applicant(name, nric, age, maritalStatus, password);
 					applicant.setAppliedProjectString(projectName);
 					applicant.setApplicationStatus(status);
+					applicant.setFlatType(flatType);
 					applicants.add(applicant);
+					combinedApplicants.add(applicant);
 				} else if (c == HDBOfficer.class) {
 					HDBOfficer hdbOfficer = new HDBOfficer(name, nric, age, maritalStatus, password);
 					hdbOfficer.setAppliedProjectString(projectName);
 					hdbOfficer.setApplicationStatus(status);
+					hdbOfficer.setFlatType(flatType);
 					officers.add(hdbOfficer);
+					combinedApplicants.add(hdbOfficer);
 				} else if (c == HDBManager.class) {
 					HDBManager hdbManager = new HDBManager(name, nric, age, maritalStatus, password);
 					managers.add(hdbManager);
@@ -395,11 +412,7 @@ public class DataManager {
 			String currentLine;
 			br.readLine();
 
-			DateTimeFormatter formatter = new DateTimeFormatterBuilder()
-		            .appendPattern("dd/MM/")
-		            .appendValueReduced(ChronoField.YEAR, 2, 2, 2000)
-		            .toFormatter()
-		            .withResolverStyle(ResolverStyle.STRICT);
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy");
 			
 			while ((currentLine = br.readLine()) != null) {
 				String[] data = smartSplit(currentLine);
@@ -411,7 +424,7 @@ public class DataManager {
 				type2 = getCSVField(data,5);
 				int units2 = Integer.parseInt(getCSVField(data,6));
 				int price2 = Integer.parseInt(getCSVField(data,7));
-				//SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yy");
+				// SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yy");
 				LocalDate openingLocalDate = LocalDate.parse(getCSVField(data, 8), formatter);
 	            LocalDate closingLocalDate = LocalDate.parse(getCSVField(data, 9), formatter);
 	            
@@ -431,6 +444,7 @@ public class DataManager {
 				tempOfficersList = officers.stream()
 						.filter(f -> tempOfficersListName.contains(f.getName()))
 						.collect(Collectors.toList());
+				
 
 				boolean visibility;
 				// By default, if the visibility field is empty, it is visible
@@ -445,7 +459,24 @@ public class DataManager {
 				flatTotal.put(type2, units2);
 				
 				Map<String, Integer> flatAvailable = new HashMap<>(flatTotal);
-				
+				List<Applicant> allApplicants = new ArrayList<>();
+				allApplicants.addAll(applicants);
+				allApplicants.addAll(officers);
+				int type1Taken = 0;
+				int type2Taken = 0;
+
+				for (Applicant applicant : allApplicants) {
+					if (projectName.equals(applicant.getAppliedProjectString())) {
+						if (type1.equals(applicant.getFlatType())) {
+							type1Taken++;
+						} else if (type2.equals(applicant.getFlatType())) {
+							type2Taken++;
+						}
+					}
+				}
+				flatAvailable.put(type1, units1-type1Taken);
+				flatAvailable.put(type2, units2-type2Taken);
+
 				Map<String, Integer> flatPrices = new HashMap<>();
 				flatPrices.put(type1, price1);
 				flatPrices.put(type2, price2);
@@ -453,6 +484,17 @@ public class DataManager {
 						flatTotal, flatAvailable, flatPrices, 
 						openingDate, closingDate,
 						manager, officerSlot, officersList, visibility);
+				for (HDBOfficer officer : officersList) {
+					officer.addRegisteredProjects(project);
+					officer.setRegistrationStatus("Approved");
+				}
+				for (HDBOfficer temp : tempOfficersList) {
+					temp.addRegisteredProjects(project);
+					temp.setRegistrationStatus("Pending");
+				}
+				
+								
+				
 				project.setTemp(tempOfficersList);
 				projects.add(project);
 			}
@@ -485,7 +527,7 @@ public class DataManager {
 			}
 		}
 		
-		for (Applicant applicant : applicants) {
+		for (Applicant applicant : combinedApplicants) {
 			Project p;
 			p = projects.stream()
 					.filter(project -> project.getName().equals(applicant.getAppliedProjectString()))

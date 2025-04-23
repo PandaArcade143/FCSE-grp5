@@ -22,7 +22,7 @@ import helpers.DataManager;
 public class HDBManagerUI {
     
     public void showMenu(HDBManager hdbmanager) {
-    	List<Applicant> applicantList = DataManager.getApplicants();
+    	List<Applicant> applicantList = DataManager.getCombinedApplicants();
     	List<HDBOfficer> hdbOfficerList = DataManager.getOfficers();
         Scanner scanner = new Scanner(System.in);
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm/yy");
@@ -515,16 +515,16 @@ public class HDBManagerUI {
 	                        		System.out.print("\nEnter new status: ");
 	                            	String status = scanner.nextLine();
 	                            	projectController.processRegistrations(hdbmanager, officer.getRegisteredProjects(), officer,status);
+	                            	break;
 	                        		}
 	                        	} else {
 	                        		System.out.println("\nNo officer with this NRIC was found, please try again.");
-	                        		break;
 	                        	}
+	                        	break;
 	                    	}
 	                    	break;
 	                    }
 	            	}
-	                break;
 	            
 	            // Display pending / withdrawing applicants
 	            case 9:
@@ -535,7 +535,7 @@ public class HDBManagerUI {
     	                	System.out.println("\nProject Name: " + project.getName());
     	                	System.out.println("\nPending applicants:");
     	                	for (Applicant pendingApplicant : applicantList) {
-    	                		if (pendingApplicant.getApplicationStatus().equals("pending")) {
+    	                		if (pendingApplicant.getApplicationStatus().equalsIgnoreCase("pending")) {
     	                			System.out.println(" - " + pendingApplicant.getName()  + " " + pendingApplicant.getNRIC());
     	    	                	count += 1;
     	                		}
@@ -546,7 +546,7 @@ public class HDBManagerUI {
     	                	count = 0;
     	                	System.out.println("\nWithdrawing applicants:");
     	                	for (Applicant withdrawingApplicant : applicantList) {
-    	                		if (withdrawingApplicant.getApplicationStatus().equals("withdrawing")) {
+    	                		if (withdrawingApplicant.getApplicationStatus().equalsIgnoreCase("withdrawing")) {
     	                			System.out.println(" - " + withdrawingApplicant.getName()  + " " + withdrawingApplicant.getNRIC());
     	    	                	count += 1;
     	                		}
@@ -581,26 +581,15 @@ public class HDBManagerUI {
 	                    		while (true) {
 	                    			System.out.print("\nEnter new status: ");
 	                    			String status = scanner.nextLine();
-	                    			if (status.compareTo("Successful") == 0) {
-	                    				if ((applicant.getAge() > 35) && (applicant.getMaritalStatus().compareTo("Single") == 0) && (applicant.getAppliedProject().getFlatTypeAvailable().get("2-Room") != 0)) {
-	                    					projectController.processApplication(hdbmanager, applicant, "2-room", status);
-	                    					break;
-	                            		
-	                    				} else if ((applicant.getAge() > 21) && (applicant.getMaritalStatus().compareTo("Married") == 0)) {
-	                    					if (applicant.getAppliedProject().getFlatTypeAvailable().get("3-Room") != 0) {
-	                    						projectController.processApplication(hdbmanager, applicant, "3-room", status);
-	                    						break;
-	                        			
-	                    					} else if (applicant.getAppliedProject().getFlatTypeAvailable().get("2-Room") != 0) {
-	                    						projectController.processApplication(hdbmanager, applicant, "2-room", status);
-	                    						break;
-	                        			
-	                    					} else {
-	                    						System.out.println("\nNo available flats for applicant, status update failed.");
-	                    					}
+	                    			List<String> flatAvailability = projectController.getFlatAvailability(applicant);
+	                    			if ("successful".equalsIgnoreCase(status)) {
+	                    				if (flatAvailability.isEmpty()) {
+	                    					System.out.println("No flats available for " + applicant.getName());
 	                    				} else {
-	                    					System.out.println("\nNo available flats for applicant, status update failed.");
-	                    				}
+	                    					System.out.println(applicant.getName() + "'s status is changed to Successful");
+	                    					applicant.setApplicationStatus(status);
+	                    					break;
+	                    			}
 	                            	
 	                    			} else if (status.compareTo("Unsuccessful") == 0){
 	                    				applicant.setApplicationStatus(status);
@@ -611,9 +600,10 @@ public class HDBManagerUI {
 	                    			}
 	                    		}
 	                    	} else {
-	                    		System.out.println("\nNo officer with this NRIC was found, please try again.");
+	                    		System.out.println("\nNo applicant with this NRIC was found, please try again.");
 	                    		break;
 	                    	}
+	                    	break;
 	                	}
 	                	break;
 	                }
@@ -638,13 +628,17 @@ public class HDBManagerUI {
 	                        	if (applicant != null) {
 	                        		System.out.println("\n" + applicant.getName() + " with NRIC of " + applicant.getNRIC() + " has a withdrawal status of: " + applicant.getWithdrawalStatus());
 	                        		while (true) {
-		                        		System.out.print("\nEnter new status: ");
+		                        		System.out.print("\nEnter new status (approve/reject): ");
 		                            	String status = scanner.nextLine();
-		                            	projectController.processWithdrawal(hdbmanager, applicant, status);
+		                            	if(projectController.processWithdrawal(hdbmanager, applicant, status))
+		                            		break;
+		                            	else {
+		                            		System.out.println("Invalid Status");
+		                            	}
 	                        		}
+	                        		break;
 	                        	} else {
 	                        		System.out.println("\nNo applicant with this NRIC was found, please try again.");
-	                        		break;
 	                        	}
 	                    	}
 	                    	break;
@@ -791,6 +785,7 @@ public class HDBManagerUI {
 	
 	                // Update inquiry reply
 	                InquiryController.replyToInquiry(chosenInquiry.getInquiryId(), replyMessage);
+	                InquiryController.resolveInquiry(chosenInquiry.getInquiryId());
 	                break;
 	
 	            case 15:
