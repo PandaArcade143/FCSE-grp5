@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -254,7 +255,9 @@ public class HDBManagerUI {
 	                }
 	
 	                // Select project to edit
-	                System.out.print("\nSelect project number to edit: ");
+	                System.out.print("\nSelect project number to edit (Enter the index): ");
+	                
+	                try {
 	                projectIndex = scanner.nextInt() - 1;
 	                scanner.nextLine();
 	                if (projectIndex < 0 || projectIndex > projectList.size()) {
@@ -262,7 +265,11 @@ public class HDBManagerUI {
 	                    break;
 	                }
 	                chosenProject = projectList.get(projectIndex);
-	
+	                } catch (InputMismatchException e) {
+	                	System.out.println("\nInvalid input. Please enter a number.");
+	                	scanner.nextLine();
+	                	break;
+	                }
 	                // Display fields to edit
 	                System.out.println("\n\nWhich field do you wish to edit?");
 	                System.out.println("1. Project Name");
@@ -443,7 +450,7 @@ public class HDBManagerUI {
 	
 	                // Select project
 	                System.out.print("\nSelect a project to toggle visibility:");
-	                projectIndex = scanner.nextInt() - 1;
+	                projectIndex = scanner.nextInt();
 	                scanner.nextLine();
 	                if (projectIndex < 0 || projectIndex > projectList.size()) {
 	                    System.out.println("\nProject does not exist.");

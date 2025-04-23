@@ -18,6 +18,9 @@ public class ApplicantUI {
         ProjectController projectController = new ProjectController();
         Scanner scanner = new Scanner(System.in);
         List<Inquiry> inquiries = InquiryController.viewInquiries(applicant.getNRIC());
+        applicant.setRole("Applicant");
+        
+        
         
 
         String status;
@@ -153,19 +156,15 @@ public class ApplicantUI {
                 case 5:
                     // Allow user to submit an inquiry about a selected project
                 	System.out.print("\nProjects available:\n");
+                	
                     projectList = projectController.getAvailableProjects(applicant); // refresh project list
-                    int j = 0;
                     for (int i = 0; i < projectList.size(); i++) {
-                    	if (applicant.getRole() == "HDBOfficer" && projectList.get(i).getName().equals(((HDBOfficer) applicant).getRegisteredProjects().getName())) {
-                			j += 1;
-                    		continue;
-                		}
-                        System.out.printf("%d. %s%n", i + 1 - j, projectList.get(i).getName());
+                        System.out.printf("%d. %s%n", i + 1, projectList.get(i).getName());
                     }
                     System.out.print("\nSelect project number to inquire: ");
                     int projectIndex;
                     try {
-                        projectIndex = Integer.parseInt(scanner.nextLine()) - 1 + j;
+                        projectIndex = Integer.parseInt(scanner.nextLine()) - 1;
                     } catch (NumberFormatException e) {
                         System.out.println("\nInvalid number.");
                         break;
