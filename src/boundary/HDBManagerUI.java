@@ -765,6 +765,8 @@ public class HDBManagerUI {
 	                }
 	                
 	                // Select project
+	                System.out.println("Select the project you wish to reply to: ");
+	                try {
 	                projectIndex = scanner.nextInt();
 	                scanner.nextLine();
 	                if (projectIndex < 0 || projectIndex > projectList.size()) {
@@ -772,6 +774,11 @@ public class HDBManagerUI {
 	                    break;
 	                }
 	                chosenProject = projectList.get(projectIndex-1);
+	                } catch (InputMismatchException e) {
+	                	System.out.println("\nInvalid input. Please enter a number.");
+	                	scanner.nextLine();
+	                	break;
+	                }
 	
 	                // View inquiries for chosen project
 	                System.out.println("\nInquires for project " + chosenProject.getName() + ":\n");
@@ -779,7 +786,8 @@ public class HDBManagerUI {
 	                for (int inq=1; inq<=inquiryList.size(); inq++) {
 	                    System.out.print(inq);
 	                    System.out.print(". ");
-	                    System.out.print(inquiryList.get(inq-1).getMessage());
+	                    System.out.print(inquiryList.get(inq-1).getSubject());
+	                    System.out.print(": " + inquiryList.get(inq-1).getMessage());
 	                    System.out.print("\n");
 	                }
 	
