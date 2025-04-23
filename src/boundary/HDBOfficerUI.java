@@ -19,7 +19,7 @@ public class HDBOfficerUI {
         List<Applicant> applicantList = DataManager.getCombinedApplicants();
         List<HDBOfficer> hdbOfficerList = DataManager.getOfficers();
         Scanner scanner = new Scanner(System.in);
-        Project registeredProject = hdbofficer.getRegisteredProjects();
+        Project registeredProject = null;
         hdbofficer.setRole("HDBOfficer");
         
         while (true) {
@@ -90,68 +90,61 @@ public class HDBOfficerUI {
                         	registeredProject = project;
                         }
                     }
+                    if (registeredProject == null) {
+                    	System.out.println("\nNo project with that name found");
+                    	break;
+                    }
                     // Displays message depending on whether project is successfully applied
                     if (hdbofficer.getAppliedProject() == registeredProject) {
                         System.out.println("\nProject is unable to be registered for as you are already applying as an applicant.");
-                    } else if (registeredProject == hdbofficer.getRegisteredProjects()){
+                    } else if (hdbofficer.getApprovedProjects().contains(registeredProject) || hdbofficer.getPendingProjects().contains(registeredProject)){
                         System.out.println("\nYou have already registered for this project.");
                     } else if (registeredProject.getOfficerSlot() == registeredProject.getOfficers().size()){
                     	System.out.println("\nNo free officer slots left for this project.");
-                    } else if (hdbofficer.getRegisteredProjects() != null) {
-                    	if (!hdbofficer.getRegisteredProjects().getOpenDate().after(currDate) && !hdbofficer.getRegisteredProjects().getCloseDate().before(currDate)) {
-                    		System.out.println("\nYou have already registered for another project.");
-                    	} else {
-                    		System.out.println("\nProject successfully registered!");
-                        	registeredProject.addTemporaryOfficer(hdbofficer);
-                        	hdbofficer.addRegisteredProjects(registeredProject);
-                    	}
-                    } else{
+                    } else if (!hdbofficer.isEligibleForRegistration(registeredProject)) {
+                    	System.out.println("\nYou have already registered for another project which overlaps.");
+                    } else {
                     	System.out.println("\nProject successfully registered!");
-                    	registeredProject.addTemporaryOfficer(hdbofficer);
-                    	hdbofficer.addRegisteredProjects(registeredProject);
+                        registeredProject.addTemporaryOfficer(hdbofficer);
+                        hdbofficer.addRegisteredProjects(registeredProject);
+                        hdbofficer.addPendingProject(registeredProject);
                     }
                     break;
                     
                 case 3:
                 	// View registration status
-                	if (hdbofficer.getRegisteredProjects() != null && !hdbofficer.getRegistrationStatus().equals("Pending")) {
-                		System.out.println("\nYou are already registered for the " + hdbofficer.getRegisteredProjects().getName() + " project.");
-                	} else if (hdbofficer.getRegistrationStatus() == null) {
-                        System.out.println("\nYou are not registered for any project or your registration has been rejected.");
-                    } else {
-                    	System.out.println("\nRegistered Project: " + hdbofficer.getRegisteredProjects().getName());
-                    	System.out.println("Registration status: " + hdbofficer.getRegistrationStatus());
-                    }
-                	
+                	System.out.println("Approved Projects:");
+                	hdbofficer.getApprovedProjects().forEach(p -> System.out.printf("Name: %s\nPeriod: %s to %s\n\n", p.getName(), p.getOpenDate().toString(), p.getCloseDate().toString()));
+                	System.out.println("Pending Projects:");
+                    hdbofficer.getPendingProjects().forEach(p -> System.out.printf("Name: %s\nPeriod: %s to %s\n\n" ,p.getName(), p.getOpenDate().toString(), p.getCloseDate().toString()));
+
                     break;
                     
                 case 4:
                 	// View project details
-                	if (hdbofficer.getRegistrationStatus() != null) {
-	                	System.out.println("\nProject Name: " + registeredProject.getName());
-	                	System.out.println("Neighborhood: " + registeredProject.getLocation());
+                	for (Project p : hdbofficer.getApprovedProjects()) {
+	                	System.out.println("\nProject Name: " + p.getName());
+	                	System.out.println("Neighborhood: " + p.getLocation());
 	                	System.out.println("Flat types and total number of units for corresponding types:");
-	                	for (Map.Entry<String, Integer> pair : registeredProject.getFlatTypeTotal().entrySet()) {
+	                	for (Map.Entry<String, Integer> pair : p.getFlatTypeTotal().entrySet()) {
 	                       System.out.println(" - Flat type: " + pair.getKey() + ", total number of units: " + pair.getValue());
 	                    }
 	                	System.out.println("Flat types and available number of units left for corresponding types:");
-	                	for (Map.Entry<String, Integer> pair : registeredProject.getFlatTypeAvailable().entrySet()) {
+	                	for (Map.Entry<String, Integer> pair : p.getFlatTypeAvailable().entrySet()) {
 	                       System.out.println(" - Flat type: " + pair.getKey() + ", available number of units left: " + pair.getValue());
 	                    }
 	                	System.out.println("Flat types and prices for corresponding types:");
-	                	for (Map.Entry<String, Integer> pair : registeredProject.getFlatPrices().entrySet()) {
+	                	for (Map.Entry<String, Integer> pair : p.getFlatPrices().entrySet()) {
 	                       System.out.println(" - Flat type: " + pair.getKey() + ", selling price: " + pair.getValue());
 	                    }
-	                	System.out.println("Application opening date: " + registeredProject.getOpenDate());
-	                	System.out.println("Application closing date: " + registeredProject.getCloseDate());
-	                	System.out.println("Manager of project: " + registeredProject.getManager());
-	                	System.out.println("Officer slots for project: " + registeredProject.getOfficerSlot());
+	                	System.out.println("Application opening date: " + p.getOpenDate());
+	                	System.out.println("Application closing date: " + p.getCloseDate());
+	                	System.out.println("Manager of project: " + p.getManager());
+	                	System.out.println("Officer slots for project: " + p.getOfficerSlot());
 	                	System.out.println("Officers of project: ");
-	                	for (HDBOfficer officer: registeredProject.getOfficers()) {
+	                	for (HDBOfficer officer: p.getOfficers()) {
 	                		System.out.println(" - " + officer.getName());
 	                    }
-                	} else {
-                        System.out.println("\nYou are not registered for any project or your registration has been rejected.");
                     }
                 	break;
                 	

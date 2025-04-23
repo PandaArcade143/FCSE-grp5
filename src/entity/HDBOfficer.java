@@ -1,4 +1,6 @@
 package entity;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -7,8 +9,39 @@ import java.util.Objects;
  */
 public class HDBOfficer extends Applicant{
 	Project registeredProject;
+	List<Project> approvedProjects = new ArrayList<Project>();
+	List<Project> pendingProjects = new ArrayList<Project>();
 	String registrationStatus;
 	String role;
+
+	
+	public List<Project> getApprovedProjects() {
+		return approvedProjects;
+	}
+
+	public void setApprovedProjects(List<Project> approvedProjects) {
+		this.approvedProjects = approvedProjects;
+	}
+	
+	public void addApprovedProject(Project p) {
+		this.approvedProjects.add(p);
+	}
+
+	public List<Project> getPendingProjects() {
+		return pendingProjects;
+	}
+
+	public void setPendingProjects(List<Project> pendingProjects) {
+		this.pendingProjects = pendingProjects;
+	}
+
+	public void addPendingProject(Project p) {
+		this.pendingProjects.add(p);
+	}
+	
+	public void removePendingProject(Project p) {
+		this.pendingProjects.remove(p);
+	}
 
 	/**
      * Constructs an HDB Officer using base applicant information.
@@ -85,11 +118,20 @@ public class HDBOfficer extends Applicant{
      */
 	public Boolean isEligibleForRegistration(Project p){
 		// If officer has applied for the same project as an application, he is not allowed to join the project
-		if (this.registeredProject == p && this.getAppliedProject() == p) return false;
-
-		// Project must not be be in the same date range
-		if (p.getOpenDate().after(registeredProject.getOpenDate()) && p.getOpenDate().before(registeredProject.getCloseDate())) {
+		if (approvedProjects.contains(p) || this.getAppliedProject() == p) {
+		
+				System.out.print("This is trunning");
 			return false;
+		}
+	
+		// Project must not be be in the same date range
+		for (Project project : approvedProjects) {
+
+			boolean overlaps = !(p.getCloseDate().before(project.getOpenDate()) ||
+	                         p.getOpenDate().after(project.getCloseDate()));	                        		
+			if (overlaps) {
+				return false;
+			}
 		}
 		
 		return true;

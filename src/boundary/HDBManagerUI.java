@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -518,13 +519,24 @@ public class HDBManagerUI {
 	                                }
 	                            }
 	                        	if (officer != null) {
-	                        		System.out.println("\n" + officer.getName() + " with NRIC of " + officer.getNRIC() + " has a registration status of: " + officer.getRegistrationStatus());
-	                        		while (true) {
-	                        		System.out.print("\nEnter new status: ");
-	                            	String status = scanner.nextLine();
-	                            	projectController.processRegistrations(hdbmanager, officer.getRegisteredProjects(), officer,status);
-	                            	break;
+	                        		System.out.println("\n" + officer.getName() + " with NRIC of " + officer.getNRIC() + " has the following pending projects");
+	                        		List<Project> pending = officer.getPendingProjects();
+	                        		officer.getPendingProjects().forEach(p -> System.out.println(p.getName()));
+	                        		System.out.println("Which project would you like to approve/deny?");
+	                        		String name = scanner.nextLine();
+	                        		Optional<Project> s = pending.stream()
+	                        				.filter(p->p.getName().equalsIgnoreCase(name))
+	                        				.findFirst();
+	                        		Project proj;
+	                        		if (s.isPresent()) {
+	                        			proj = s.get();
+	                        		} else {
+	                        			System.out.println("Project not found.");
+	                        			continue;
 	                        		}
+	                        		System.out.print("\nEnter new status (Approved/Denied): ");
+	                            	String status = scanner.nextLine();
+	                            	projectController.processRegistrations(hdbmanager, proj, officer,status);
 	                        	} else {
 	                        		System.out.println("\nNo officer with this NRIC was found, please try again.");
 	                        	}

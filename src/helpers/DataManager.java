@@ -501,14 +501,14 @@ public class DataManager {
 						manager, officerSlot, officersList, visibility);
 				for (HDBOfficer officer : officersList) {
 					officer.addRegisteredProjects(project);
+					officer.addApprovedProject(project);
 					officer.setRegistrationStatus("Approved");
 				}
 				for (HDBOfficer temp : tempOfficersList) {
 					temp.addRegisteredProjects(project);
+					temp.addPendingProject(project);
 					temp.setRegistrationStatus("Pending");
 				}
-				
-								
 				
 				project.setTemp(tempOfficersList);
 				projects.add(project);
