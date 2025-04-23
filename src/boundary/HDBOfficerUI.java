@@ -20,7 +20,6 @@ public class HDBOfficerUI {
         List<HDBOfficer> hdbOfficerList = DataManager.getOfficers();
         Scanner scanner = new Scanner(System.in);
         Project registeredProject = hdbofficer.getRegisteredProjects();
-        hdbofficer.setRole("HDBOfficer");
         
         while (true) {
         	List<Project> projectList = projectController.getFilteredProjects(hdbofficer); // Fetches list of available projects

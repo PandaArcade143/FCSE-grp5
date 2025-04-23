@@ -18,9 +18,6 @@ public class ApplicantUI {
         ProjectController projectController = new ProjectController();
         Scanner scanner = new Scanner(System.in);
         List<Inquiry> inquiries = InquiryController.viewInquiries(applicant.getNRIC());
-        applicant.setRole("Applicant");
-        
-        
         
 
         String status;
@@ -121,33 +118,13 @@ public class ApplicantUI {
                 case 4:
                     // Attempt to withdraw current application
                 	status = applicant.getApplicationStatus();
-                	Project p = applicant.getAppliedProject();
-                	
-                	if (status != null && p != null) {
-                		if (status.equalsIgnoreCase("withdrawing")) {
+                	if (status != null) {
+                		if (status.equals("withdrawing")) {
                 			System.out.println("\nApplication already pending withdrawal.");
-                		} else if (status.equalsIgnoreCase("withdrawn")) {
-                			System.out.println("\nApplication has been approved to be withdrawn. Remove application? (y/n)");
-                			String s = scanner.nextLine();
-                			if (s.equals("y")) {
-                				applicant.setAppliedProject(null); 
-                				applicant.setAppliedProjectString(null);
-                				applicant.setFlatType(null);
-                			}
-                		} else if (status.equalsIgnoreCase("rejectwithdrawal")) {
-                			System.out.println("\nApplication to withdraw has been rejected. Reverting application status back.");
-                			if (applicant.getFlatType().isEmpty()) {
-                				applicant.setApplicationStatus("Pending");
-                			} else {
-                				applicant.setApplicationStatus("Booked");
-                			}
-                			
                 		} else {
-                			applicant.setApplicationStatus("Withdrawing");
+                			applicant.setApplicationStatus("withdrawing");
                 			System.out.println("\nApplication is now pending for withdrawal.");
                 		}
-                	} else if (status == null && p != null){
-                		                		
                     } else {
                         System.out.println("\nNo application found.");
                     }
@@ -156,15 +133,19 @@ public class ApplicantUI {
                 case 5:
                     // Allow user to submit an inquiry about a selected project
                 	System.out.print("\nProjects available:\n");
-                	
                     projectList = projectController.getAvailableProjects(applicant); // refresh project list
+                    int j = 0;
                     for (int i = 0; i < projectList.size(); i++) {
-                        System.out.printf("%d. %s%n", i + 1, projectList.get(i).getName());
+                    	if (applicant.getRole() == "HDBOfficer" && projectList.get(i).getName().equals(((HDBOfficer) applicant).getRegisteredProjects().getName())) {
+                			j += 1;
+                    		continue;
+                		}
+                        System.out.printf("%d. %s%n", i + 1 - j, projectList.get(i).getName());
                     }
                     System.out.print("\nSelect project number to inquire: ");
                     int projectIndex;
                     try {
-                        projectIndex = Integer.parseInt(scanner.nextLine()) - 1;
+                        projectIndex = Integer.parseInt(scanner.nextLine()) - 1 + j;
                     } catch (NumberFormatException e) {
                         System.out.println("\nInvalid number.");
                         break;
