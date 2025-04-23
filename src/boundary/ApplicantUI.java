@@ -118,13 +118,33 @@ public class ApplicantUI {
                 case 4:
                     // Attempt to withdraw current application
                 	status = applicant.getApplicationStatus();
-                	if (status != null) {
+                	Project p = applicant.getAppliedProject();
+                	
+                	if (status != null && p != null) {
                 		if (status.equalsIgnoreCase("withdrawing")) {
                 			System.out.println("\nApplication already pending withdrawal.");
+                		} else if (status.equalsIgnoreCase("withdrawn")) {
+                			System.out.println("\nApplication has been approved to be withdrawn. Remove application? (y/n)");
+                			String s = scanner.nextLine();
+                			if (s.equals("y")) {
+                				applicant.setAppliedProject(null); 
+                				applicant.setAppliedProjectString(null);
+                				applicant.setFlatType(null);
+                			}
+                		} else if (status.equalsIgnoreCase("rejectwithdrawal")) {
+                			System.out.println("\nApplication to withdraw has been rejected. Reverting application status back.");
+                			if (applicant.getFlatType().isEmpty()) {
+                				applicant.setApplicationStatus("Pending");
+                			} else {
+                				applicant.setApplicationStatus("Booked");
+                			}
+                			
                 		} else {
                 			applicant.setApplicationStatus("Withdrawing");
                 			System.out.println("\nApplication is now pending for withdrawal.");
                 		}
+                	} else if (status == null && p != null){
+                		                		
                     } else {
                         System.out.println("\nNo application found.");
                     }

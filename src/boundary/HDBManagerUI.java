@@ -629,7 +629,7 @@ public class HDBManagerUI {
 	                        	if (applicant != null) {
 	                        		System.out.println("\n" + applicant.getName() + " with NRIC of " + applicant.getNRIC() + " has a withdrawal status of: " + applicant.getWithdrawalStatus());
 	                        		while (true) {
-		                        		System.out.print("\nEnter new status (approve/reject): ");
+		                        		System.out.print("\nEnter new status (approved/denied): ");
 		                            	String status = scanner.nextLine();
 		                            	if(projectController.processWithdrawal(hdbmanager, applicant, status))
 		                            		break;
@@ -752,7 +752,7 @@ public class HDBManagerUI {
 	                }
 	                
 	                // Select project
-	                projectIndex = scanner.nextInt() - 1;
+	                projectIndex = scanner.nextInt();
 	                scanner.nextLine();
 	                if (projectIndex < 0 || projectIndex > projectList.size()) {
 	                    System.out.println("\nProject does not exist.");
