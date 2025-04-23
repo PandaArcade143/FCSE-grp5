@@ -28,7 +28,7 @@ public class HDBManagerUI {
     	List<Applicant> applicantList = DataManager.getCombinedApplicants();
     	List<HDBOfficer> hdbOfficerList = DataManager.getOfficers();
         Scanner scanner = new Scanner(System.in);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/mm/yy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yy");
         ProjectController projectController = new ProjectController();
         HDBOfficer officer = null;
         Applicant applicant = null;
@@ -200,11 +200,27 @@ public class HDBManagerUI {
 		                    System.out.print("\nApplication opening date(dd/mm/yy): ");
 		                    String applicationOpenDate = scanner.nextLine();
 		                    openingDate = dateFormat.parse(applicationOpenDate);
+							// Validate day, month, and year for the opening date
+							String[] openDateParts = applicationOpenDate.split("/");
+							int openDay = Integer.parseInt(openDateParts[0]);
+							int openMonth = Integer.parseInt(openDateParts[1]);
+					
+							if (openDay < 1 || openDay > 31 || openMonth < 1 || openMonth > 12) {
+								throw new IllegalArgumentException("Invalid day or month value.");
+							}
+					 
 		
 		                    // Enter application closing date
 		                    System.out.print("\nApplication closing date(dd/mm/yy): ");
 		                    String applicationCloseDate = scanner.nextLine();
 		                    closingDate = dateFormat.parse(applicationCloseDate);
+							// Validate day, month, and year for the closing date
+							String[] closeDateParts = applicationCloseDate.split("/");
+							int closeDay = Integer.parseInt(closeDateParts[0]);
+							int closeMonth = Integer.parseInt(closeDateParts[1]);
+							if (closeDay < 1 || closeDay > 31 || closeMonth < 1 || closeMonth > 12) {
+								throw new IllegalArgumentException("Invalid day or month value.");
+							}
 		                    if (!closingDate.after(openingDate)) {
 		                    	System.out.println("\nClosing date should be after opening date.");
 		                    } else {
@@ -343,19 +359,33 @@ public class HDBManagerUI {
 	                    	
 	                    // Edit application opening date
 	                    case 4:
-	                        System.out.print("\nCurrent application opening date(dd/mm/yy): ");
-	                        System.out.println(chosenProject.getOpenDate());
-	                        System.out.print("\nNew application opening date(dd/mm/yy): ");
-	
-	                        Date openDate = new Date();
-	                        try {
-	                            String applicationOpenDate = scanner.nextLine();
-	                            openDate = dateFormat.parse(applicationOpenDate);
-	                        } catch (Exception e) {
-	                            System.out.println("\nInvalid date format! Please use dd/mm/yy.");
-	                        }
+							validDate = false;
+							Date openDate = new Date();
+							String applicationOpenDate = "";
+							while(!validDate){
+								System.out.print("\nCurrent application opening date(dd/mm/yy): ");
+								System.out.println(chosenProject.getOpenDate());
+								System.out.print("\nNew application opening date(dd/mm/yy): ");
+							
+								try {
+									applicationOpenDate = scanner.nextLine();
+									openDate = dateFormat.parse(applicationOpenDate);
+									String[] openDateParts = applicationOpenDate.split("/");
+									int openDay = Integer.parseInt(openDateParts[0]);
+									int openMonth = Integer.parseInt(openDateParts[1]);
+								
+									if (openDay < 1 || openDay > 31 || openMonth < 1 || openMonth > 12) {
+										throw new IllegalArgumentException("Invalid day or month value.");
+									}
+									else{
+										validDate = true;
+									}
+
+								} catch (Exception e) {
+									System.out.println("\nInvalid date format! Please use dd/mm/yy.");
+								}
+							}
 	                        
-	                        validDate = true;
 	                        
 	                        for (Project createdProject : hdbmanager.getCreatedProjects()) {
 			            		if (!createdProject.getCloseDate().before(openDate) && !createdProject.getOpenDate().after(openDate)) {
@@ -373,19 +403,35 @@ public class HDBManagerUI {
 	
 	                    // Edit application closing date
 	                    case 5:
+							validDate = false;
+							Date closeDate = new Date();
+							String applicationCloseDate = "";
+							while(!validDate){
 	                        System.out.print("\nCurrent application closing date(dd/mm/yy): ");
 	                        System.out.println(chosenProject.getCloseDate());
 	                        System.out.print("\nNew application closing date(dd/mm/yy): ");
+							applicationCloseDate = scanner.nextLine();
 	
-	                        Date closeDate = new Date();
+	                        
 	                        try {
-	                            String applicationCloseDate = scanner.nextLine();
+	                            
 	                            closeDate = dateFormat.parse(applicationCloseDate);
+								String[] closeDateParts = applicationCloseDate.split("/");
+								int closeDay = Integer.parseInt(closeDateParts[0]);
+								int closeMonth = Integer.parseInt(closeDateParts[1]);
+						
+								if (closeDay < 1 || closeDay > 31 || closeMonth < 1 || closeMonth > 12) {
+									throw new IllegalArgumentException("Invalid day or month value.");
+								}
+								else{
+									validDate = true;
+								}
+
 	                        } catch (Exception e) {
 	                            System.out.println("\nInvalid date format! Please use dd/mm/yy.");
 	                        }
-	                        
-	                        validDate = true;
+						}
+	                       
 	                        
 	                        for (Project createdProject : hdbmanager.getCreatedProjects()) {
 			            		if (!createdProject.getCloseDate().before(closeDate) && !createdProject.getOpenDate().after(closeDate)) {
