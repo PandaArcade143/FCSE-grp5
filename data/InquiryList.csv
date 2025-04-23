@@ -1,5 +1,3 @@
 InquiryID,SenderNRIC,Subject,Message,Status,CreatedAt,ResolvedAt,RelatedProject,Reply
 5bab89fe-c7e8-42d5-8ead-0e9e4215d8c3,T1234567J,Unit Number,Can I choose what unit number I get?,Open,2025-04-21T13:32:10.031012400,null,Acacia Breeze,
 05db000c-4e7a-494e-bbfb-765c3ef8e99d,T1234567H,Contact,How many I contact the manager?,Open,2025-04-23T06:41:07.339073100,null,Grassy Hill,You may email her: jess.gmail.com
-0180a166-922a-4e8c-a6d5-1d756d0a6914,T1234567H,test,test,Resolved,2025-04-23T18:11:59.386186558,2025-04-23T18:13:45.228146524,Sunny City,Testing
-f82c9a0b-81f4-48bb-b008-d61d50dddeea,T1234567H,Why is the hill grassy?,a,Resolved,2025-04-23T18:28:30.777105208,2025-04-23T18:31:38.989281914,Grassy Hill,Really?

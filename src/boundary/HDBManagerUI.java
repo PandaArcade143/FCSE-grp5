@@ -4,11 +4,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -256,9 +254,7 @@ public class HDBManagerUI {
 	                }
 	
 	                // Select project to edit
-	                System.out.print("\nSelect project number to edit (Enter the index): ");
-	                
-	                try {
+	                System.out.print("\nSelect project number to edit: ");
 	                projectIndex = scanner.nextInt() - 1;
 	                scanner.nextLine();
 	                if (projectIndex < 0 || projectIndex > projectList.size()) {
@@ -266,11 +262,7 @@ public class HDBManagerUI {
 	                    break;
 	                }
 	                chosenProject = projectList.get(projectIndex);
-	                } catch (InputMismatchException e) {
-	                	System.out.println("\nInvalid input. Please enter a number.");
-	                	scanner.nextLine();
-	                	break;
-	                }
+	
 	                // Display fields to edit
 	                System.out.println("\n\nWhich field do you wish to edit?");
 	                System.out.println("1. Project Name");
@@ -451,7 +443,7 @@ public class HDBManagerUI {
 	
 	                // Select project
 	                System.out.print("\nSelect a project to toggle visibility:");
-	                projectIndex = scanner.nextInt();
+	                projectIndex = scanner.nextInt() - 1;
 	                scanner.nextLine();
 	                if (projectIndex < 0 || projectIndex > projectList.size()) {
 	                    System.out.println("\nProject does not exist.");
@@ -580,12 +572,7 @@ public class HDBManagerUI {
 	                	System.out.println("\nInvalid NRIC given, please try again.");
 	                } else {
 	                	while (true) {
-	                		List<Applicant> pendingApplicants = new ArrayList<Applicant>();
-	                		pendingApplicants = applicantList.stream()
-	                				.filter(a -> a.getApplicationStatus().equals("Pending"))
-	                				.collect(Collectors.toList());
-
-	                    	for (Applicant a: pendingApplicants) {
+	                    	for (Applicant a: applicantList) {
 	                            if (a.getNRIC().equalsIgnoreCase(nric)) {
 	                                applicant = a;
 	                            }
@@ -642,7 +629,7 @@ public class HDBManagerUI {
 	                        	if (applicant != null) {
 	                        		System.out.println("\n" + applicant.getName() + " with NRIC of " + applicant.getNRIC() + " has a withdrawal status of: " + applicant.getWithdrawalStatus());
 	                        		while (true) {
-		                        		System.out.print("\nEnter new status (approved/denied): ");
+		                        		System.out.print("\nEnter new status (approve/reject): ");
 		                            	String status = scanner.nextLine();
 		                            	if(projectController.processWithdrawal(hdbmanager, applicant, status))
 		                            		break;
@@ -773,20 +760,13 @@ public class HDBManagerUI {
 	                }
 	                
 	                // Select project
-	                System.out.println("Select the project you wish to reply to: ");
-	                try {
-	                projectIndex = scanner.nextInt();
+	                projectIndex = scanner.nextInt() - 1;
 	                scanner.nextLine();
 	                if (projectIndex < 0 || projectIndex > projectList.size()) {
 	                    System.out.println("\nProject does not exist.");
 	                    break;
 	                }
 	                chosenProject = projectList.get(projectIndex-1);
-	                } catch (InputMismatchException e) {
-	                	System.out.println("\nInvalid input. Please enter a number.");
-	                	scanner.nextLine();
-	                	break;
-	                }
 	
 	                // View inquiries for chosen project
 	                System.out.println("\nInquires for project " + chosenProject.getName() + ":\n");
@@ -794,8 +774,7 @@ public class HDBManagerUI {
 	                for (int inq=1; inq<=inquiryList.size(); inq++) {
 	                    System.out.print(inq);
 	                    System.out.print(". ");
-	                    System.out.print(inquiryList.get(inq-1).getSubject());
-	                    System.out.print(": " + inquiryList.get(inq-1).getMessage());
+	                    System.out.print(inquiryList.get(inq-1).getMessage());
 	                    System.out.print("\n");
 	                }
 	

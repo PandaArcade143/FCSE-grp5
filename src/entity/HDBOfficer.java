@@ -8,7 +8,6 @@ import java.util.Objects;
 public class HDBOfficer extends Applicant{
 	Project registeredProject;
 	String registrationStatus;
-	String role;
 
 	/**
      * Constructs an HDB Officer using base applicant information.
@@ -21,7 +20,6 @@ public class HDBOfficer extends Applicant{
      */
 	public HDBOfficer(String name, String nric, int age, String maritalStatus, String password) {
 		super(name, nric, age, maritalStatus, password);
-		role = "HDBOfficer";
 	}
 
 	/**
@@ -30,12 +28,7 @@ public class HDBOfficer extends Applicant{
      * @return a string representing the role, in this case "HDBOfficer"
      */
 	public String getRole() {
-		return role;
-	}
-	
-	public void setRole(String role) {
-		this.role = role;
-		
+		return "HDBOfficer";
 	}
 
 	/**
