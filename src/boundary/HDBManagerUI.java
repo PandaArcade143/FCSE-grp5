@@ -884,7 +884,7 @@ public class HDBManagerUI implements HDBStaffInt{
 						break;
 					}
 					chosenProject = projectList.get(projectIndex-1);
-				} catch (InputMismatchException e) {
+				} catch (Exception e) {
 					System.out.println("\nInvalid input. Please enter a number.");
 					scanner.nextLine();
 					break;
@@ -910,18 +910,26 @@ public class HDBManagerUI implements HDBStaffInt{
 
 				// Select inquiry to reply to
 				System.out.println("Which inquiry do you wish to reply to:");
-				int inquiryIndex = scanner.nextInt() - 1;
-				scanner.nextLine();
-				if (inquiryIndex < 0 || inquiryIndex >= inquiryList.size()) {
-					System.out.println("\nInquiry does not exist.");
+				try{
+
+					int inquiryIndex = scanner.nextInt() - 1;
+					scanner.nextLine();
+					if (inquiryIndex < 0 || inquiryIndex >= inquiryList.size()) {
+						System.out.println("\nInquiry does not exist.");
+						break;
+					}
+					Inquiry chosenInquiry = inquiryList.get(inquiryIndex);
+					// Enter reply message to inquiry
+					System.out.print("\nEnter reply: ");
+					String replyMessage = scanner.nextLine();
+					replyToProjInquiry(chosenInquiry.getInquiryId(), replyMessage);
+					
+				}catch (Exception e) {
+					System.out.println("\nInvalid input. Please enter a number.");
+					scanner.nextLine();
 					break;
 				}
-				Inquiry chosenInquiry = inquiryList.get(inquiryIndex);
-
-				// Enter reply message to inquiry
-				System.out.print("\nEnter reply: ");
-				String replyMessage = scanner.nextLine();
-				replyToProjInquiry(chosenInquiry.getInquiryId(), replyMessage);
+				
 				// // Update inquiry reply
 				// InquiryController.replyToInquiry(chosenInquiry.getInquiryId(), replyMessage);
 				// System.out.println("\nIs the inquiry resolved? (Yes/No)");
