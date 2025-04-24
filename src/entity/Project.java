@@ -284,20 +284,11 @@ public class Project {
 	
 
 	/**
-     * Returns a list of temporary officers.
-     * @return list of temporary HDB officers
-     */
-	public List<HDBOfficer> getTemp() {
-		return temp;
-	}
-	
-	/**
 	 * sets the temporary HDBOfficers that have applied
 	 *
 	 * @param temp list of HDBOfficers
  	*/
-
-	public void setTemp(List<HDBOfficer> temp) {
+	public void setTemporaryOfficers(List<HDBOfficer> temp) {
 		this.temp = temp;
 	}
 

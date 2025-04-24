@@ -46,7 +46,6 @@ public class HDBOfficerUI {
 
 		ProjectController projectController = new ProjectController();
 		List<Applicant> applicantList = DataManager.getCombinedApplicants();
-		List<HDBOfficer> hdbOfficerList = DataManager.getOfficers();
 		Scanner scanner = new Scanner(System.in);
 		Project registeredProject = null;
 		hdbofficer.setRole("HDBOfficer");
@@ -113,7 +112,6 @@ public class HDBOfficerUI {
 				// HDB officer registers for a project
 				System.out.println("\nEnter the name of the project you wish to register for: ");
 				String projectName = scanner.nextLine().trim();
-				Date currDate = new Date();
 				for (Project project : projectList) {
 					if (project.getName().equalsIgnoreCase(projectName)) {
 						registeredProject = project;

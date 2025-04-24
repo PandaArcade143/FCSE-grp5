@@ -543,7 +543,7 @@ public class DataManager {
 					temp.setRegistrationStatus("Pending");
 				}
 				
-				project.setTemp(tempOfficersList);
+				project.setTemporaryOfficers(tempOfficersList);
 				projects.add(project);
 			}
 				
