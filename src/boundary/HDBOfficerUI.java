@@ -362,7 +362,12 @@ public class HDBOfficerUI implements HDBStaffInt{
 				System.out.println("\nInvalid option. Please try again.");
 			}
 		}
-
+		/**
+		 * Replies to a project inquiry by updating the inquiry message and optionally resolving it.
+		 *
+		 * @param inquiryId     The ID of the inquiry to respond to.
+		 * @param replyMessage  The message to be sent as a reply to the inquiry.
+		 */
 
 	}
 	public void viewProjectInquiries(List<Project> proj){
@@ -395,7 +400,11 @@ public class HDBOfficerUI implements HDBStaffInt{
 			}
 		}
 	}
-
+	/**
+	 * Asks the user if the inquiry has been resolved and updates the inquiry status accordingly.
+	 *
+	 * @param inquiryId The ID of the inquiry to resolve.
+	 */
 	public void replyToProjInquiry(String inquiryId, String replyMessage){
 		// Update inquiry reply
 		InquiryController.replyToInquiry(inquiryId, replyMessage);
