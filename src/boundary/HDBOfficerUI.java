@@ -191,9 +191,10 @@ public class HDBOfficerUI {
 							// Now proceed to respond to selectedInquiry
 							System.out.print("\nEnter your reply: ");
 							String replyMessage = scanner.nextLine();
-							System.out.print("\n\n\n");
 							InquiryController.replyToInquiry(selectedInquiry.getInquiryId(), replyMessage);
 							InquiryController.resolveInquiry(selectedInquiry.getInquiryId());
+							System.out.print("\nInquiries resolved");
+							System.out.print("\n\n\n");
 						} else {
 							System.out.println("Invalid inquiry number.");
 						}

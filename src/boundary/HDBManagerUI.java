@@ -486,6 +486,7 @@ public class HDBManagerUI {
 				}
 				chosenProject = projectList.get(projectIndex);
 				projectController.deleteProject(hdbmanager, chosenProject); // Delete project
+				System.out.println("Project deleted!");
 				break;
 
 				// Toggle visibility of projects
@@ -574,7 +575,7 @@ public class HDBManagerUI {
 								System.out.println("\n" + officer.getName() + " with NRIC of " + officer.getNRIC() + " has the following pending projects");
 								List<Project> pending = officer.getPendingProjects();
 								officer.getPendingProjects().forEach(p -> System.out.println(p.getName()));
-								System.out.println("Which project would you like to approve/deny?");
+								System.out.println("Which project would you like to approve/deny: ");
 								String name = scanner.nextLine();
 								Optional<Project> s = pending.stream()
 										.filter(p->p.getName().equalsIgnoreCase(name))
@@ -589,6 +590,7 @@ public class HDBManagerUI {
 								System.out.print("\nEnter new status (Approved/Denied): ");
 								String status = scanner.nextLine();
 								projectController.processRegistrations(hdbmanager, proj, officer,status);
+								break;
 							} else {
 								System.out.println("\nNo officer with this NRIC was found, please try again.");
 							}

@@ -468,6 +468,8 @@ public class ProjectController {
         if (status.equals("approved")){
             a.setWithdrawalStatus(status);
             a.setApplicationStatus("Withdrawn");
+            a.setAppliedProject(null);
+            a.setAppliedProjectString("");
             return true;
         } else if (status.equals("denied")){
             a.setWithdrawalStatus(status);
