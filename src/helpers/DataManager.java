@@ -41,32 +41,32 @@ public class DataManager {
 	static {
 		try {
 			try {
-				DataManager.loadUsers("../data/ApplicantList.csv", Applicant.class);
+				DataManager.loadUsers("data/ApplicantList.csv", Applicant.class);
 			} catch (FileNotFoundException  e) {
 				System.err.println("ApplicantList.csv is missing.");
 			}
 	
 			try {
-				DataManager.loadUsers("../data/ManagerList.csv", HDBManager.class);
+				DataManager.loadUsers("data/ManagerList.csv", HDBManager.class);
 			} catch (FileNotFoundException e) {
 				System.err.println("ManagerList.csv is missing.");
 			}
 	
 			try {
-				DataManager.loadUsers("../data/OfficerList.csv", HDBOfficer.class);
+				DataManager.loadUsers("data/OfficerList.csv", HDBOfficer.class);
 			} catch (FileNotFoundException e) {
 				System.err.println("OfficerList.csv is missing.");
 			}
 	
 			try {
-				projects = DataManager.loadProjects("../data/ProjectList.csv");
+				projects = DataManager.loadProjects("data/ProjectList.csv");
 			} catch (FileNotFoundException e) {
 				System.err.println("ProjectList.csv is missing.");
 				projects = new ArrayList<>(); // fallback to empty list
 			}
 	
 			try {
-				inquiries = DataManager.loadInquiries("../data/InquiryList.csv");
+				inquiries = DataManager.loadInquiries("data/InquiryList.csv");
 			} catch (FileNotFoundException e) {
 				System.err.println("InquiryList.csv is missing.");
 				inquiries = new ArrayList<>(); // fallback to empty list
