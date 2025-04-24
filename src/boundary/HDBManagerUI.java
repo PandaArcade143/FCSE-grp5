@@ -821,12 +821,23 @@ public class HDBManagerUI {
 	                inquiryList = InquiryController.allInquiries();
 	                System.out.println("\nInquires:\n");
 	                for (int inq=1; inq<=inquiryList.size(); inq++) {
-	                    System.out.print(inq);
-	                    System.out.print(". ");
-	                    System.out.print(inquiryList.get(inq-1).getRelatedProject().getName());
-	                    System.out.print(": ");
-	                    System.out.print(inquiryList.get(inq-1).getMessage());
-	                    System.out.print("\n");
+						if (inquiryList.get(inq-1).getStatus().equalsIgnoreCase("open")){
+							System.out.print(inq);
+							System.out.print(". ");
+							System.out.print(inquiryList.get(inq-1).getRelatedProject().getName());
+							System.out.print(": ");
+							System.out.print(inquiryList.get(inq-1).getMessage());
+							System.out.print("\n");
+						}else if (inquiryList.get(inq-1).getStatus().equalsIgnoreCase("resolved")){
+							System.out.print(inq);
+							System.out.print(". ");
+							System.out.print(inquiryList.get(inq-1).getRelatedProject().getName());
+							System.out.print(": ");
+							System.out.print(inquiryList.get(inq-1).getMessage());
+							System.err.print(" (Resolved)");
+							System.out.print("\n");
+						}
+	        
 	                }
 	                break;
 	
@@ -841,7 +852,7 @@ public class HDBManagerUI {
 						}
 					}
 					if (projectList.size() <= 0){
-						System.out.println("\nNo queries found, exiting back to menu");
+						System.out.println("\nNo projects found, exiting back to menu");
 						break;
 					}
 	                System.out.println("\nProjects Created:\n");
@@ -869,21 +880,27 @@ public class HDBManagerUI {
 	
 	                // View inquiries for chosen project
 	                System.out.println("\nInquires for project " + chosenProject.getName() + ":\n");
-	                inquiryList = InquiryController.viewInquiries(chosenProject);
-	                for (int inq=1; inq<=inquiryList.size(); inq++) {
-	                    System.out.print(inq);
-	                    System.out.print(". ");
-	                    System.out.print(inquiryList.get(inq-1).getSubject());
-	                    System.out.print(": " + inquiryList.get(inq-1).getMessage());
-	                    System.out.print("\n");
+					List <Inquiry> inqList = InquiryController.viewInquiries(chosenProject);
+	                inquiryList = new ArrayList<>();
+					int idx = 1;
+	                for (Inquiry inq:inqList) {
+	                    if (inq.getStatus().equalsIgnoreCase("open")){
+							inquiryList.add(inq);
+							System.out.print(idx);
+							System.out.print(". ");
+							System.out.print(inq.getRelatedProject().getName());
+							System.out.print(": ");
+							System.out.print(inq.getMessage());
+							System.out.print("\n");
+						}
 	                }
 	
 	                // Select inquiry to reply to
 	                System.out.println("Which inquiry do you wish to reply to:");
 	                int inquiryIndex = scanner.nextInt() - 1;
 	                scanner.nextLine();
-	                if (inquiryIndex < 0 || inquiryIndex > inquiryList.size()) {
-	                    System.out.println("\nProject does not exist.");
+	                if (inquiryIndex < 0 || inquiryIndex >= inquiryList.size()) {
+	                    System.out.println("\nInquiry does not exist.");
 	                    break;
 	                }
 	                Inquiry chosenInquiry = inquiryList.get(inquiryIndex);
