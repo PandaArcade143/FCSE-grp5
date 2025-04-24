@@ -20,6 +20,7 @@ import entity.HDBOfficer;
 import entity.Inquiry;
 import entity.Project;
 import helpers.DataManager;
+import boundary.HDBStaffInt;
 
 /**
  * The {@code HDBManagerUI} class represents the command-line interface
@@ -35,7 +36,7 @@ import helpers.DataManager;
  *   <li>Apply filters to project listings</li>
  * </ul>
  */
-public class HDBManagerUI {
+public class HDBManagerUI implements HDBStaffInt{
 
 	 /**
      * Displays the interactive menu for an HDB Manager and handles actions based on user input.
@@ -103,34 +104,7 @@ public class HDBManagerUI {
 			case 1:
 				projectList = projectController.getFilteredProjects(hdbmanager);
 				System.out.println("\nAll projects created:");
-				for (Project project : projectList) {
-					if (project != null) {
-						System.out.println("\nProject Name: " + project.getName());
-						System.out.println("Neighborhood: " + project.getLocation());
-						System.out.println("Flat types and total number of units for corresponding types:");
-						for (Map.Entry<String, Integer> pair : project.getFlatTypeTotal().entrySet()) {
-							System.out.println(" - Flat type: " + pair.getKey() + ", total number of units: " + pair.getValue());
-						}
-						System.out.println("Flat types and available number of units left for corresponding types:");
-						for (Map.Entry<String, Integer> pair : project.getFlatTypeAvailable().entrySet()) {
-							System.out.println(" - Flat type: " + pair.getKey() + ", available number of units left: " + pair.getValue());
-						}
-						System.out.println("Flat types and prices for corresponding types:");
-						for (Map.Entry<String, Integer> pair : project.getFlatPrices().entrySet()) {
-							System.out.println(" - Flat type: " + pair.getKey() + ", selling price: " + pair.getValue());
-						}
-						System.out.println("Application opening date: " + project.getOpenDate());
-						System.out.println("Application closing date: " + project.getCloseDate());
-						System.out.println("Manager of project: " + project.getManagerName());
-						System.out.println("Officer slots for project: " + project.getOfficerSlot());
-						System.out.println("Officers of project: ");
-						for (HDBOfficer hdbofficer: project.getOfficers()) {
-							System.out.println(" - " + hdbofficer.getName());
-						}
-					} else {
-						System.out.println("\nNo project has been created.");
-					}
-				}
+				viewProjectInquiries(projectList);
 				break;
 
 				// Display only projects created by current HDB manager user
@@ -889,6 +863,9 @@ public class HDBManagerUI {
 					System.out.println("\nNo projects found, exiting back to menu");
 					break;
 				}
+				// Display all projects for HDB manager to reply to inquiries
+				System.out.println("\nWhich project do you want to reply to inquiries?");
+
 				System.out.println("\nProjects Created:\n");
 				for (int proj=1; proj<=projectList.size(); proj++) {
 					System.out.print(proj);
@@ -912,7 +889,8 @@ public class HDBManagerUI {
 					scanner.nextLine();
 					break;
 				}
-
+				
+				
 				// View inquiries for chosen project
 				System.out.println("\nInquires for project " + chosenProject.getName() + ":\n");
 				List <Inquiry> inqList = InquiryController.viewInquiries(chosenProject);
@@ -943,17 +921,17 @@ public class HDBManagerUI {
 				// Enter reply message to inquiry
 				System.out.print("\nEnter reply: ");
 				String replyMessage = scanner.nextLine();
-
-				// Update inquiry reply
-				InquiryController.replyToInquiry(chosenInquiry.getInquiryId(), replyMessage);
-				System.out.println("\nIs the inquiry resolved? (Yes/No)");
-				String ans = scanner.nextLine();
-				if (ans.equalsIgnoreCase("yes")){
-					InquiryController.resolveInquiry(chosenInquiry.getInquiryId());
-					System.out.println("\nInquiry resolved");
-				} else{
-					System.out.println("Inquiry remains Unresolved");
-				}
+				replyToProjInquiry(chosenInquiry.getInquiryId(), replyMessage);
+				// // Update inquiry reply
+				// InquiryController.replyToInquiry(chosenInquiry.getInquiryId(), replyMessage);
+				// System.out.println("\nIs the inquiry resolved? (Yes/No)");
+				// String ans = scanner.nextLine();
+				// if (ans.equalsIgnoreCase("yes")){
+				// 	InquiryController.resolveInquiry(chosenInquiry.getInquiryId());
+				// 	System.out.println("\nInquiry resolved");
+				// } else{
+				// 	System.out.println("Inquiry remains Unresolved");
+				// }
 				break;
 
 			case 15:
@@ -1029,5 +1007,53 @@ public class HDBManagerUI {
 			}
 		}
 
+	}
+	public void viewProjectInquiries(List<Project> proj){
+		for (Project project : proj) {
+			if (project != null) {
+				System.out.println("\nProject Name: " + project.getName());
+				System.out.println("Neighborhood: " + project.getLocation());
+				System.out.println("Flat types and total number of units for corresponding types:");
+				for (Map.Entry<String, Integer> pair : project.getFlatTypeTotal().entrySet()) {
+					System.out.println(" - Flat type: " + pair.getKey() + ", total number of units: " + pair.getValue());
+				}
+				System.out.println("Flat types and available number of units left for corresponding types:");
+				for (Map.Entry<String, Integer> pair : project.getFlatTypeAvailable().entrySet()) {
+					System.out.println(" - Flat type: " + pair.getKey() + ", available number of units left: " + pair.getValue());
+				}
+				System.out.println("Flat types and prices for corresponding types:");
+				for (Map.Entry<String, Integer> pair : project.getFlatPrices().entrySet()) {
+					System.out.println(" - Flat type: " + pair.getKey() + ", selling price: " + pair.getValue());
+				}
+				System.out.println("Application opening date: " + project.getOpenDate());
+				System.out.println("Application closing date: " + project.getCloseDate());
+				System.out.println("Manager of project: " + project.getManagerName());
+				System.out.println("Officer slots for project: " + project.getOfficerSlot());
+				System.out.println("Officers of project: ");
+				for (HDBOfficer hdbofficer: project.getOfficers()) {
+					System.out.println(" - " + hdbofficer.getName());
+				}
+			} else {
+				System.out.println("\nNo project has been created.");
+			}
+		}
+	}
+
+	public void replyToProjInquiry(String inquiryId, String replyMessage){
+		// Update inquiry reply
+		InquiryController.replyToInquiry(inquiryId, replyMessage);
+		resolveInquiry(inquiryId);
+		System.out.println("\nInquiry replied to successfully.");
+	}
+    public void resolveInquiry(String inquiryId){
+		System.out.println("\nIs the inquiry resolved? (Yes/No)");
+		Scanner scanner = new Scanner(System.in);
+		String ans = scanner.nextLine();
+		if (ans.equalsIgnoreCase("yes")){
+			InquiryController.resolveInquiry(inquiryId);
+			System.out.println("\nInquiry resolved");
+		} else{
+			System.out.println("Inquiry remains Unresolved");
+		}
 	}
 }
