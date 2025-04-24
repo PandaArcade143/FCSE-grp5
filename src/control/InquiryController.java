@@ -151,7 +151,7 @@ public class InquiryController {
         	}
             if (inq.getInquiryId().equals(inquiryId)) {
                 inq.setReply(replyMessage);
-                System.out.println("Reply sent:\n" + inq);
+                System.out.println("\n\n\nReply sent~~~~\n" + inq);
                 return;
             }
         }
