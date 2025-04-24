@@ -58,6 +58,13 @@ public class Project {
 		this.temp = new ArrayList<>();
 	}
 	
+	/**
+	 * Decrements the count of available flats of the specified type by 1,
+	 * if there is at least one available. If no such flat is available,
+	 * an error message is printed to the standard error stream.
+	 *
+	 * @param flatType the type of flat to decrement availability for (e.g., "2-Room", "3-Room")
+	 */
 	public void decrementFlat(String flatType) {
 		Integer no = flatTypeAvailable.getOrDefault(flatType, 0);
 		if (no > 0) {
@@ -68,11 +75,20 @@ public class Project {
 	
 	}
 
+	/**
+	 * Returns the HDB manager assigned to this project.
+	 *
+	 * @return the manager associated with this project
+	 */
 	public HDBManager getManager() {
 		return manager;
 	}
 
-
+	/**
+	 * Sets the HDB manager for this project.
+	 *
+	 * @param manager the manager to assign to this project
+	 */
 	public void setManager(HDBManager manager) {
 		this.manager = manager;
 	}

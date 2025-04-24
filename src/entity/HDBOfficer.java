@@ -14,31 +14,65 @@ public class HDBOfficer extends Applicant{
 	String registrationStatus;
 	String role;
 
-	
+	/**
+	 * Returns the list of projects that have been approved for the user.
+	 *
+	 * @return a list of approved projects
+	 */	
 	public List<Project> getApprovedProjects() {
 		return approvedProjects;
 	}
 
+	/**
+	 * Sets the list of approved projects for the user.
+	 *
+	 * @param approvedProjects the list of approved projects to set
+	 */
 	public void setApprovedProjects(List<Project> approvedProjects) {
 		this.approvedProjects = approvedProjects;
 	}
 	
+	/**
+	 * Adds a project to the list of approved projects.
+	 *
+	 * @param p the project to add to the approved list
+	 */
 	public void addApprovedProject(Project p) {
 		this.approvedProjects.add(p);
 	}
 
+	/**
+	 * Returns the list of projects that are currently pending approval for the user.
+	 *
+	 * @return a list of pending projects
+	 */
 	public List<Project> getPendingProjects() {
 		return pendingProjects;
 	}
 
+	/**
+	 * Sets the list of pending projects for the user.
+	 *
+	 * @param pendingProjects the list of pending projects to set
+	 */
 	public void setPendingProjects(List<Project> pendingProjects) {
 		this.pendingProjects = pendingProjects;
 	}
 
+	/**
+	 * Adds a project to the list of pending projects.
+	 *
+	 * @param p the project to add to the pending list
+	 */
 	public void addPendingProject(Project p) {
 		this.pendingProjects.add(p);
 	}
-	
+
+	/**
+	 * Removes a project from the list of pending projects.
+	 *
+	 * @param p the project to remove from the pending list
+	 */
 	public void removePendingProject(Project p) {
 		this.pendingProjects.remove(p);
 	}

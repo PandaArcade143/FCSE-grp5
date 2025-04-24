@@ -11,9 +11,31 @@ import entity.HDBOfficer;
 import entity.Inquiry;
 import entity.Project;
 
+
+/**
+ * Handles the interactive user interface for an {@link Applicant} user.
+ * <p>
+ * Provides menu options for applicants to:
+ * <ul>
+ *   <li>View and apply for BTO projects</li>
+ *   <li>Apply for a project
+ *   <li>Check application status</li>
+ *   <li>Withdraw from a project</li>
+ *   <li>Submit, edit, or delete inquiries</li>
+ *   <li>Filter projects by criteria</li>
+ *   <li>Switch to Officer menu (if eligible)</li>
+ * </ul>
+ */
 public class ApplicantUI {
 
-    //Display menu for an Applicant and handle their actions
+    /**
+     * Displays the applicant menu and handles their choices interactively.
+     * This includes operations such as project application, inquiry management,
+     * and project filtering. Officers who are also applicants can switch to
+     * the officer menu.
+     *
+     * @param applicant the currently logged-in applicant
+     */
     public void showMenu(Applicant applicant) {
         ProjectController projectController = new ProjectController();
         Scanner scanner = new Scanner(System.in);
