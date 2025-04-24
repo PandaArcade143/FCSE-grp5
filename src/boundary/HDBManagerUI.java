@@ -34,7 +34,7 @@ public class HDBManagerUI {
         Applicant applicant = null;
         Project chosenProject;
         boolean validDate;
-        List<Project> projectList;
+        List<Project> projectList = new ArrayList<>();
         int projectIndex;
         List<Inquiry> inquiryList;
         int filterOption;
@@ -525,7 +525,7 @@ public class HDBManagerUI {
 	            case 7:
 	            	projectList = hdbmanager.getCreatedProjects();
                     for (Project project : projectList) {
-                    	if (project != null) {
+                    	if (project != null && project.getManagerName().equalsIgnoreCase(hdbmanager.getName())) {
     	                	System.out.println("\nProject Name: " + project.getName());
     	                	System.out.println("\nAprroved officers:");
     	                	for (HDBOfficer approvedOfficer : project.getOfficers()) {
@@ -546,6 +546,7 @@ public class HDBManagerUI {
     	                	
                     	} else {
                             System.out.println("\nYou did not create any projects.");
+							break;
                         }
                     }
                     break;
@@ -599,7 +600,7 @@ public class HDBManagerUI {
 	            	projectList = hdbmanager.getCreatedProjects();
 	            	int count = 0;
                     for (Project project : projectList) {
-                    	if (project != null) {
+                    	if (project != null && project.getManagerName().equalsIgnoreCase(hdbmanager.getName())) {
     	                	System.out.println("\nProject Name: " + project.getName());
     	                	System.out.println("\nPending applicants:");
     	                	for (Applicant pendingApplicant : applicantList) {
@@ -624,6 +625,7 @@ public class HDBManagerUI {
     	                	}
                     	} else {
                             System.out.println("\nYou did not create any projects.");
+							break;
                         }
                     	break;
                     }
@@ -831,7 +833,17 @@ public class HDBManagerUI {
 	            // View and reply to inquiries regarding project that hdb manager is handling
 	            case 14:
 	                // Display only projects created by current HDB manager user
-	                projectList = hdbmanager.getCreatedProjects();
+					List <Project> allProjList = hdbmanager.getCreatedProjects();
+					projectList.clear();
+					for (Project projs:allProjList){
+						if (projs.getManagerName().equalsIgnoreCase(hdbmanager.getName())){
+							projectList.add(projs);
+						}
+					}
+					if (projectList.size() <= 0){
+						System.out.println("\nNo queries found, exiting back to menu");
+						break;
+					}
 	                System.out.println("\nProjects Created:\n");
 	                for (int proj=1; proj<=projectList.size(); proj++) {
 	                    System.out.print(proj);
@@ -882,7 +894,14 @@ public class HDBManagerUI {
 	
 	                // Update inquiry reply
 	                InquiryController.replyToInquiry(chosenInquiry.getInquiryId(), replyMessage);
-	                InquiryController.resolveInquiry(chosenInquiry.getInquiryId());
+					System.out.println("\nIs the inquiry resolved? (Yes/No)");
+					String ans = scanner.nextLine();
+					if (ans.equalsIgnoreCase("yes")){
+						InquiryController.resolveInquiry(chosenInquiry.getInquiryId());
+						System.out.println("\nInquiry resolved");
+					} else{
+						System.out.println("Inquiry remains Unresolved");
+					}
 	                break;
 	
 	            case 15:

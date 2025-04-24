@@ -181,7 +181,7 @@ public class ApplicantUI {
                     System.out.println("\n\nInquiry Menu:");
                     System.out.println("1. Edit an inquiry");
                     System.out.println("2. Delete an inquiry");
-                    System.out.println("4. Back");
+                    System.out.println("3. Back");
                     System.out.println("\nSelect an option: ");
                     int actionChoice;
                     try {
