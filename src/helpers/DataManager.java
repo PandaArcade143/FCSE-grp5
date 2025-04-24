@@ -39,16 +39,49 @@ public class DataManager {
      * and sets a shutdown hook to save data on exit.
      */	
 	static {
-		DataManager.loadUsers("data/ApplicantList.csv", Applicant.class);
-		DataManager.loadUsers("data/ManagerList.csv", HDBManager.class);
-		DataManager.loadUsers("data/OfficerList.csv", HDBOfficer.class);
-		projects = DataManager.loadProjects("data/ProjectList.csv");
-		inquiries = DataManager.loadInquiries("data/InquiryList.csv");
-		
-		// Creates a shutdown hook that will save data everytime the program closes
-		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-			DataManager.saveAll();
-		}));
+		try {
+			try {
+				DataManager.loadUsers("data/ApplicantList.csv", Applicant.class);
+			} catch (FileNotFoundException  e) {
+				System.err.println("ApplicantList.csv is missing.");
+			}
+	
+			try {
+				DataManager.loadUsers("data/ManagerList.csv", HDBManager.class);
+			} catch (FileNotFoundException e) {
+				System.err.println("ManagerList.csv is missing.");
+			}
+	
+			try {
+				DataManager.loadUsers("data/OfficerList.csv", HDBOfficer.class);
+			} catch (FileNotFoundException e) {
+				System.err.println("OfficerList.csv is missing.");
+			}
+	
+			try {
+				projects = DataManager.loadProjects("data/ProjectList.csv");
+			} catch (FileNotFoundException e) {
+				System.err.println("ProjectList.csv is missing.");
+				projects = new ArrayList<>(); // fallback to empty list
+			}
+	
+			try {
+				inquiries = DataManager.loadInquiries("data/InquiryList.csv");
+			} catch (FileNotFoundException e) {
+				System.err.println("InquiryList.csv is missing.");
+				inquiries = new ArrayList<>(); // fallback to empty list
+			}
+	
+	
+		} catch (Exception e) {
+			System.err.println("Unexpected error during data loading: " + e.getMessage());
+			e.printStackTrace();
+		} finally{
+			// Register shutdown hook
+			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+				DataManager.saveAll();
+			}));
+		}
 	}
 	
 	public static List<Applicant> getCombinedApplicants() {
@@ -357,7 +390,7 @@ public class DataManager {
      * @param filename the path to the CSV file to read
      * @param Class type of user
      */	
-	public static <T> void loadUsers(String path, Class<T> c) {
+	public static <T> void loadUsers(String path, Class<T> c) throws FileNotFoundException {
 		try (BufferedReader br = new BufferedReader(new FileReader(path))) {
 			String currentLine;
 			br.readLine();
@@ -420,7 +453,7 @@ public class DataManager {
      * @param filename the path to the CSV file to read
      * @return list of Project objects
      */
-	public static List<Project> loadProjects(String path) {
+	public static List<Project> loadProjects(String path) throws FileNotFoundException {
 
 		List<Project> projects = new ArrayList<Project>();
 		try (BufferedReader br = new BufferedReader(new FileReader(path))) {
@@ -564,12 +597,12 @@ public class DataManager {
      * @param filename the path to the CSV file to read
      * @return list of Inquiry objects
      */
-	public static List<Inquiry> loadInquiries(String path) {
+	public static List<Inquiry> loadInquiries(String path) throws FileNotFoundException {
 		inquiries = new ArrayList<>();
 		File file = new File(path); 
-		if (!file.exists()) {
-			return inquiries;
-		}
+		// if (!file.exists()) {
+		// 	return inquiries;
+		// }
 		
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 			String currentLine;

@@ -143,12 +143,12 @@ public class HDBManagerUI {
 				// Create new BTO project
 			case 3:
 				// Enter project details
-				System.out.println("\nPlease enter the relevant information");
+				System.out.println("\nPlease enter the relevant information (or Quit)");
 
 				// Enter project name
 				System.out.print("\nProject Name: ");
 				projectName = scanner.nextLine();
-
+				if (projectName.equalsIgnoreCase("quit")) break;
 				// Enter neighbourhood
 				System.out.print("Neighbourhood: ");
 				String neighbourhood = scanner.nextLine();
@@ -274,11 +274,12 @@ public class HDBManagerUI {
 				}
 
 				// Select project to edit
-				System.out.print("\nSelect project number to edit (Enter the index): ");
+				System.out.print("\nSelect project number to edit (Enter the index or 0 to quit): ");
 
 				try {
 					projectIndex = scanner.nextInt() - 1;
 					scanner.nextLine();
+					if (projectIndex == -1) break;
 					if (projectIndex < 0 || projectIndex > projectList.size()) {
 						System.out.println("\nProject does not exist.");
 						break;
@@ -475,9 +476,10 @@ public class HDBManagerUI {
 				}
 
 				// Select project to delete
-				System.out.print("\nSelect a project to delete: ");
+				System.out.print("\nSelect a project to delete (or 0 to quit): ");
 				projectIndex = scanner.nextInt() - 1;
 				scanner.nextLine();
+				if (projectIndex == -1) break;
 				if (projectIndex < 0 || projectIndex > projectList.size()) {
 					System.out.println("\nProject does not exist.");
 					break;
@@ -498,9 +500,10 @@ public class HDBManagerUI {
 				}
 
 				// Select project
-				System.out.print("\nSelect a project to toggle visibility (select index):");
+				System.out.print("\nSelect a project to toggle visibility (select index or 0 to quit): ");
 				projectIndex = scanner.nextInt();
 				scanner.nextLine();
+				if (projectIndex == 0) break;
 				if (projectIndex < 0 || projectIndex > projectList.size()) {
 					System.out.println("\nProject does not exist.");
 					break;
@@ -527,7 +530,7 @@ public class HDBManagerUI {
 				for (Project project : projectList) {
 					if (project != null && project.getManagerName().equalsIgnoreCase(hdbmanager.getName())) {
 						System.out.println("\nProject Name: " + project.getName());
-						System.out.println("\nAprroved officers:");
+						System.out.println("\nApproved officers:");
 						for (HDBOfficer approvedOfficer : project.getOfficers()) {
 							if (project.getOfficers() != null) {
 								System.out.println(" - " + approvedOfficer.getName()  + " " + approvedOfficer.getNRIC());
@@ -554,8 +557,9 @@ public class HDBManagerUI {
 				// Approve / Reject HDB officer's registration
 			case 8:
 				while (true) {
-					System.out.print("\nEnter officer's NRIC: ");
+					System.out.print("\nEnter officer's NRIC (or Quit): ");
 					String nric = scanner.nextLine();
+					if (nric.equalsIgnoreCase("quit")) break;
 					if (!nric.matches("[ST]\\d{7}[A-Z]")) {
 						//check if nric is valid
 						System.out.println("\nInvalid NRIC given, please try again.");
@@ -634,8 +638,9 @@ public class HDBManagerUI {
 				// Approve / reject BTO applications
 			case 10:
 				while (true) {
-					System.out.print("\nEnter applicant's NRIC: ");
+					System.out.print("\nEnter applicant's NRIC (or Quit): ");
 					String nric = scanner.nextLine();
+					if (nric.equalsIgnoreCase("quit")) break;
 					if (!nric.matches("[ST]\\d{7}[A-Z]")) {
 						//check if nric is valid
 						System.out.println("\nInvalid NRIC given, please try again.");
@@ -863,10 +868,11 @@ public class HDBManagerUI {
 				}
 
 				// Select project
-				System.out.println("Select the project you wish to reply to: ");
+				System.out.println("\nSelect the project you wish to reply to (or 0 to quit): ");
 				try {
 					projectIndex = scanner.nextInt();
 					scanner.nextLine();
+					if (projectIndex == 0) break;
 					if (projectIndex < 0 || projectIndex > projectList.size()) {
 						System.out.println("\nProject does not exist.");
 						break;
