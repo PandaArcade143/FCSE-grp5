@@ -11,8 +11,37 @@ import entity.Inquiry;
 import entity.Project;
 import helpers.DataManager;
 
+/**
+ * The {@code HDBOfficerUI} class provides a console-based user interface for {@link HDBOfficer} users
+ * within the BTO Management System.
+ * 
+ * <p>It enables HDB Officers to:
+ * <ul>
+ *   <li>View and register for available BTO projects</li>
+ *   <li>Check registration status</li>
+ *   <li>Access and manage project details</li>
+ *   <li>Respond to project-related inquiries</li>
+ *   <li>Book applicants into flat types and update their BTO status</li>
+ *   <li>Filter project listings by location and price</li>
+ *   <li>Switch to the applicant menu (if also an applicant)</li>
+ * </ul>
+ */
 public class HDBOfficerUI {
 
+	/**
+     * Displays the HDB Officer main menu and handles user actions such as project registration,
+     * inquiry management, applicant booking, and status updates.
+     * 
+     * <p>The method supports:
+     * <ul>
+     *   <li>Project registration with overlap and slot checks</li>
+     *   <li>Inquiry filtering and replying</li>
+     *   <li>Managing applicant statuses and generating booking receipts</li>
+     *   <li>Switching to the Applicant UI if applicable</li>
+     * </ul>
+     *
+     * @param hdbofficer the currently authenticated {@code HDBOfficer}
+     */
 	public void showMenu(HDBOfficer hdbofficer) {
 
 		ProjectController projectController = new ProjectController();

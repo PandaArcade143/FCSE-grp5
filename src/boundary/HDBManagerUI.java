@@ -22,8 +22,36 @@ import entity.Inquiry;
 import entity.Project;
 import helpers.DataManager;
 
+/**
+ * The {@code HDBManagerUI} class represents the command-line interface
+ * for {@link HDBManager} users in the BTO Management System.
+ * <p>
+ * It provides functionality for managers to:
+ * <ul>
+ *   <li>View and manage BTO projects</li>
+ *   <li>Create, edit, delete, and toggle project visibility</li>
+ *   <li>Handle officer registrations</li>
+ *   <li>Manage applicant approvals and withdrawals</li>
+ *   <li>Reply to inquiries and generate applicant reports</li>
+ *   <li>Apply filters to project listings</li>
+ * </ul>
+ */
 public class HDBManagerUI {
 
+	 /**
+     * Displays the interactive menu for an HDB Manager and handles actions based on user input.
+     * <p>
+     * This includes a wide range of operations:
+     * <ul>
+     *   <li>Project creation and management</li>
+     *   <li>Officer registration processing</li>
+     *   <li>Applicant approvals and withdrawals</li>
+     *   <li>Inquiry handling and replying</li>
+     *   <li>Filtering and reporting on applicants and projects</li>
+     * </ul>
+     *
+     * @param hdbmanager the currently logged-in HDB manager
+     */
 	public void showMenu(HDBManager hdbmanager) {
 		List<Applicant> applicantList = DataManager.getCombinedApplicants();
 		List<HDBOfficer> hdbOfficerList = DataManager.getOfficers();
@@ -51,7 +79,7 @@ public class HDBManagerUI {
 			System.out.println("4. Edit an existing BTO project");
 			System.out.println("5. Delete a BTO project");
 			System.out.println("6. Toggle visibility of project");
-			System.out.println("7. View aprroved/pending officers for my projects");
+			System.out.println("7. View approved/pending officers for my projects");
 			System.out.println("8. Approve/reject HDB Officer registrations");
 			System.out.println("9. View pending/withdrawing applicants for my projects");
 			System.out.println("10. Approve/reject applicant's BTO application");

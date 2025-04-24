@@ -34,7 +34,22 @@ public class ProjectController {
     	filters.put("minPrice", "");
     }
     
-    
+    /**
+     * Returns a list of flat types available for the given applicant based on 
+     * their age and marital status.
+     * <p>
+     * The eligibility rules are as follows:
+     * <ul>
+     *   <li>If the applicant is 35 or older and single, they are eligible for a 
+     *       2-Room flat if it is available.</li>
+     *   <li>If the applicant is 21 or older and married, they are eligible for a 
+     *       2-Room flat if available, and additionally for a 3-Room flat if the 
+     *       2-Room is also available.</li>
+     * </ul>
+     * 
+     * @param a the applicant whose eligibility and flat availability is being checked
+     * @return a list of flat types the applicant is eligible to apply for
+     */ 
     public List<String> getFlatAvailability(Applicant a) {
     	List<String> flats = new ArrayList<String>();
     	Project p = a.getAppliedProject();

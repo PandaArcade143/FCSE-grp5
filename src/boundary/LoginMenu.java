@@ -9,9 +9,25 @@ import entity.HDBOfficer;
 import entity.User;
 import control.AuthController;
 
+/**
+ * The {@code LoginMenu} class handles user authentication and redirection
+ * to appropriate role-based menus within the BTO Management System.
+ * <p>
+ * It validates user credentials, authenticates the login,
+ * and displays a role-based menu for further interaction.
+ */
 public class LoginMenu {
 
-	//Display the login menu and redirect user based on role
+    /**
+     * Displays the login menu for the system and processes user authentication.
+     * <p>
+     * It performs NRIC validation, password checking, and then redirects users
+     * to different menus based on their roles (Applicant, HDBManager, or HDBOfficer).
+     *
+     * @param applicantList the list of registered applicants
+     * @param managerList the list of registered HDB managers
+     * @param officerList the list of registered HDB officers
+     */
 	public void showMenu(List<Applicant> applicantList, List<HDBManager> managerList, List<HDBOfficer> officerList) {
 		AuthController authController = new AuthController();
 		Scanner scanner = new Scanner(System.in);
@@ -160,8 +176,18 @@ public class LoginMenu {
 			}
 		}
 	}
-
-	//Generic method to find a User in a list by NRIC
+	
+    /**
+     * Finds a {@link User} in the provided list based on the specified NRIC.
+     * <p>
+     * This generic helper method checks each object in the list to determine
+     * if it is a {@code User} and compares its NRIC (case-insensitive) with the input.
+     *
+     * @param nric the NRIC to search for
+     * @param list a list of any type, expected to contain {@code User} objects
+     * @return the matching {@code User} if found; {@code null} otherwise
+     * @param <T> the type parameter of the list elements
+     */
 	private static <T> User findUserByNRIC(String nric, List<T> list) {
 		for (T u : list) {
 			if (u instanceof User && ((User) u).getNRIC().equalsIgnoreCase(nric)) {
