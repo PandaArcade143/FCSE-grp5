@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 import control.InquiryController;
-import interfaces.IHDBStaff;
+import IHDBStaff;
 
 /**
  * Represents an HDB Officer who is also an applicant,
@@ -174,16 +174,6 @@ public class HDBOfficer extends Applicant implements IHDBStaff{
 		return true;
 	}
 
-	/** 
-    * Returns a list of inquiries relating to the project
-    * @param proj is the project to check against for inquiries
-    * @return the list of inquiries
-    */
-	@Override
-	List<Inquiry> viewProjectInquiries(Project proj){
-		InquiryController.viewInquiries(proj);
-	}
-  
 	/**
 	* Reply to an inquiry
 	* 

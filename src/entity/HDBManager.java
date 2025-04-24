@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import control.InquiryController;
-import interfaces.IHDBStaff;
+import IHDBStaff;
 
 /**
  * Represents an HDB Manager, a user responsible for creating and managing BTO projects.
@@ -84,16 +84,6 @@ public class HDBManager extends User implements IHDBStaff{
      */
 	public String toString() {
 		return this.getName();
-	}
-     
-     /** 
-      * Returns a list of inquiries relating to the project
-      * @param proj is the project to check against for inquiries
-      * @return the list of inquiries
-      */
-     @Override
-	List<Inquiry> viewProjectInquiries(Project proj){
-		InquiryController.viewInquiries(proj);
 	}
 
      /**
