@@ -3,11 +3,14 @@ package entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import control.InquiryController;
+import IHDBStaff;
+
 /**
  * Represents an HDB Manager, a user responsible for creating and managing BTO projects.
  * This class maintains a list of projects created by the manager.
  */
-public class HDBManager extends User{
+public class HDBManager extends User implements IHDBStaff{
 	List<Project> createdProjects;
 	
 	/**
@@ -81,5 +84,26 @@ public class HDBManager extends User{
      */
 	public String toString() {
 		return this.getName();
+	}
+
+     /**
+      * Reply to an inquiry
+      * 
+      * @param inquiryId is the ID of the inquiry to reply to
+      * @param replyMessage is the message for the inquiry
+      */
+	@Override
+    void replyToInquiry(String inquiryId, String replyMessage){
+		InquiryController.replyToInquiry(inquiryId, replyMessage);
+	}
+
+     /**
+      * Closes and resolves an inquiry
+      *
+      * @param inquiryId is the ID of the inquiry to resolve
+      */
+	@Override
+    void resolveInquiry(String inquiryId){
+		InquiryController.resolveInquiry(inquiryId);
 	}
 }

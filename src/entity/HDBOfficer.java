@@ -3,11 +3,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import control.InquiryController;
+import IHDBStaff;
+
 /**
  * Represents an HDB Officer who is also an applicant,
  * but with the additional ability to register and manage a project.
  */
-public class HDBOfficer extends Applicant{
+public class HDBOfficer extends Applicant implements IHDBStaff{
 	Project registeredProject;
 	List<Project> approvedProjects = new ArrayList<Project>();
 	List<Project> pendingProjects = new ArrayList<Project>();
@@ -169,6 +172,27 @@ public class HDBOfficer extends Applicant{
 		}
 		
 		return true;
+	}
+
+	/**
+	* Reply to an inquiry
+	* 
+	* @param inquiryId is the ID of the inquiry to reply to
+	* @param replyMessage is the message for the inquiry
+	*/
+	@Override
+	void replyToInquiry(String inquiryId, String replyMessage){
+		InquiryController.replyToInquiry(inquiryId, replyMessage);
+	}
+  
+	/**
+	* Closes and resolves an inquiry
+	*
+	* @param inquiryId is the ID of the inquiry to resolve
+	*/
+	@Override
+	void resolveInquiry(String inquiryId){
+		InquiryController.resolveInquiry(inquiryId);
 	}
 	
 	/**
