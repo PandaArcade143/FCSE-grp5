@@ -284,10 +284,9 @@ public class Project {
 	
 
 	/**
-	 * Sets the total number of flats for each type.
-	 *
-	 * @param flatTypeTotal map of flat types to total counts
- 	*/
+     * Returns a list of temporary officers.
+     * @return list of temporary HDB officers
+     */
 	public List<HDBOfficer> getTemp() {
 		return temp;
 	}
@@ -295,7 +294,7 @@ public class Project {
 	/**
 	 * sets the temporary HDBOfficers that have applied
 	 *
-	 * @param list of HDBOfficers
+	 * @param temp list of HDBOfficers
  	*/
 
 	public void setTemp(List<HDBOfficer> temp) {

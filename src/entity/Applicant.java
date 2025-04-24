@@ -100,7 +100,7 @@ public class Applicant extends User{
      *
      * @return a list of {@link Inquiry} objects
      */
-	public List<Inquiry> getInquiries(){ // UML diagram said to return a string and I don't see an Override ToString in UML
+	public List<Inquiry> getInquiries(){
 		return inquiries;
 	}	
 
