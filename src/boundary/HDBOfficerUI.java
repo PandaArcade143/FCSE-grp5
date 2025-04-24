@@ -26,7 +26,7 @@ import helpers.DataManager;
  *   <li>Switch to the applicant menu (if also an applicant)</li>
  * </ul>
  */
-public class HDBOfficerUI {
+public class HDBOfficerUI implements HDBStaffInt{
 
 	/**
      * Displays the HDB Officer main menu and handles user actions such as project registration,
@@ -78,36 +78,8 @@ public class HDBOfficerUI {
 			case 1:
 				// Display list of available projects
 				System.out.println("\nProjects available:");
-				for (Project project : projectList) {
-					if (project != null) {
-						System.out.println("\nProject Name: " + project.getName());
-						System.out.println("Neighborhood: " + project.getLocation());
-						System.out.println("Flat types and total number of units for corresponding types:");
-						for (Map.Entry<String, Integer> pair : project.getFlatTypeTotal().entrySet()) {
-							System.out.println(" - Flat type: " + pair.getKey() + ", total number of units: " + pair.getValue());
-						}
-						System.out.println("Flat types and available number of units left for corresponding types:");
-						for (Map.Entry<String, Integer> pair : project.getFlatTypeAvailable().entrySet()) {
-							System.out.println(" - Flat type: " + pair.getKey() + ", available number of units left: " + pair.getValue());
-						}
-						System.out.println("Flat types and prices for corresponding types:");
-						for (Map.Entry<String, Integer> pair : project.getFlatPrices().entrySet()) {
-							System.out.println(" - Flat type: " + pair.getKey() + ", selling price: " + pair.getValue());
-						}
-						System.out.println("Application opening date: " + project.getOpenDate());
-						System.out.println("Application closing date: " + project.getCloseDate());
-						System.out.println("Manager of project: " + project.getManager());
-						System.out.println("Officer slots for project: " + project.getOfficerSlot());
-						System.out.println("Officers of project: ");
-						for (HDBOfficer officer: project.getOfficers()) {
-							System.out.println(" - " + officer.getName());
-						}
-					} else {
-						System.out.println("\nYou are not allowed to view any project.");
-					}
-				}
+				viewProjectInquiries(projectList);
 				break;
-
 			case 2:
 				// HDB officer registers for a project
 				System.out.println("\nEnter the name of the project you wish to register for: ");
@@ -204,7 +176,7 @@ public class HDBOfficerUI {
 						Inquiry inquiry = inquiries.get(i);
 						System.out.println((i + 1) + ". " + inquiry.getSubject() + ": " + inquiry.getMessage());
 					}
-					System.out.print("Enter which inquiry to respond to or type 'Back' to return: ");                	
+					System.out.print("Enter which inquiry (by index) to respond to or type 'Back' to return: ");                	
 
 					String input = scanner.nextLine();
 					if (input.equalsIgnoreCase("Back")) {
@@ -218,9 +190,7 @@ public class HDBOfficerUI {
 							// Now proceed to respond to selectedInquiry
 							System.out.print("\nEnter your reply: ");
 							String replyMessage = scanner.nextLine();
-							InquiryController.replyToInquiry(selectedInquiry.getInquiryId(), replyMessage);
-							InquiryController.resolveInquiry(selectedInquiry.getInquiryId());
-							System.out.print("\nInquiries resolved");
+							replyToProjInquiry(selectedInquiry.getInquiryId(), replyMessage);
 							System.out.print("\n\n\n");
 						} else {
 							System.out.println("Invalid inquiry number.");
@@ -395,4 +365,53 @@ public class HDBOfficerUI {
 
 
 	}
+	public void viewProjectInquiries(List<Project> proj){
+		for (Project project : proj) {
+			if (project != null) {
+				System.out.println("\nProject Name: " + project.getName());
+				System.out.println("Neighborhood: " + project.getLocation());
+				System.out.println("Flat types and total number of units for corresponding types:");
+				for (Map.Entry<String, Integer> pair : project.getFlatTypeTotal().entrySet()) {
+					System.out.println(" - Flat type: " + pair.getKey() + ", total number of units: " + pair.getValue());
+				}
+				System.out.println("Flat types and available number of units left for corresponding types:");
+				for (Map.Entry<String, Integer> pair : project.getFlatTypeAvailable().entrySet()) {
+					System.out.println(" - Flat type: " + pair.getKey() + ", available number of units left: " + pair.getValue());
+				}
+				System.out.println("Flat types and prices for corresponding types:");
+				for (Map.Entry<String, Integer> pair : project.getFlatPrices().entrySet()) {
+					System.out.println(" - Flat type: " + pair.getKey() + ", selling price: " + pair.getValue());
+				}
+				System.out.println("Application opening date: " + project.getOpenDate());
+				System.out.println("Application closing date: " + project.getCloseDate());
+				System.out.println("Manager of project: " + project.getManagerName());
+				System.out.println("Officer slots for project: " + project.getOfficerSlot());
+				System.out.println("Officers of project: ");
+				for (HDBOfficer hdbofficer: project.getOfficers()) {
+					System.out.println(" - " + hdbofficer.getName());
+				}
+			} else {
+				System.out.println("\nNo project has been created.");
+			}
+		}
+	}
+
+	public void replyToProjInquiry(String inquiryId, String replyMessage){
+		// Update inquiry reply
+		InquiryController.replyToInquiry(inquiryId, replyMessage);
+		resolveInquiry(inquiryId);
+		System.out.println("\nInquiry replied to successfully.");
+	}
+    public void resolveInquiry(String inquiryId){
+		System.out.println("\nIs the inquiry resolved? (Yes/No)");
+		Scanner scanner = new Scanner(System.in);
+		String ans = scanner.nextLine();
+		if (ans.equalsIgnoreCase("yes")){
+			InquiryController.resolveInquiry(inquiryId);
+			System.out.println("\nInquiry resolved");
+		} else{
+			System.out.println("Inquiry remains Unresolved");
+		}
+	}
+	
 }
