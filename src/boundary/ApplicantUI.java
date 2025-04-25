@@ -146,9 +146,8 @@ public class ApplicantUI {
                         System.out.println("\nNo application found.");
                         break;
                     } 
-                    if (p == null) {
-                    	System.out.println("\nYou have not applied for any project.");;
-                    }
+                    
+                    
                 	if (status != null) {
                 		if (status.equalsIgnoreCase("withdrawing")) {
                 			System.out.println("\nApplication already pending withdrawal.");
@@ -161,13 +160,16 @@ public class ApplicantUI {
                 				applicant.setFlatType(null);
                 				applicant.setApplicationStatus(null);
                 				System.out.println("Removed application. You can now apply for other projects.");
+                				break;
                 			}
                 		} else if (status.equalsIgnoreCase("rejectwithdrawal")) {
                 			System.out.println("\nApplication to withdraw has been rejected. Reverting application status back.");
                 			if (applicant.getFlatType().isEmpty()) {
                 				applicant.setApplicationStatus("Pending");
+                				break;
                 			} else {
                 				applicant.setApplicationStatus("Booked");
+                				break;
  
                 			}
  
@@ -176,7 +178,16 @@ public class ApplicantUI {
                 			System.out.println("\nApplication is now pending for withdrawal.");
                 		}
 
+
                 	} 
+                	
+                	
+                	if (p == null || status == null) {
+                        System.out.println("\nNo application found.");
+                        break;
+                    } 
+                	
+             
                 	break;
 
 
