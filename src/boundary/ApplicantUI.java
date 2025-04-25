@@ -142,9 +142,12 @@ public class ApplicantUI {
                     // Attempt to withdraw current application
                 	status = applicant.getApplicationStatus();
                     Project p = applicant.getAppliedProject();
-                    if (p == null && status == null) {
+                    if (p != null && status == null) {
                         System.out.println("\nNo application found.");
                         break;
+                    } 
+                    if (p == null) {
+                    	System.out.println("\nYou have not applied for any project.");;
                     }
                 	if (status != null) {
                 		if (status.equalsIgnoreCase("withdrawing")) {
