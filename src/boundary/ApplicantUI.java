@@ -40,7 +40,6 @@ public class ApplicantUI {
         ProjectController projectController = new ProjectController();
         Scanner scanner = new Scanner(System.in);
         List<Inquiry> inquiries = InquiryController.viewInquiries(applicant.getNRIC());
-        applicant.setRole("Applicant");
         
 
         String status;
