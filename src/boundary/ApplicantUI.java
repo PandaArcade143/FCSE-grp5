@@ -142,17 +142,22 @@ public class ApplicantUI {
                     // Attempt to withdraw current application
                 	status = applicant.getApplicationStatus();
                     Project p = applicant.getAppliedProject();
-                    
+                    if (p == null && status == null) {
+                        System.out.println("\nNo application found.");
+                        break;
+                    }
                 	if (status != null) {
                 		if (status.equalsIgnoreCase("withdrawing")) {
                 			System.out.println("\nApplication already pending withdrawal.");
-                		} else if (status.equalsIgnoreCase("withdrawn")) {
+                		} else if (status.equalsIgnoreCase("withdrawn") || status.equalsIgnoreCase("unsuccessful")) {
                 			System.out.println("\nApplication has been approved to be withdrawn. Remove application? (y/n)");
                 			String s = scanner.nextLine();
                 			if (s.equals("y")) {
                 				applicant.setAppliedProject(null); 
                 				applicant.setAppliedProjectString(null);
                 				applicant.setFlatType(null);
+                				applicant.setApplicationStatus(null);
+                				System.out.println("Removed application. You can now apply for other projects.");
                 			}
                 		} else if (status.equalsIgnoreCase("rejectwithdrawal")) {
                 			System.out.println("\nApplication to withdraw has been rejected. Reverting application status back.");
@@ -163,17 +168,14 @@ public class ApplicantUI {
  
                 			}
  
-                		} else {
+                		} else if (p != null){
                 			applicant.setApplicationStatus("Withdrawing");
                 			System.out.println("\nApplication is now pending for withdrawal.");
                 		}
 
-                	} else if (status == null && p != null){
-                		
-                    } else {
-                        System.out.println("\nNo application found.");
-                    }
+                	} 
                 	break;
+
 
                 case 5:
                     // Allow user to submit an inquiry about a selected project
