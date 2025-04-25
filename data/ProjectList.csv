@@ -1,4 +1,4 @@
 Project Name,Neighborhood,Type 1,Number of units for Type 1,Selling price for Type 1,Type 2,Number of units for Type 2,Selling price for Type 2,Application opening date,Application closing date,Manager,Officer Slot,Officer,Temp,Visiblity
-Acacia Breeze,Yishun,2-Room,2,350000,3-Room,3,450000,15/02/25,20/03/25,Michael,3,"Daniel,Emily",,TRUE
-Sunny City,Boon Lay,2-Room,5,400000,3-Room,3,450000,20/04/25,12/06/25,Michael,3,"Emily,Katherine",,TRUE
-Grassy Hill,Hillview,2-Room,0,300000,3-Room,2,500000,05/03/25,29/04/25,Jessica,4,,,TRUE
+Acacia Breeze,Yishun,2-Room,2,350000,3-Room,3,450000,"15/02/25","20/03/25",Michael,3,"Daniel,Emily","",true
+Sunny City,Boon Lay,2-Room,5,400000,3-Room,3,450000,"20/04/25","12/06/25",Michael,3,"Emily,Katherine","",true
+Grassy Hill,Hillview,2-Room,0,300000,3-Room,2,500000,"05/03/25","29/04/25",Jessica,4,"","",true
