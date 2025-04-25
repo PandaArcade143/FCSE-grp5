@@ -901,10 +901,11 @@ public class HDBManagerUI implements HDBStaffInt{
 						inquiryList.add(inq);
 						System.out.print(idx);
 						System.out.print(". ");
-						System.out.print(inq.getRelatedProject().getName());
+						System.out.print(inq.getSubject());
 						System.out.print(": ");
 						System.out.print(inq.getMessage());
 						System.out.print("\n");
+						idx++;
 					}
 				}
 
